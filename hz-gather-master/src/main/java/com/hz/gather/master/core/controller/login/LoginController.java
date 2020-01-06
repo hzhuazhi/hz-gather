@@ -131,6 +131,7 @@ public class LoginController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
