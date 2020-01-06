@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.VcMemberQuestionsMapper" >
+  <sql id="Base_Column_List" >
+    member_id, problem1, answer1, problem2, answer2, problem3, answer3, create_time, 
+    update_time, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.VcMemberQuestions" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from vc_member_questions
+    where member_id = #{memberId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from vc_member_questions
+    where member_id = #{memberId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberQuestions" >
+    insert into vc_member_questions
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="problem1 != null" >
+        problem1,
+      </if>
+      <if test="answer1 != null" >
+        answer1,
+      </if>
+      <if test="problem2 != null" >
+        problem2,
+      </if>
+      <if test="answer2 != null" >
+        answer2,
+      </if>
+      <if test="problem3 != null" >
+        problem3,
+      </if>
+      <if test="answer3 != null" >
+        answer3,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="problem1 != null" >
+        #{problem1,jdbcType=VARCHAR},
+      </if>
+      <if test="answer1 != null" >
+        #{answer1,jdbcType=VARCHAR},
+      </if>
+      <if test="problem2 != null" >
+        #{problem2,jdbcType=VARCHAR},
+      </if>
+      <if test="answer2 != null" >
+        #{answer2,jdbcType=VARCHAR},
+      </if>
+      <if test="problem3 != null" >
+        #{problem3,jdbcType=VARCHAR},
+      </if>
+      <if test="answer3 != null" >
+        #{answer3,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberQuestions" >
+    update vc_member_questions
+    <set >
+      <if test="problem1 != null" >
+        problem1 = #{problem1,jdbcType=VARCHAR},
+      </if>
+      <if test="answer1 != null" >
+        answer1 = #{answer1,jdbcType=VARCHAR},
+      </if>
+      <if test="problem2 != null" >
+        problem2 = #{problem2,jdbcType=VARCHAR},
+      </if>
+      <if test="answer2 != null" >
+        answer2 = #{answer2,jdbcType=VARCHAR},
+      </if>
+      <if test="problem3 != null" >
+        problem3 = #{problem3,jdbcType=VARCHAR},
+      </if>
+      <if test="answer3 != null" >
+        answer3 = #{answer3,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where member_id = #{memberId,jdbcType=INTEGER}
+  </update>
+</mapper>

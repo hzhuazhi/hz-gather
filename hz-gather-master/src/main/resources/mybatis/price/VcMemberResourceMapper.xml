@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.VcMemberResourceMapper" >
+  <sql id="Base_Column_List" >
+    id, member_id, total_money, already_money, surplus_money, cash_money, push_people, 
+    team_active, push_people_all, team_active_all, create_time, update_time, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.VcMemberResource">
+    select 
+    <include refid="Base_Column_List" />
+    from vc_member_resource
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vc_member_resource
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+    insert into vc_member_resource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="totalMoney != null" >
+        total_money,
+      </if>
+      <if test="alreadyMoney != null" >
+        already_money,
+      </if>
+      <if test="surplusMoney != null" >
+        surplus_money,
+      </if>
+      <if test="cashMoney != null" >
+        cash_money,
+      </if>
+      <if test="pushPeople != null" >
+        push_people,
+      </if>
+      <if test="teamActive != null" >
+        team_active,
+      </if>
+      <if test="pushPeopleAll != null" >
+        push_people_all,
+      </if>
+      <if test="teamActiveAll != null" >
+        team_active_all,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=DECIMAL},
+      </if>
+      <if test="totalMoney != null" >
+        #{totalMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="alreadyMoney != null" >
+        #{alreadyMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="surplusMoney != null" >
+        #{surplusMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cashMoney != null" >
+        #{cashMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="pushPeople != null" >
+        #{pushPeople,jdbcType=INTEGER},
+      </if>
+      <if test="teamActive != null" >
+        #{teamActive,jdbcType=INTEGER},
+      </if>
+      <if test="pushPeopleAll != null" >
+        #{pushPeopleAll,jdbcType=INTEGER},
+      </if>
+      <if test="teamActiveAll != null" >
+        #{teamActiveAll,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=DECIMAL},
+      </if>
+      <if test="totalMoney != null" >
+        total_money = #{totalMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="alreadyMoney != null" >
+        already_money = #{alreadyMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="surplusMoney != null" >
+        surplus_money = #{surplusMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cashMoney != null" >
+        cash_money = #{cashMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="pushPeople != null" >
+        push_people = #{pushPeople,jdbcType=INTEGER},
+      </if>
+      <if test="teamActive != null" >
+        team_active = #{teamActive,jdbcType=INTEGER},
+      </if>
+      <if test="pushPeopleAll != null" >
+        push_people_all = #{pushPeopleAll,jdbcType=INTEGER},
+      </if>
+      <if test="teamActiveAll != null" >
+        team_active_all = #{teamActiveAll,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateUpPeople" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="teamActiveAll != null" >
+        team_active_all =teamActiveAll+ #{teamActiveAll},
+      </if>
+      <if test="pushPeopleAll != null" >
+        push_people_all =pushPeopleAll+ #{pushPeopleAll},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
+</mapper>

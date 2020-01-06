@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.UMoneyListMapper" >
+  <sql id="Base_Column_List" >
+    id, member_id, reward_type, symbol_type, money, curday, curhour, curminute, create_time, 
+    update_time, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.UMoneyList" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from u_money_list
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from u_money_list
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.UMoneyList" >
+    insert into u_money_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="rewardType != null" >
+        reward_type,
+      </if>
+      <if test="symbolType != null" >
+        symbol_type,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="rewardType != null" >
+        #{rewardType,jdbcType=BIT},
+      </if>
+      <if test="symbolType != null" >
+        #{symbolType,jdbcType=BIT},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="curday != null" >
+        #{curday,jdbcType=INTEGER},
+      </if>
+      <if test="curhour != null" >
+        #{curhour,jdbcType=BIT},
+      </if>
+      <if test="curminute != null" >
+        #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.UMoneyList" >
+    update u_money_list
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="rewardType != null" >
+        reward_type = #{rewardType,jdbcType=BIT},
+      </if>
+      <if test="symbolType != null" >
+        symbol_type = #{symbolType,jdbcType=BIT},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday,jdbcType=INTEGER},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour,jdbcType=BIT},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
