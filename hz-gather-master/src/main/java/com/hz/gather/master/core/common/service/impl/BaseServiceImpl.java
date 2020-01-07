@@ -7,7 +7,7 @@ package com.hz.gather.master.core.common.service.impl;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.BaseService;
-import com.hz.gather.master.core.model.page.BasePage;
+import com.hz.gather.master.core.protocol.page.BasePage;
 
 import java.util.List;
 

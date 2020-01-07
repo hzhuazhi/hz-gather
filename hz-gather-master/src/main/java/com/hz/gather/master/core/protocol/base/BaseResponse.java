@@ -1,6 +1,6 @@
 package com.hz.gather.master.core.protocol.base;
 
-import com.hz.gather.master.core.model.page.Page;
+import com.hz.gather.master.core.protocol.page.Page;
 
 /**
  * @Description 服务的响应给客户端的基础类

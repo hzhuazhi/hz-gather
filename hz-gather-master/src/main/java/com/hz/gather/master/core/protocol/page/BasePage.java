@@ -1,4 +1,4 @@
-package com.hz.gather.master.core.model.page;
+package com.hz.gather.master.core.protocol.page;
 
 /**
  * @Description 分页的基础属性

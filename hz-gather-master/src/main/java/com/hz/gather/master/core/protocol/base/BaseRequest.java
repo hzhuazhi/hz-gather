@@ -1,7 +1,7 @@
 package com.hz.gather.master.core.protocol.base;
 
 
-import com.hz.gather.master.core.model.page.BasePage;
+import com.hz.gather.master.core.protocol.page.BasePage;
 
 import java.io.Serializable;
 
