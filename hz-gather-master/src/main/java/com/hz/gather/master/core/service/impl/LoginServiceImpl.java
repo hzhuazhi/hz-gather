@@ -16,8 +16,8 @@ import com.hz.gather.master.core.mapper.VirtualCoinPriceMapper;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberGenerateModel;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
-import com.hz.gather.master.core.model.login.LoginModel;
 import com.hz.gather.master.core.model.price.VirtualCoinPriceModel;
+import com.hz.gather.master.core.protocol.request.login.LoginModel;
 import com.hz.gather.master.core.service.LoginService;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -326,17 +326,8 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         return token;
     }
 
-    @Override
-    public VcMember queryMemberInfo(Integer memberId) {
-        VcMember  vcMember =PublicMethod.toVcMember(memberId);
-        VcMember  rsVcMember=vcMemberMapper.selectByPrimaryKey(vcMember);
-        return rsVcMember;
-    }
 
-    @Override
-    public VcMemberResource queryMemberResourceInfo(Integer memberId) {
-        VcMemberResource vcMemberResource   =  PublicMethod.toVcMemberResource(memberId);
-        VcMemberResource  vcMemberResource1  =  vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
-        return vcMemberResource1;
-    }
+
+
+
 }

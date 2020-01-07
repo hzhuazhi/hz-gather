@@ -9,7 +9,7 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.login.*;
+import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
 import org.apache.commons.lang.StringUtils;
@@ -236,9 +236,13 @@ public class LoginController {
             String  token = ComponentUtil.generateService.getNonexistentInformation(Constant.PW_TOKEN);
             //
             ComponentUtil.loginService.toPwTokenRedis(token,memberId);
-            String  pwToken =PublicMethod.toForgetPhoneDto(token);
 
-            return JsonResult.successResult(pwToken);
+            String  pwToken =PublicMethod.toForgetPhoneDto(token);
+            String encryptionData = StringUtil.mergeCodeBase64(pwToken);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+
+            return JsonResult.successResult(encryptionData);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -289,7 +293,11 @@ public class LoginController {
             }
 
             data  =     PublicMethod.toToken(token);
-            return JsonResult.successResult(data);
+
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(encryptionData);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);

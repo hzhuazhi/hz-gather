@@ -2,10 +2,7 @@ package com.hz.gather.master.core.runner;
 
 import com.hz.gather.master.core.common.redis.RedisIdService;
 import com.hz.gather.master.core.common.redis.RedisService;
-import com.hz.gather.master.core.service.GenerateService;
-import com.hz.gather.master.core.service.LoginService;
-import com.hz.gather.master.core.service.TransactionalService;
-import com.hz.gather.master.core.service.VirtualCoinPriceService;
+import com.hz.gather.master.core.service.*;
 import com.hz.gather.master.util.ComponentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +31,8 @@ public class AutowireRunner implements ApplicationRunner {
     private RedisIdService redisIdService;
     @Autowired
     private RedisService redisService;
-    @Autowired
-    private VirtualCoinPriceService virtualCoinPriceService;
+//    @Autowired
+//    private VirtualCoinPriceService virtualCoinPriceService;
 
     @Autowired
     private GenerateService generateService;
@@ -45,6 +42,9 @@ public class AutowireRunner implements ApplicationRunner {
     private LoginService loginService;
     @Autowired
     private TransactionalService transactionalService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     Thread runThread = null;
 
@@ -61,11 +61,11 @@ public class AutowireRunner implements ApplicationRunner {
         log.info("AutowireRunner ...");
         ComponentUtil.redisIdService = redisIdService;
         ComponentUtil.redisService = redisService;
-        ComponentUtil.virtualCoinPriceService = virtualCoinPriceService;
+//        ComponentUtil.virtualCoinPriceService = virtualCoinPriceService;
         ComponentUtil.loginService = loginService;
         ComponentUtil.generateService = generateService;
         ComponentUtil.transactionalService = transactionalService;
-
+        ComponentUtil.userInfoService  =   userInfoService;
         runThread = new RunThread();
         runThread.start();
 

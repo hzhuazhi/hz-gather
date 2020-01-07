@@ -3,8 +3,7 @@ package com.hz.gather.master.core.service;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.BaseService;
 import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
-import com.hz.gather.master.core.model.login.LoginModel;
+import com.hz.gather.master.core.protocol.request.login.LoginModel;
 
 /**
  * @Description TODO
@@ -42,7 +41,7 @@ public interface LoginService<T> extends BaseService<T>  {
      * @param loginModel
      * @return
      */
-    public String    addMemberInfo(LoginModel  loginModel)throws Exception;
+    public String    addMemberInfo(LoginModel loginModel)throws Exception;
 
     /**
      * 注册用户检查邀请码是否有效
@@ -162,18 +161,5 @@ public interface LoginService<T> extends BaseService<T>  {
     public  String   phoneSmsCodeSignIn(String phone,String  timeStamp,String smsCode)throws  Exception;
 
 
-    /***
-     * 根据memberId 查询  memberInfo
-     * @param memberId
-     * @return
-     */
-    public  VcMember  queryMemberInfo(Integer  memberId);
-
-    /***
-     * 根据memberId 查询  ResourceInfo
-     * @param memberId
-     * @return
-     */
-    public VcMemberResource queryMemberResourceInfo(Integer  memberId);
 
 }

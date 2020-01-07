@@ -261,6 +261,9 @@
       <if test="isValid != null" >
         is_valid = #{isValid},
       </if>
+      <if test="token != null" >
+        token = #{token},
+      </if>
     </set>
     where member_id = #{memberId}
   </update>

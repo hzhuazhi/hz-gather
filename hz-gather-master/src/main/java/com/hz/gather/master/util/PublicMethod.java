@@ -4,7 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
-import com.hz.gather.master.core.model.login.*;
+import com.hz.gather.master.core.model.user.CommonModel;
+import com.hz.gather.master.core.protocol.request.login.*;
+import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
+import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
+import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
+import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Date;
@@ -37,7 +42,7 @@ public class PublicMethod {
      * @date 2020/1/2 22:32
      */
     public  static String toSendSmsDto(String  timeStamp){
-        SendSmsDto sendSmsDto = new  SendSmsDto();
+        SendSmsDto sendSmsDto = new SendSmsDto();
         sendSmsDto.setTimeStamp(timeStamp);
         return   JSON.toJSONString(sendSmsDto);
     }
@@ -236,7 +241,7 @@ public class PublicMethod {
      * @date 2020/1/3 16:57
      */
     public  static String    toForgetPhoneDto(String  token){
-        ForgetPhoneDto  forgetPhoneDto= new ForgetPhoneDto();
+        ForgetPhoneDto forgetPhoneDto= new ForgetPhoneDto();
         forgetPhoneDto.setPwToken(token);
         return   JSON.toJSONString(forgetPhoneDto);
     }
@@ -364,5 +369,38 @@ public class PublicMethod {
         signInModelDto.setToken(token);
         return   JSON.toJSONString(signInModelDto);
     }
+
+    /**
+     * @Description: 根据token  查询用户信息
+     * @param token
+     * @return java.lang.Integer
+     * @author long
+     * @date 2020/1/7 16:53
+     */
+    public  static Integer  tokenGetMemberId(String  token){
+        Integer   memberId = 0;
+        String  rsMemberId =(String)ComponentUtil.redisService.get(token);
+        if(!StringUtils.isBlank(rsMemberId)){
+            memberId  = Integer.parseInt(rsMemberId);
+        }
+        return memberId;
+    }
+
+
+    /**
+     * @Description: isCommonModel 是否成功的
+     * @param commonModel
+     * @return boolean
+     * @author long
+     * @date 2020/1/7 17:13
+     */
+    public  static boolean  isCommonModel(CommonModel commonModel){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(commonModel.getToken())){
+            return  flag ;
+        }
+        return true;
+    }
+
 
 }

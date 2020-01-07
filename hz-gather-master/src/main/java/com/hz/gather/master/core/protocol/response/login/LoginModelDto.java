@@ -1,13 +1,13 @@
-package com.hz.gather.master.core.model.login;
+package com.hz.gather.master.core.protocol.response.login;
 
 /**
  * @Description TODO
  * @Author long
- * @Date 2020/1/6 23:43
+ * @Date 2020/1/3 16:52
  * @Version 1.0
  */
-public class SignInModelDto {
-    private String  token;
+public class LoginModelDto {
+    private  String token;
 
     public String getToken() {
         return token;
