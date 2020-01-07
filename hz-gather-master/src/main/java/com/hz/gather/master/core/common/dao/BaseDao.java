@@ -2,6 +2,8 @@ package com.hz.gather.master.core.common.dao;
 
 
 
+import com.hz.gather.master.core.model.page.BasePage;
+
 import java.util.List;
 
 
@@ -86,17 +88,17 @@ public interface BaseDao<T> {
 	 */
 	public List<T> findByCondition(Object obj);
 
-//	/**
-//	 * 查询总数-分页
-//	 * @param page
-//	 * @return
-//	 */
-//	public int queryByCount(BasePage page);
-//
-//	/**
-//	 * 查询列表数据-分页
-//	 * @param page
-//	 * @return
-//	 */
-//	public List<T> queryByList(BasePage page);
+	/**
+	 * 查询总数-分页
+	 * @param page
+	 * @return
+	 */
+	public int queryByCount(BasePage page);
+
+	/**
+	 * 查询列表数据-分页
+	 * @param page
+	 * @return
+	 */
+	public List<T> queryByList(BasePage page);
 }

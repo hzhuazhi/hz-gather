@@ -7,6 +7,7 @@ package com.hz.gather.master.core.common.service.impl;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.BaseService;
+import com.hz.gather.master.core.model.page.BasePage;
 
 import java.util.List;
 
@@ -122,13 +123,13 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 		return getDao().findByCondition(obj);
 	};
 
-//	public int queryByCount(BasePage page){
-//		return getDao().queryByCount(page);
-//	}
-//
-//	public List<T> queryByList(BasePage page){
-//		Integer rowCount = queryByCount(page);
-//		page.setRowCount(rowCount);
-//		return getDao().queryByList(page);
-//	}
+	public int queryByCount(BasePage page){
+		return getDao().queryByCount(page);
+	}
+
+	public List<T> queryByList(BasePage page){
+		Integer rowCount = queryByCount(page);
+		page.setRowCount(rowCount);
+		return getDao().queryByList(page);
+	}
 }
