@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pf.play.rule.core.mapper.RegionMapper">
+<mapper namespace="com.hz.gather.master.core.mapper.RegionMapper">
     <!-- 属性映射 -->
-    <resultMap type="com.pf.play.rule.core.model.region.RegionModel" id="dataMap">
+    <resultMap type="com.hz.gather.master.core.model.region.RegionModel" id="dataMap">
         <id property="id" column="id" />
         <result property="startIp" column="start_ip" />
         <result property="endIp" column="end_ip" />
@@ -41,7 +41,7 @@
     <select id="findAll" resultMap="dataMap">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_base_gateway a
+        from tb_ga_base_gateway a
         <!-- <include refid="Example_Where_Clause"/>-->
     </select>
 
@@ -50,7 +50,7 @@
     <select id="findByCondition" parameterType="Map" resultMap="dataMap">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_base_gateway a
+        from tb_ga_base_gateway a
         <include refid="Example_Where_Clause"/>
     </select>
 
@@ -59,7 +59,7 @@
             resultMap="dataMap">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_base_gateway a
+        from tb_ga_base_gateway a
         <include refid="Example_Where_Clause"/>
         limit 1
     </select>
@@ -69,7 +69,7 @@
             resultMap="dataMap">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_base_gateway a
+        from tb_ga_base_gateway a
         where 1=1
         and a.id = #{id}
         and a.yn = 0
