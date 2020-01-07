@@ -1,7 +1,7 @@
 package com.hz.gather.master.core.mapper;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
-import com.hz.gather.master.core.model.dao.VcMemberResource;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -10,7 +10,7 @@ public interface VcMemberResourceMapper<T> extends BaseDao<T> {
 
     int insertSelective(VcMemberResource record);
 
-    VcMemberResource selectByPrimaryKey(Long id);
+    VcMemberResource selectByPrimaryKey(VcMemberResource record);
 
     int updateByPrimaryKeySelective(VcMemberResource record);
 

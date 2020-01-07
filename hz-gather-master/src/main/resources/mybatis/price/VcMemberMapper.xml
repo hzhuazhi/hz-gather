@@ -7,7 +7,7 @@
     create_time, is_active, login_time, device_id, superior_id, pay_password, extension_member_id,
     grade_type, is_questions, is_valid
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.VcMember" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMember" >
     select
     <include refid="Base_Column_List" />
     from vc_member
@@ -21,12 +21,15 @@
     <if test="inviteCode != null and inviteCode != '' " >
       and invite_code = #{inviteCode}
     </if>
+    <if test="password != null and password != '' " >
+      and password = #{password}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from vc_member
     where member_id = #{memberId}
   </delete>
-  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.VcMember" >
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcMember" >
     insert into vc_member
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="memberId != null" >
@@ -183,7 +186,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.VcMember" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMember" >
     update vc_member
     <set >
       <if test="ownerMemberId != null" >
@@ -262,7 +265,7 @@
     where member_id = #{memberId}
   </update>
 
-  <select id="selectByCodeOrAddress" resultType="com.hz.gather.master.core.model.dao.VcMember" >
+  <select id="selectByCodeOrAddress" resultType="com.hz.gather.master.core.model.entity.VcMember" >
     select
     <include refid="Base_Column_List" />
     from vc_member

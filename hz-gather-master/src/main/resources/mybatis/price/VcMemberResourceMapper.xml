@@ -5,7 +5,7 @@
     id, member_id, total_money, already_money, surplus_money, cash_money, push_people, 
     team_active, push_people_all, team_active_all, create_time, update_time, is_valid
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.VcMemberResource">
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberResource">
     select 
     <include refid="Base_Column_List" />
     from vc_member_resource
@@ -15,7 +15,7 @@
     delete from vc_member_resource
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     insert into vc_member_resource
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -100,7 +100,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     update vc_member_resource
     <set >
       <if test="memberId != null" >
@@ -143,7 +143,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <update id="updateUpPeople" parameterType="com.hz.gather.master.core.model.dao.VcMemberResource" >
+  <update id="updateUpPeople" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     update vc_member_resource
     <set >
       <if test="teamActiveAll != null" >

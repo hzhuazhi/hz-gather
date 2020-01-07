@@ -38,11 +38,11 @@ public class GenerateServiceImpl<T> extends BaseServiceImpl<T> implements Genera
                 reStr = ComponentUtil.redisService.get(token1);
             }else if(type==Constant.INVITE_CODE){
                 rs  =   UUIDUtils.createInviteCode();
-                String token1 = CachedKeyUtils.getCacheKey(CacheKey.TOKEN_INFO, rs);
+                String token1 = CachedKeyUtils.getCacheKey(CacheKey.INVITE_INFO, rs);
                 reStr= ComponentUtil.redisService.get(token1);
             }else if(type == Constant.TRADING_ADDRESS){
                 rs = UUIDUtils.createUUID();
-                String token1 = CachedKeyUtils.getCacheKey(CacheKey.TOKEN_INFO, rs);
+                String token1 = CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, rs);
                 reStr= ComponentUtil.redisService.get(token1);
             }else if(type == Constant.MEMBERID){
                 AtomicLong atomic_did = new AtomicLong(ComponentUtil.redisIdService.getIncr(CacheKey.MEMBER_ID_INFO, ONE_YEAR));

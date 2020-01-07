@@ -2,7 +2,8 @@ package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.BaseService;
-import com.hz.gather.master.core.model.dao.VcMember;
+import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.login.LoginModel;
 
 /**
@@ -25,7 +26,7 @@ public interface LoginService<T> extends BaseService<T>  {
      * 该电话号码是否有存在
      * @param phone
      */
-    String      createTime(String phone)throws  Exception;
+    String      createTime(String phone,Integer type)throws  Exception;
 
 
     /**
@@ -34,7 +35,7 @@ public interface LoginService<T> extends BaseService<T>  {
      * @param phone
      * @return
      */
-    public boolean    checkVerifCode(String time,String phone,String verifCode)throws ServiceException;
+    public boolean    checkVerifCode(String time,String phone,String verifCode,Integer type)throws ServiceException;
 
     /**
      * 注册用户添加信息
@@ -110,12 +111,69 @@ public interface LoginService<T> extends BaseService<T>  {
      * @return
      * @throws Exception
      */
-    public  VcMember   queryVcMember(Integer   memberId)throws  Exception;
+    public VcMember queryVcMember(Integer   memberId)throws  Exception;
 
-
+    /**
+     * 删除token
+     * @param delToken
+     * @throws Exception
+     */
     public  void   removeToken(String  delToken)throws  Exception;
 
+    /**
+     * 注册类发短信
+     * @param phone
+     * @throws Exception
+     */
+    public  String   sendRegister(String  phone,String areaCode)throws  Exception;
+
+    /**
+     * 忘记密码
+     * @param phone
+     * @throws Exception
+     */
+    public  String   sendForgetPassword(String  phone)throws  Exception;
+
+    /**
+     * 短信登陆发送短信
+     * @param phone
+     * @throws Exception
+     */
+    public  String   sendSmsSignIn(String  phone)throws  Exception;
 
 
+    /**
+     * 手机号 + 密码 登录
+     * @param phone
+     * @param password
+     * @return
+     * @throws Exception
+     */
+    public  String   passwordSignIn(String phone,String  password)throws  Exception;
+
+
+    /**
+     * 手机号 + 验证码 登录
+     * @param phone
+     * @param timeStamp
+     * @return
+     * @throws Exception
+     */
+    public  String   phoneSmsCodeSignIn(String phone,String  timeStamp,String smsCode)throws  Exception;
+
+
+    /***
+     * 根据memberId 查询  memberInfo
+     * @param memberId
+     * @return
+     */
+    public  VcMember  queryMemberInfo(Integer  memberId);
+
+    /***
+     * 根据memberId 查询  ResourceInfo
+     * @param memberId
+     * @return
+     */
+    public VcMemberResource queryMemberResourceInfo(Integer  memberId);
 
 }

@@ -10,7 +10,7 @@ import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.mapper.UMoneyListMapper;
 import com.hz.gather.master.core.mapper.VcMemberMapper;
 import com.hz.gather.master.core.mapper.VirtualCoinPriceMapper;
-import com.hz.gather.master.core.model.dao.VcMember;
+import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.price.VirtualCoinPriceModel;
 import com.hz.gather.master.core.service.VirtualCoinPriceService;
 import com.hz.gather.master.util.ComponentUtil;
@@ -104,7 +104,7 @@ public class VirtualCoinPriceServiceImpl<T> extends BaseServiceImpl<T> implement
     public void test() {
 
 //        uMoneyListMapper.selectByPrimaryKey(1L);
-        VcMember  vcMember = new VcMember();
+        VcMember vcMember = new VcMember();
         vcMemberMapper.selectByPrimaryKey(vcMember);
     }
 }

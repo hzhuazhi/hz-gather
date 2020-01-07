@@ -1,7 +1,7 @@
 package com.hz.gather.master.core.mapper;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
-import com.hz.gather.master.core.model.dao.VcMemberQuestions;
+import com.hz.gather.master.core.model.entity.VcMemberQuestions;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

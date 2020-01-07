@@ -2,8 +2,8 @@ package com.hz.gather.master.util;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.DateUtil;
-import com.hz.gather.master.core.model.dao.VcMember;
-import com.hz.gather.master.core.model.dao.VcMemberResource;
+import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.login.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -118,7 +118,7 @@ public class PublicMethod {
      */
     public  static VcMemberResource insertVcMemberResource(Integer memberId){
         Date createdate =  DateUtil.currentTimestamp();
-        VcMemberResource   vcMemberResourceModel  =  new  VcMemberResource();
+        VcMemberResource vcMemberResourceModel  =  new  VcMemberResource();
         vcMemberResourceModel.setMemberId(memberId);
         vcMemberResourceModel.setCreateTime(createdate);
         vcMemberResourceModel.setUpdateTime(new Date());
@@ -308,4 +308,61 @@ public class PublicMethod {
         vcMember.setMemberId(memberId);
         return vcMember;
     }
+
+
+    /**
+     * @Description: TODO
+     * @param phone
+    * @param password
+     * @return com.hz.gather.master.core.model.dao.VcMember
+     * @author long
+     * @date 2020/1/6 20:10
+     */
+    public  static  VcMember  toVcMember(String phone,String password){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setPhone(phone);
+        vcMember.setPassword(password);
+        return vcMember;
+    }
+
+    /**
+     * 设置memberId + token
+     * @param memberId
+     * @param token
+     * @return
+     */
+    public  static  VcMember  toVcMember(Integer memberId,String token){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setMemberId(memberId);
+        vcMember.setToken(token);
+        return vcMember;
+    }
+
+    /**
+     * @Description: TODO
+     * @param memberId
+     * @return com.hz.gather.master.core.model.dao.VcMemberResource
+     * @author long
+     * @date 2020/1/7 11:03
+     */
+    public  static  VcMemberResource  toVcMemberResource(Integer memberId){
+        VcMemberResource  vcMemberResource =  new  VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        return vcMemberResource;
+    }
+
+
+    /**
+     * @Description: 给 toToken
+     * @param token
+     * @return java.lang.String
+     * @author long
+     * @date 2020/1/3 16:57
+     */
+    public  static String  toToken(String  token){
+        SignInModelDto  signInModelDto= new SignInModelDto();
+        signInModelDto.setToken(token);
+        return   JSON.toJSONString(signInModelDto);
+    }
+
 }

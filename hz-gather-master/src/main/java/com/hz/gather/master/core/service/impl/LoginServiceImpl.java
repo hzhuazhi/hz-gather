@@ -4,19 +4,18 @@ import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.enums.ENUM_ERROR;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
-import com.hz.gather.master.core.common.utils.DateUtil;
-import com.hz.gather.master.core.common.utils.RandomUtil;
-import com.hz.gather.master.core.common.utils.SendSms;
+import com.hz.gather.master.core.common.utils.*;
 import com.hz.gather.master.core.common.utils.constant.CacheKey;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.mapper.VcMemberGenerateMapper;
 import com.hz.gather.master.core.mapper.VcMemberMapper;
+import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
 import com.hz.gather.master.core.mapper.VirtualCoinPriceMapper;
-import com.hz.gather.master.core.model.dao.VcMember;
-import com.hz.gather.master.core.model.dao.VcMemberGenerateModel;
-import com.hz.gather.master.core.model.dao.VcMemberResource;
+import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.entity.VcMemberGenerateModel;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.login.LoginModel;
 import com.hz.gather.master.core.model.price.VirtualCoinPriceModel;
 import com.hz.gather.master.core.service.LoginService;
@@ -50,6 +49,9 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     @Autowired
     private VirtualCoinPriceMapper virtualCoinPriceMapper;
 
+    @Autowired
+    private VcMemberResourceMapper vcMemberResourceMapper;
+
     @Override
     public BaseDao<T> getDao() {
         return vcMemberMapper;
@@ -74,20 +76,36 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     }
 
     @Override
-    public String createTime(String phone)throws  Exception {
+    public String createTime(String phone,Integer type)throws  Exception {
         String  time = DateUtil.timeStamp()  ;
         String  amsVerification = RandomUtil.getRandom(6);
         if (amsVerification.startsWith("0")){
             amsVerification = amsVerification.replaceFirst("0" , "1");
         }
-        ComponentUtil.redisService.set((phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
+        //缺少一个发送短信
+        if(type==1){
+            ComponentUtil.redisService.set(CacheKey.REGISTER_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
+        }else if(type==2){
+            ComponentUtil.redisService.set(CacheKey.FORGET_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
+        }else if(type==3){
+            ComponentUtil.redisService.set(CacheKey.SIGN_IN_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
+        }
+
         return time;
     }
 
     @Override
-    public boolean checkVerifCode(String time, String phone,String verifCode)throws ServiceException {
+    public boolean checkVerifCode(String time, String phone,String verifCode,Integer type)throws ServiceException {
         // 查询缓存是否有验证码
-        String    verifCodeRedis = (String)ComponentUtil.redisService.get((phone+time));
+        String    verifCodeRedis="";
+        if(type==1){
+            verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.REGISTER_SMS+(phone+time));
+        }else if(type==2){
+            verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.FORGET_SMS+(phone+time));
+        }else if(type==3){
+            verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.SIGN_IN_SMS+(phone+time));
+        }
+
         if (StringUtils.isBlank(verifCode)){
             throw  new ServiceException(ENUM_ERROR.A00008.geteCode(),ENUM_ERROR.A00008.geteDesc());
         }
@@ -193,7 +211,6 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     /**
      * @Description: 给信息新注册的用添加到缓存里面
-     * @param registerReq
      * @param InviteAdd []
      * @return void
      * @author long
@@ -247,5 +264,79 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     @Override
     public void removeToken(String delToken) throws Exception {
         ComponentUtil.redisService.remove(delToken);
+    }
+
+    @Override
+    public String sendRegister(String phone, String areaCode) throws Exception {
+        boolean flag = ComponentUtil.loginService.isPhoneExist(phone);
+        if(flag){
+            throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
+        }
+        String   time  = ComponentUtil.loginService.createTime(phone,1);
+        return   time;
+    }
+
+    @Override
+    public String sendForgetPassword(String phone) throws Exception {
+        String  time  = ComponentUtil.loginService.createTime(phone,2);
+        return time;
+    }
+
+    @Override
+    public String sendSmsSignIn(String phone) throws Exception {
+        String  time  = ComponentUtil.loginService.createTime(phone,3);
+        return time;
+    }
+
+    @Override
+    public String passwordSignIn(String phone, String password) throws Exception {
+        VcMember   vcMember = PublicMethod.toVcMember(phone,password);
+        VcMember   rsVcMember=vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(rsVcMember==null){
+            return null;
+        }
+        String  token  = UUIDUtils.createUUID();
+        VcMember   vcMemberUqdate  = PublicMethod.toVcMember(rsVcMember.getMemberId(),token);
+        vcMemberMapper.updateByPrimaryKeySelective(vcMemberUqdate);
+        ComponentUtil.redisService.set(token,rsVcMember.getMemberId()+"");
+        return token;
+    }
+
+    @Override
+    public String phoneSmsCodeSignIn(String phone, String timeStamp,String smsCode) throws Exception {
+        String  key = CacheKey.SIGN_IN_SMS+(phone+timeStamp);
+        String  code =(String)ComponentUtil.redisService.get(key);
+        if (StringUtils.isBlank(code)){
+            return "1";
+        }
+        if(!code.equals(smsCode)){
+            return "2";
+        }
+
+
+        VcMember   vcMember = PublicMethod.toVcMember(phone);
+        VcMember   rsVcMember=vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(rsVcMember==null){
+            return null;
+        }
+        String  token  = UUIDUtils.createUUID();
+        VcMember vcMemberUqdate  = PublicMethod.toVcMember(rsVcMember.getMemberId(),token);
+        vcMemberMapper.updateByPrimaryKeySelective(vcMemberUqdate);
+        ComponentUtil.redisService.set(token,rsVcMember.getMemberId()+"");
+        return token;
+    }
+
+    @Override
+    public VcMember queryMemberInfo(Integer memberId) {
+        VcMember  vcMember =PublicMethod.toVcMember(memberId);
+        VcMember  rsVcMember=vcMemberMapper.selectByPrimaryKey(vcMember);
+        return rsVcMember;
+    }
+
+    @Override
+    public VcMemberResource queryMemberResourceInfo(Integer memberId) {
+        VcMemberResource vcMemberResource   =  PublicMethod.toVcMemberResource(memberId);
+        VcMemberResource  vcMemberResource1  =  vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
+        return vcMemberResource1;
     }
 }

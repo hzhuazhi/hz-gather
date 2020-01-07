@@ -5,7 +5,7 @@
     member_id, problem1, answer1, problem2, answer2, problem3, answer3, create_time, 
     update_time, is_valid
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.dao.VcMemberQuestions" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberQuestions" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from vc_member_questions
@@ -15,7 +15,7 @@
     delete from vc_member_questions
     where member_id = #{memberId,jdbcType=INTEGER}
   </delete>
-  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberQuestions" >
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberQuestions" >
     insert into vc_member_questions
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="memberId != null" >
@@ -82,7 +82,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.VcMemberQuestions" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberQuestions" >
     update vc_member_questions
     <set >
       <if test="problem1 != null" >

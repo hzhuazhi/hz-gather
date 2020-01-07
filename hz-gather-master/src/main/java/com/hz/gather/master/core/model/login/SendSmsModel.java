@@ -8,7 +8,7 @@ package com.hz.gather.master.core.model.login;
  */
 public class SendSmsModel {
     /**
-     * 类型  1、是注册 2、忘记密码
+     * 类型  1、是注册 2、忘记密码 3、用户登录
      */
     private Integer smsType;
 

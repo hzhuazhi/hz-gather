@@ -4,8 +4,8 @@ import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.mapper.VcMemberMapper;
 import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
-import com.hz.gather.master.core.model.dao.VcMember;
-import com.hz.gather.master.core.model.dao.VcMemberResource;
+import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.service.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource,VcMemberResource  uqVcMemberResource) {
+    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource) {
         vcMemberMapper.insertSelective(vcMember);
         vcMemberResourceMapper.insertSelective(vcMemberResource);
         vcMemberResourceMapper.updateUpPeople(uqVcMemberResource);

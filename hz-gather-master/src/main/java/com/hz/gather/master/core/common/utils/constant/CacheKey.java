@@ -47,4 +47,21 @@ public interface CacheKey {
      * PW_TOKEN
      */
     String PW_TOKEN= "-8";
+
+
+
+    /**
+     * 注册_SMS
+     */
+    String REGISTER_SMS = "reg-sms-";
+
+    /**
+     * 忘记密码_sms
+     */
+    String FORGET_SMS  = "forget-sms-";
+
+    /**
+     * 登陆_sms
+     */
+    String SIGN_IN_SMS  = "signin-sms-";
 }

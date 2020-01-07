@@ -7,9 +7,8 @@ import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
-import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
-import com.hz.gather.master.core.model.dao.VcMember;
+import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.login.*;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -46,12 +45,14 @@ public class LoginController {
      * @author long
      * 字段格式 { "smsType": 1: "13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
      * 字段格式 { "smsType": 2: "13606768872","version": "1.0.1" }
+     * 字段格式 { "smsType": 3: "13606768872","version": "1.0.1" }
      * @date 2020/1/2 21:02
      */
     @PostMapping("/register_sms")
     public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
         String data = "";
         SendSmsModel sendSmsModel = new SendSmsModel();
+        String time ="";
         try{
             data        = StringUtil.decoderBase64(jsonData);
             sendSmsModel  = JSON.parseObject(data, SendSmsModel.class);
@@ -61,11 +62,14 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
-            flag = ComponentUtil.loginService.isPhoneExist(sendSmsModel.getPhone());
-            if(flag){
-                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
+            if(sendSmsModel.getSmsType()==1){
+                time  =  ComponentUtil.loginService.sendRegister(sendSmsModel.getPhone(),sendSmsModel.getCountry());
+            }else if(sendSmsModel.getSmsType()==2){
+                time  =  ComponentUtil.loginService.sendForgetPassword(sendSmsModel.getPhone());
+            }else if(sendSmsModel.getSmsType()==3){
+                time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());
             }
-            String   time  = ComponentUtil.loginService.createTime(sendSmsModel.getPhone());
+
             //还缺一个发送
             // 数据加密
             String encryptionData = StringUtil.mergeCodeBase64(PublicMethod.toSendSmsDto(time));
@@ -108,7 +112,7 @@ public class LoginController {
             }
 
             //验证码是否正确
-            flag = ComponentUtil.loginService.checkVerifCode(loginModel.getTimeStamp(),loginModel.getPhone(),loginModel.getSmsCode());
+            flag = ComponentUtil.loginService.checkVerifCode(loginModel.getTimeStamp(),loginModel.getPhone(),loginModel.getSmsCode(),1);
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
@@ -117,8 +121,6 @@ public class LoginController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
             }
-
-
 
             //用户手机号码是否被注册
             flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
@@ -174,7 +176,7 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00005.geteCode(),ENUM_ERROR.A00005.geteDesc());
             }
 
-            VcMember  vcMember = ComponentUtil.loginService.queryVcMember(memberId);
+            VcMember vcMember = ComponentUtil.loginService.queryVcMember(memberId);
             if(vcMember==null){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
@@ -220,7 +222,7 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
-            flag = ComponentUtil.loginService.checkVerifCode(forgetPhoneModel.getTimeStamp(),forgetPhoneModel.getPhone(),forgetPhoneModel.getVerificationCode());
+            flag = ComponentUtil.loginService.checkVerifCode(forgetPhoneModel.getTimeStamp(),forgetPhoneModel.getPhone(),forgetPhoneModel.getVerificationCode(),2);
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
@@ -244,21 +246,50 @@ public class LoginController {
         }
     }
 
-
+    /**
+     * @Description: 登录信息
+     * @param request
+    * @param response
+    * @param jsonData
+     * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
+     * @author long
+     * 字段格式 { "type": 1, "phone":"13606768872","password":"111111"}
+     * 字段格式 { "type": 1, "phone":"13606768872","smsCode": "888888" ,"timeStamp": "123124123" }
+     * @date 2020/1/7 13:46
+     */
     @PostMapping("/sign_in")
     public JsonResult<Object> getSignIn(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
         log.info("----------:进来啦!");
         String data = "";
         SignInModel signInModel = new SignInModel();
+        String   token ="";
         try{
             data        = StringUtil.decoderBase64(jsonData);
             signInModel  = JSON.parseObject(data, SignInModel.class);
-
-
             boolean  flag = PublicMethod.checkSignIn(signInModel);
 
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
+            }
 
-            return JsonResult.successResult(null);
+            if (signInModel.getType()==1){
+                token=ComponentUtil.loginService.passwordSignIn(signInModel.getPhone(),signInModel.getPassword());
+            }else if(signInModel.getType()==2){
+                token=ComponentUtil.loginService.phoneSmsCodeSignIn(signInModel.getPhone(),signInModel.getTimeStamp(),signInModel.getSmsCode());
+            }
+
+            if(StringUtils.isBlank(token)){
+                throw  new ServiceException(ENUM_ERROR.A00010.geteCode(),ENUM_ERROR.A00010.geteDesc());
+            }
+
+            if(token.equals("1")){
+                throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
+            }else if(token.equals("2")){
+                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+            }
+
+            data  =     PublicMethod.toToken(token);
+            return JsonResult.successResult(data);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
