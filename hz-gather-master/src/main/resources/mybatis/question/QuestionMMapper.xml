@@ -94,7 +94,7 @@
         from tb_ga_question_m a
         <include refid="Example_Where_Clause"/>
         <include refid="Example_Order_By"/>
-        <if test="start != null and start != '' and end != null and end != ''" >
+        <if test="pageNumber != null and pageNumber != ''" >
             limit #{start},#{end}
         </if>
     </select>

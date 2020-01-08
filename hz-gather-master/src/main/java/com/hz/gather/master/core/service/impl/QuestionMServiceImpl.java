@@ -3,9 +3,12 @@ package com.hz.gather.master.core.service.impl;
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.mapper.QuestionMMapper;
+import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.service.QuestionMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Description 百问百答问题类别的Service层的实现层
@@ -28,4 +31,5 @@ public class QuestionMServiceImpl<T> extends BaseServiceImpl<T> implements Quest
     public BaseDao<T> getDao() {
         return questionMMapper;
     }
+
 }

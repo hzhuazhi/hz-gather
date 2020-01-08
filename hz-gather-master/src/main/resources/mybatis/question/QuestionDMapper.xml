@@ -7,18 +7,9 @@
 
     <!-- 定义数据库基本列,只适用代替单表的*-->
     <sql id="Base_Column_List">
-        a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,a.is_overtime,
-        a.curday,a.curhour,a.curminute,a.run_num,a.run_status,
-        a.create_time,a.update_time,a.yn,b.invite_code,b.nickname
+        a.id,a.question_m_id,a.seat_d,a.title,a.sketch,a.page_ads,a.keyword,a.create_time,a.update_time,a.yn,b.category_name
     </sql>
 
-    <!-- 定义数据库基本列,只适用代替单表的* 待支付订单-->
-    <sql id="Base_Column_List_Unpaid">
-        a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,a.is_overtime,
-        a.curday,a.curhour,a.curminute,a.run_num,a.run_status,
-        a.create_time,a.update_time,a.yn,b.sell_fixed_num,b.buy_fixed_num,b.service_charge,b.sell_nickname,b.buy_nickname,b.trade_status,b.picture_ads,b.ratio,b.pay_time,
-	    b.receive_time,b.appeal_status,b.create_time as trade_create_time
-    </sql>
 
     <!-- 查询条件 -->
     <sql id="Example_Where_Clause">
@@ -27,127 +18,16 @@
             <if test="id != null and id != '' " >
                 and a.id = #{id}
             </if>
-            <if test="orderNo != null and orderNo != '' " >
-                and a.order_no = #{orderNo}
+            <if test="questionMId != null and questionMId != '' " >
+                and a.question_m_id = #{questionMId}
             </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                and a.order_trade_status = #{orderTradeStatus}
-            </if>
-            <if test="orderStatus != null and orderStatus != '' " >
-                and a.order_status = #{orderStatus}
-            </if>
-            <if test="appealStatus != null and appealStatus != '' " >
-                and a.appeal_status = #{appealStatus}
-            </if>
-            <if test="curday != null and curday != '' " >
-                and a.curday = #{curday}
-            </if>
-            <if test="curdayStart != null and curdayStart != '' and curdayEnd != null and curdayEnd != '' " >
-                and a.curday >= #{curdayStart} and a.curday &lt;= #{curdayEnd}
-            </if>
-            <if test="runNum != null and runNum != '' " >
-                and a.run_num = #{runNum}
-            </if>
-            <if test="runStatus != null and runStatus != '' " >
-                and a.run_status = #{runStatus}
-            </if>
-            <!-- 各个用户查询时，他的用户ID是可以拿到的，这里的条件是：是否包含自己发布的订单 -->
-            <choose>
-                <when test="ownType != null and ownType != '' " >
-                    and a.member_id != #{memberId}
-                </when>
-                <otherwise>
-                    <if test="memberId != null and memberId != '' " >
-                        and a.member_id = #{memberId}
-                    </if>
-                </otherwise>
-            </choose>
-            <if test="inviteCode != null and inviteCode != '' " >
-                and b.invite_code = #{inviteCode}
-            </if>
-            <if test="nickname != null and nickname != '' " >
-                and b.nickname = #{nickname}
-            </if>
-            <!-- 由于0的值，没办法做为空判断，所以弄了一个isInit字段来进行判断 -->
-            <if test="isInit != null and isInit != '' " >
-                and a.order_trade_status = 0
-            </if>
-            <!-- 订单是否超时（用户未及时支付金额给卖家）：1未超时，2超时 -->
-            <if test="isAll == null or isAll == '' " >
-                and a.is_overtime = 1
+            <if test="searchKey != null and searchKey != '' " >
+                and (a.title like CONCAT('%',#{searchKey},'%') or a.sketch like CONCAT('%',#{searchKey},'%') or a.keyword like CONCAT('%',#{searchKey},'%'))
             </if>
             and a.yn = 0
         </trim>
     </sql>
 
-
-    <!-- 查询条件_待支付 -->
-    <sql id="Example_Where_Clause_Unpaid">
-        where 1=1
-        <trim  suffixOverrides="," >
-            <if test="id != null and id != '' " >
-                and a.id = #{id}
-            </if>
-            <if test="orderNo != null and orderNo != '' " >
-                and a.order_no = #{orderNo}
-            </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                and a.order_trade_status = #{orderTradeStatus}
-            </if>
-            <if test="orderStatus != null and orderStatus != '' " >
-                and a.order_status = #{orderStatus}
-            </if>
-            <if test="appealStatus != null and appealStatus != '' " >
-                and a.appeal_status = #{appealStatus}
-            </if>
-            <if test="curday != null and curday != '' " >
-                and a.curday = #{curday}
-            </if>
-            <if test="curdayStart != null and curdayStart != '' and curdayEnd != null and curdayEnd != '' " >
-                and a.curday >= #{curdayStart} and a.curday &lt;= #{curdayEnd}
-            </if>
-            <if test="runNum != null and runNum != '' " >
-                and a.run_num = #{runNum}
-            </if>
-            <if test="runStatus != null and runStatus != '' " >
-                and a.run_status = #{runStatus}
-            </if>
-            <!-- 各个用户查询时，他的用户ID是可以拿到的，这里的条件是：是否包含自己发布的订单 -->
-            <choose>
-                <when test="ownType != null and ownType != '' " >
-                    and a.member_id != #{memberId}
-                </when>
-                <otherwise>
-                    <if test="memberId != null and memberId != '' " >
-                        and a.member_id = #{memberId}
-                    </if>
-                </otherwise>
-            </choose>
-            <if test="orderTradeStatusList != null and orderTradeStatusList.size()>0">
-                and a.order_trade_status in
-                <foreach item="item" index="index" collection="orderTradeStatusList" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="tradeStatusList != null and tradeStatusList.size()>0">
-                and b.trade_status in
-                <foreach item="item" index="index" collection="tradeStatusList" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="buyMemberId != null and buyMemberId != '' " >
-                and b.buy_member_id = #{buyMemberId}
-            </if>
-            <if test="sellMemberId != null and sellMemberId != '' " >
-                and b.sell_member_id = #{sellMemberId}
-            </if>
-
-            <!-- 订单是否超时（用户未及时支付金额给卖家）：1未超时，2超时 -->
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-        </trim>
-    </sql>
 
     <!-- 查询条件_id -->
     <sql id="Example_Where_Clause_id">
@@ -162,24 +42,7 @@
 
     <!-- 排序条件 -->
     <sql id="Example_Order_By">
-        <if test="sortType != null and sortType != '' and sortType == 1 " >
-            order by a.create_time desc
-        </if>
-        <if test="sortType != null and sortType != '' and sortType == 2 " >
-            order by a.create_time asc
-        </if>
-        <if test="sortType != null and sortType != '' and sortType == 3 " >
-            order by a.trade_num * 1 desc
-        </if>
-        <if test="sortType != null and sortType != '' and sortType == 4 " >
-            order by a.trade_num * 1 asc
-        </if>
-        <if test="sortType != null and sortType != '' and sortType == 5 " >
-            order by a.trade_price * 1 desc
-        </if>
-        <if test="sortType != null and sortType != '' and sortType == 6 " >
-            order by a.trade_price * 1 asc
-        </if>
+        order by b.seat_m asc,a.seat_d asc
     </sql>
 
 
@@ -187,7 +50,7 @@
     <select id="findAll" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause"/>
     </select>
 
@@ -195,7 +58,7 @@
     <select id="findByCondition" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause"/>
         <include refid="Example_Order_By"/>
     </select>
@@ -204,7 +67,7 @@
     <select id="findByObject" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause"/>
         limit 1
     </select>
@@ -213,7 +76,7 @@
     <select id="findById" parameterType="java.lang.Long" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause_id"/>
     </select>
 
@@ -222,7 +85,7 @@
     <!-- 查询总数-->
     <select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
         select count(1)
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause"/>
     </select>
 
@@ -230,10 +93,12 @@
     <select id="queryByList" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
         select
         <include refid="Base_Column_List" />
-        from tb_pf_order a left join vc_member b on a.member_id = b.member_id
+        from tb_ga_question_d a left join tb_ga_question_m b on a.question_m_id = b.id
         <include refid="Example_Where_Clause"/>
         <include refid="Example_Order_By"/>
-        limit #{start},#{end}
+        <if test="pageNumber != null and pageNumber != ''" >
+            limit #{start},#{end}
+        </if>
     </select>
 
 
@@ -242,83 +107,47 @@
         <!--<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">-->
         <!--SELECT LAST_INSERT_ID() as id-->
         <!--</selectKey>-->
-        insert into tb_pf_order
+        insert into tb_ga_question_d
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="orderNo != null and orderNo != '' " >
-                order_no,
+            <if test="questionMId != null and questionMId != '' " >
+                question_m_id,
             </if>
-            <if test="memberId != null and memberId != '' " >
-                member_id,
+            <if test="seatD != null and seatD != '' " >
+                seat_d,
             </if>
-            <if test="tradeNum != null and tradeNum != '' " >
-                trade_num,
+            <if test="title != null and title != '' " >
+                title,
             </if>
-            <if test="tradePrice != null and tradePrice != '' " >
-                trade_price,
+            <if test="sketch != null and sketch != '' " >
+                sketch,
             </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                order_trade_status,
+            <if test="pageAds != null and pageAds != '' " >
+                page_ads,
             </if>
-            <if test="orderStatus != null and orderStatus != '' " >
-                order_status,
-            </if>
-            <if test="appealStatus != null and appealStatus != '' " >
-                appeal_status,
-            </if>
-            <if test="curday != null and curday != '' " >
-                curday,
-            </if>
-            <if test="curhour != null and curhour != '' " >
-                curhour,
-            </if>
-            <if test="curminute != null and curminute != '' " >
-                curminute,
-            </if>
-            <if test="runNum != null and runNum != '' " >
-                run_num,
-            </if>
-            <if test="runStatus != null and runStatus != '' " >
-                run_status,
+            <if test="keyword != null and keyword != '' " >
+                keyword,
             </if>
             create_time,
         </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="orderNo != null and orderNo != '' " >
-                <![CDATA[  #{orderNo}, ]]>
+            <if test="questionMId != null and questionMId != '' " >
+                <![CDATA[  #{questionMId}, ]]>
             </if>
-            <if test="memberId != null and memberId != '' " >
-                <![CDATA[  #{memberId}, ]]>
+            <if test="seatD != null and seatD != '' " >
+                <![CDATA[  #{seatD}, ]]>
             </if>
-            <if test="tradeNum != null and tradeNum != '' " >
-                <![CDATA[  #{tradeNum}, ]]>
+            <if test="title != null and title != '' " >
+                <![CDATA[  #{title}, ]]>
             </if>
-            <if test="tradePrice != null and tradePrice != '' " >
-                <![CDATA[  #{tradePrice}, ]]>
+            <if test="sketch != null and sketch != '' " >
+                <![CDATA[  #{sketch}, ]]>
             </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                <![CDATA[  #{orderTradeStatus}, ]]>
+            <if test="pageAds != null and pageAds != '' " >
+                <![CDATA[  #{pageAds}, ]]>
             </if>
-            <if test="orderStatus != null and orderStatus != '' " >
-                <![CDATA[  #{orderStatus}, ]]>
-            </if>
-            <if test="appealStatus != null and appealStatus != '' " >
-                <![CDATA[  #{appealStatus}, ]]>
-            </if>
-            <if test="curday != null and curday != '' " >
-                <![CDATA[  #{curday}, ]]>
-            </if>
-            <if test="curhour != null and curhour != '' " >
-                <![CDATA[  #{curhour}, ]]>
-            </if>
-            <if test="curminute != null and curminute != '' " >
-                <![CDATA[  #{curminute}, ]]>
-            </if>
-            <if test="runNum != null and runNum != '' " >
-                <![CDATA[  #{runNum}, ]]>
-            </if>
-            <if test="runStatus != null and runStatus != '' " >
-                <![CDATA[  #{runStatus}, ]]>
+            <if test="keyword != null and keyword != '' " >
+                <![CDATA[  #{keyword}, ]]>
             </if>
             NOW(),
         </trim>
@@ -326,28 +155,25 @@
 
     <!-- 更新基本信息 -->
     <update id="update" parameterType="com.hz.gather.master.core.model.question.QuestionDModel">
-        UPDATE tb_pf_order a
+        UPDATE tb_ga_question_d a
         <trim prefix="set" suffixOverrides=",">
-            <if test="orderNo != null and orderNo != '' " >
-                a.order_no = #{orderNo},
+            <if test="questionMId != null and questionMId != '' " >
+                a.question_m_id = #{questionMId},
             </if>
-            <if test="memberId != null and memberId != '' " >
-                a.member_id = #{memberId},
+            <if test="seatD != null and seatD != '' " >
+                a.seat_d = #{seatD},
             </if>
-            <if test="tradeNum != null and tradeNum != '' " >
-                a.trade_num = #{tradeNum},
+            <if test="title != null and title != '' " >
+                a.title = #{title},
             </if>
-            <if test="tradePrice != null and tradePrice != '' " >
-                a.trade_price = #{tradePrice},
+            <if test="sketch != null and sketch != '' " >
+                a.sketch = #{sketch},
             </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                a.order_trade_status = #{orderTradeStatus},
+            <if test="pageAds != null and pageAds != '' " >
+                a.page_ads = #{pageAds},
             </if>
-            <if test="orderStatus != null and orderStatus != '' " >
-                a.order_status = #{orderStatus},
-            </if>
-            <if test="appealStatus != null and appealStatus != '' " >
-                a.appeal_status = #{appealStatus},
+            <if test="keyword != null and keyword != '' " >
+                a.keyword = #{keyword},
             </if>
             a.update_time = NOW(),
         </trim>
@@ -356,7 +182,7 @@
 
     <!-- 主要作用1.逻辑删除，2更新状态 -->
     <update id="manyOperation" parameterType="Object">
-        update tb_pf_order a
+        update tb_ga_question_d a
         <trim prefix="set" suffixOverrides=",">
             <if test="yn != 0 and yn >0 " >
                 a.yn = #{yn},
@@ -364,560 +190,6 @@
         </trim>
         <include refid="Example_Where_Clause_id"/>
     </update>
-
-
-    <!-- 取消订单 -->
-    <update id="cancelOrder" parameterType="Object">
-        update tb_pf_order a
-        <trim prefix="set" suffixOverrides=",">
-            <if test="orderStatus != null and orderStatus != '' " >
-                a.order_status = #{orderStatus},
-            </if>
-            a.update_time = NOW()
-        </trim>
-        where 1=1
-        and a.order_no = #{orderNo} and a.member_id = #{memberId}
-        and a.order_trade_status = 0 and a.order_status = 1
-        and a.yn = 0
-    </update>
-
-
-    <!-- 查询-待付款订单-详情 -->
-    <select id="getUnpaidOrder" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-        <include refid="Base_Column_List_Unpaid" />
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        <include refid="Example_Where_Clause_Unpaid"/>
-    </select>
-
-
-
-    <!-- 查询总数-待付款订单-->
-    <select id="countUnpaidOrder" resultType="java.lang.Integer"  parameterType="Object">
-        select count(1)
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        <include refid="Example_Where_Clause_Unpaid"/>
-    </select>
-
-    <!-- 查询分页列表-待付款、待收款订单-列表 -->
-    <select id="getUnpaidOrderList" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-        <include refid="Base_Column_List_Unpaid" />
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        <include refid="Example_Where_Clause_Unpaid"/>
-        <include refid="Example_Order_By"/>
-        limit #{start},#{end}
-    </select>
-
-
-    <!-- 修改订单状态：订单交易状态、订单状态 -->
-    <update id="updateOrderStatus" parameterType="Object">
-        update tb_pf_order a
-        <trim prefix="set" suffixOverrides=",">
-            <if test="orderStatus != null and orderStatus != '' " >
-                a.order_status = #{orderStatus},
-            </if>
-            <if test="orderTradeStatus != null and orderTradeStatus != '' " >
-                a.order_trade_status = #{orderTradeStatus},
-            </if>
-            a.update_time = NOW()
-        </trim>
-        where 1=1
-        and a.order_no = #{orderNo}
-        and a.yn = 0
-    </update>
-
-
-
-
-
-
-    <!-- 查询总数-获取用户的已完成的订单数据的总行数-->
-    <select id="countFinishOrder" resultType="java.lang.Integer"  parameterType="Object">
-        select count(1) from
-        (
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          1 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-        union all
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          2 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.sell_member_id = #{sellMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-            ) a1
-    </select>
-
-
-    <!-- 获取用户的已完成的订单数据-买入订单-详情 -->
-    <select id="getFinishOrderByBuy" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-          a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,
-          a.is_overtime,a.curday,a.curhour,a.curminute,a.run_num,a.run_status,a.create_time,a.update_time,a.yn,
-          b.sell_fixed_num,b.buy_fixed_num,b.service_charge,b.sell_nickname,b.buy_nickname,b.trade_status,b.picture_ads,
-          b.ratio,b.pay_time,b.receive_time,b.appeal_status as trade_appeal_status,b.create_time as trade_create_time,
-          1 as order_type
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        where 1 = 1
-            and a.order_no = #{orderNo}
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-    </select>
-
-
-
-    <!-- 获取用户的已完成的订单数据-卖出订单-详情 -->
-    <select id="getFinishOrderBySell" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-          a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,
-          a.is_overtime,a.curday,a.curhour,a.curminute,a.run_num,a.run_status,a.create_time,a.update_time,a.yn,
-          b.sell_fixed_num,b.buy_fixed_num,b.service_charge,b.sell_nickname,b.buy_nickname,b.trade_status,b.picture_ads,
-          b.ratio,b.pay_time,b.receive_time,b.appeal_status as trade_appeal_status,b.create_time as trade_create_time,
-          2 as order_type
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        where 1 = 1
-            and a.order_no = #{orderNo}
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.sell_member_id = #{sellMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-    </select>
-
-
-
-
-    <!-- 查询分页列表-获取用户的已完成的订单数据-列表 -->
-    <select id="getFinishOrderList" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select a1.id,a1.order_no,a1.member_id,a1.trade_num,a1.trade_price,a1.order_trade_status,a1.order_status,a1.appeal_status,
-          a1.is_overtime,a1.curday,a1.curhour,a1.curminute,a1.run_num,a1.run_status,a1.create_time,
-          a1.update_time,a1.yn,a1.sell_fixed_num,a1.buy_fixed_num,a1.service_charge,a1.sell_nickname,
-          a1.buy_nickname,a1.trade_status,a1.picture_ads,a1.ratio,a1.pay_time,a1.receive_time,
-          a1.appeal_status as trade_appeal_status,a1.create_time as trade_create_time,a1.order_type
-          from
-        (
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          1 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-        union all
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          2 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and a.order_trade_status = 3
-            and a.order_status = 3
-            and b.trade_status = 5
-            and b.sell_member_id = #{sellMemberId}
-            and a.is_overtime = 1
-            and a.yn = 0
-            and b.yn = 0
-            ) a1 order by a1.create_time desc
-        limit #{start},#{end}
-    </select>
-
-
-
-    <!-- 更新订单流水的申诉状态 -->
-    <update id="updateOrderAppealStatus" parameterType="Object">
-        update tb_pf_order a
-        <trim prefix="set" suffixOverrides=",">
-            <if test="appealStatus != null and appealStatus != '' " >
-                a.appeal_status = #{appealStatus},
-            </if>
-            a.update_time = NOW()
-        </trim>
-        where 1=1
-        and a.id = #{id}
-        and a.yn = 0
-    </update>
-
-
-    <!-- 更新订单是否超时：订单是否超时（用户未及时支付金额给卖家）：1未超时，2超时 -->
-    <update id="updateOrderOverTime" parameterType="Object">
-        update tb_pf_order a
-        <trim prefix="set" suffixOverrides=",">
-            <if test="isOvertime != null and isOvertime != '' " >
-                a.is_overtime = #{isOvertime},
-            </if>
-            a.update_time = NOW()
-        </trim>
-        where 1=1
-        and a.id = #{id}
-        and a.yn = 0
-    </update>
-
-
-
-    <!-- 获取已超时的订单数据-买入订单-详情 -->
-    <select id="getOverTimeOrderByBuy" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-          a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,
-          a.is_overtime,a.curday,a.curhour,a.curminute,a.run_num,a.run_status,a.create_time,a.update_time,a.yn,
-          b.sell_fixed_num,b.buy_fixed_num,b.service_charge,b.sell_nickname,b.buy_nickname,b.trade_status,b.picture_ads,
-          b.ratio,b.pay_time,b.receive_time,b.appeal_status as trade_appeal_status,b.create_time as trade_create_time,
-          1 as order_type
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        where 1 = 1
-            and a.order_no = #{orderNo}
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 2
-            and a.yn = 0
-            and b.yn = 0
-    </select>
-
-
-
-    <!-- 获取已超时的订单数据-卖出订单-详情 -->
-    <select id="getOverTimeOrderBySell" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select
-          a.id,a.order_no,a.member_id,a.trade_num,a.trade_price,a.order_trade_status,a.order_status,a.appeal_status,
-          a.is_overtime,a.curday,a.curhour,a.curminute,a.run_num,a.run_status,a.create_time,a.update_time,a.yn,
-          b.sell_fixed_num,b.buy_fixed_num,b.service_charge,b.sell_nickname,b.buy_nickname,b.trade_status,b.picture_ads,
-          b.ratio,b.pay_time,b.receive_time,b.appeal_status as trade_appeal_status,b.create_time as trade_create_time,
-          2 as order_type
-        from tb_pf_order a left join tb_pf_order_trade b on a.id = b.order_id
-        where 1 = 1
-            and a.order_no = #{orderNo}
-            and b.trade_status = 1
-            and b.sell_member_id = #{sellMemberId}
-            and a.yn = 0
-            and b.yn = 0
-    </select>
-
-
-    <!-- 查询总数-获取已超时订单数据的总行数-->
-    <select id="countOverTimeOrder" resultType="java.lang.Integer"  parameterType="Object">
-        select count(1) from
-        (
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          1 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 2
-            and a.yn = 0
-            and b.yn = 0
-        union all
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          2 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and b.sell_member_id = #{sellMemberId}
-            and b.trade_status = 1
-            and a.yn = 0
-            and b.yn = 0
-            ) a1
-    </select>
-
-    <!-- 查询分页列表-获取已超时订单数据-列表 -->
-    <select id="getOverTimeOrderList" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionDModel">
-        select a1.id,a1.order_no,a1.member_id,a1.trade_num,a1.trade_price,a1.order_trade_status,a1.order_status,a1.appeal_status,
-          a1.is_overtime,a1.curday,a1.curhour,a1.curminute,a1.run_num,a1.run_status,a1.create_time,
-          a1.update_time,a1.yn,a1.sell_fixed_num,a1.buy_fixed_num,a1.service_charge,a1.sell_nickname,
-          a1.buy_nickname,a1.trade_status,a1.picture_ads,a1.ratio,a1.pay_time,a1.receive_time,
-          a1.appeal_status as trade_appeal_status,a1.create_time as trade_create_time,a1.order_type
-          from
-        (
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          1 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and b.buy_member_id = #{buyMemberId}
-            and a.is_overtime = 2
-            and a.yn = 0
-            and b.yn = 0
-        union all
-        select
-          a.id,
-          a.order_no,
-          a.member_id,
-          a.trade_num,
-          a.trade_price,
-          a.order_trade_status,
-          a.order_status,
-          a.appeal_status,
-          a.is_overtime,
-          a.curday,
-          a.curhour,
-          a.curminute,
-          a.run_num,
-          a.run_status,
-          a.create_time,
-          a.update_time,
-          a.yn,
-          b.sell_fixed_num,
-          b.buy_fixed_num,
-          b.service_charge,
-          b.sell_nickname,
-          b.buy_nickname,
-          b.trade_status,
-          b.picture_ads,
-          b.ratio,
-          b.pay_time,
-          b.receive_time,
-          b.appeal_status as trade_appeal_status,
-          b.create_time        as trade_create_time,
-          2 as order_type
-        from tb_pf_order a
-          left join tb_pf_order_trade b
-            on a.id = b.order_id
-        where 1 = 1
-            and b.trade_status = 1
-            and b.sell_member_id = #{sellMemberId}
-            and a.yn = 0
-            and b.yn = 0
-            ) a1 order by a1.create_time desc
-        limit #{start},#{end}
-    </select>
-
-
-
 
 
 </mapper>

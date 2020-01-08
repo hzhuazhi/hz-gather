@@ -69,6 +69,10 @@ public class QuestionDModel extends BasePage implements Serializable {
      */
     private Integer yn;
 
+    /**
+     * 搜索的输入条件
+     */
+    private String searchKey;
 
     public Long getId() {
         return id;
@@ -156,5 +160,13 @@ public class QuestionDModel extends BasePage implements Serializable {
 
     public void setYn(Integer yn) {
         this.yn = yn;
+    }
+
+    public String getSearchKey() {
+        return searchKey;
+    }
+
+    public void setSearchKey(String searchKey) {
+        this.searchKey = searchKey;
     }
 }

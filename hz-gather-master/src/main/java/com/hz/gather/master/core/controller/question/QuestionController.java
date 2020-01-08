@@ -2,11 +2,18 @@ package com.hz.gather.master.core.controller.question;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.exception.ExceptionMethod;
+import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.JsonResult;
+import com.hz.gather.master.core.common.utils.SignUtil;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
+import com.hz.gather.master.core.model.ResponseEncryptionJson;
+import com.hz.gather.master.core.model.question.QuestionDModel;
+import com.hz.gather.master.core.model.question.QuestionMModel;
+import com.hz.gather.master.core.protocol.request.question.RequestQuestion;
 import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,67 +59,168 @@ public class QuestionController {
 
 
     /**
-     * @Description: 获取我的申诉（主动发起的申诉）-列表
+     * @Description: 获取百问百答类别数据
      * @param request
      * @param response
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
      * @author yoko
      * @date 2019/11/25 22:58
-     * local:http://localhost:8082/play/al/getActiveData
+     * local:http://localhost:8082/mg/qt/getDataMList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","pageNumber":1,"pageSize":3}
-     * 客户端加密字段:ctime+cctime+token+秘钥=sign
-     * 服务端加密字段:stime+token+秘钥=sign
-     * result=={
-     *     "errcode": "0",
+     * 必填字段:{"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     *
+     * result={
+     *     "resultCode": "0",
      *     "message": "success",
-     *     "content": {
-     *         "jsonData": "eyJhTGlzdCI6W3siYXBwZWFsRGVzY3JpYmUiOiLnlLPor4nljp/lm6BfMSIsImFwcGVhbFJlcGxlbmlzaCI6IueUs+ivieihpeWFhV8xIiwiYXBwZWFsUmVzdWx0IjowLCJidXlOaWNrbmFtZSI6IuWwj+mjnum+mTEiLCJjcmVhdGVUaW1lIjoiMjAxOS0xMi0wNSAxNToyNTo0NCIsImlkIjoxLCJpZGVudGl0eVR5cGUiOjEsIm9yZGVyTm8iOiJvcmRlcl9ub18xIiwib3JkZXJUcmFkZVRpbWUiOiIyMDE5LTEyLTA0IDEwOjI1OjM2IiwicmVmdXRlRGVzY3JpYmUiOiLlj43pqbPljp/lm6BfMSIsInJlZnV0ZVJlcGxlbmlzaCI6IuWPjemps+ihpeWFhV8xIiwic2VsbE5pY2tuYW1lIjoi5bCP6aOe6b6ZMyIsInNlcnZpY2VDaGFyZ2UiOiIzLjMiLCJ0b3RhbFByaWNlIjoiMTIuMSIsInRyYWRlTnVtIjoiMTEiLCJ0cmFkZVByaWNlIjoiMS4xIn0seyJhcHBlYWxEZXNjcmliZSI6IueUs+ivieWOn+WboF8yIiwiYXBwZWFsUmVwbGVuaXNoIjoi55Sz6K+J6KGl5YWFXzIiLCJhcHBlYWxSZXN1bHQiOjAsImJ1eU5pY2tuYW1lIjoi5Lmw5a62X+aYteensF8zIiwiaWQiOjIsImlkZW50aXR5VHlwZSI6Miwib3JkZXJObyI6Im9yZGVyX25vXzIiLCJvcmRlclRyYWRlVGltZSI6IjIwMTktMTEtMjcgMjE6NTM6MDIiLCJyZWZ1dGVEZXNjcmliZSI6IiIsInJlZnV0ZVJlcGxlbmlzaCI6IiIsInNlbGxOaWNrbmFtZSI6IuWNluWutl/mmLXnp7BfNCIsInNlcnZpY2VDaGFyZ2UiOiIxLjUiLCJ0b3RhbFByaWNlIjoiIiwidHJhZGVOdW0iOiIzIiwidHJhZGVQcmljZSI6IjMifSx7ImFwcGVhbERlc2NyaWJlIjoi55Sz6K+J5Y6f5ZugXzQiLCJhcHBlYWxSZXBsZW5pc2giOiLnlLPor4nooaXlhYVfNCIsImFwcGVhbFJlc3VsdCI6MCwiYnV5Tmlja25hbWUiOiLkubDlrrZf5pi156ewXzciLCJpZCI6NCwiaWRlbnRpdHlUeXBlIjoyLCJvcmRlck5vIjoib3JkZXJfbm9fNCIsIm9yZGVyVHJhZGVUaW1lIjoiMjAxOS0xMS0yNyAyMTo1MzowMiIsInJlZnV0ZURlc2NyaWJlIjoiIiwicmVmdXRlUmVwbGVuaXNoIjoiIiwic2VsbE5pY2tuYW1lIjoi5Y2W5a62X+aYteensF84Iiwic2VydmljZUNoYXJnZSI6IjIuNSIsInRvdGFsUHJpY2UiOiIiLCJ0cmFkZU51bSI6IjUiLCJ0cmFkZVByaWNlIjoiNSJ9XSwicm93Q291bnQiOjEwLCJzaWduIjoiZGZmZmZjNTI2NzI5NmIwZjVjYTE3ZWI0MmY3OTZiZjciLCJzdGltZSI6MTU3NTU1MTU3OTMyNywidG9rZW4iOiIxMTExMTEifQ=="
+     *     "data": {
+     *         "jsonData": "eyJxTUxpc3QiOlt7ImNhdGVnb3J5TmFtZSI6Iui0puWPt+mXrumimF8xIiwiaWNvbkFkcyI6Imh0dHBzOi8vcGljczcuYmFpZHUuY29tL2ZlZWQvMjFhNDQ2MjMwOWY3OTA1Mjg4MTBhNTA2NzM4YjAwY2Y3YmNiZDU3ZC5qcGVnP3Rva2VuPTEzZTFmODhkNjc5NjQzNmY5YmVlMGY3NDBkOGNjN2IzJnM9MEUyMUQyMDU1RTcyMTA5NDc0ODQ2OEI3MDMwMEEwMDIiLCJpZCI6MSwic2VhdE0iOjF9LHsiY2F0ZWdvcnlOYW1lIjoiWFjpl67pophfMiIsImljb25BZHMiOiJodHRwczovL3BpY3M3LmJhaWR1LmNvbS9mZWVkLzIxYTQ0NjIzMDlmNzkwNTI4ODEwYTUwNjczOGIwMGNmN2JjYmQ1N2QuanBlZz90b2tlbj0xM2UxZjg4ZDY3OTY0MzZmOWJlZTBmNzQwZDhjYzdiMyZzPTBFMjFEMjA1NUU3MjEwOTQ3NDg0NjhCNzAzMDBBMDAyIiwiaWQiOjIsInNlYXRNIjoyfSx7ImNhdGVnb3J5TmFtZSI6IllZ6Zeu6aKYXzMiLCJpY29uQWRzIjoiaHR0cHM6Ly9waWNzNy5iYWlkdS5jb20vZmVlZC8yMWE0NDYyMzA5Zjc5MDUyODgxMGE1MDY3MzhiMDBjZjdiY2JkNTdkLmpwZWc/dG9rZW49MTNlMWY4OGQ2Nzk2NDM2ZjliZWUwZjc0MGQ4Y2M3YjMmcz0wRTIxRDIwNTVFNzIxMDk0NzQ4NDY4QjcwMzAwQTAwMiIsImlkIjozLCJzZWF0TSI6M30seyJjYXRlZ29yeU5hbWUiOiJaWumXrumimF80IiwiaWNvbkFkcyI6Imh0dHBzOi8vcGljczcuYmFpZHUuY29tL2ZlZWQvMjFhNDQ2MjMwOWY3OTA1Mjg4MTBhNTA2NzM4YjAwY2Y3YmNiZDU3ZC5qcGVnP3Rva2VuPTEzZTFmODhkNjc5NjQzNmY5YmVlMGY3NDBkOGNjN2IzJnM9MEUyMUQyMDU1RTcyMTA5NDc0ODQ2OEI3MDMwMEEwMDIiLCJpZCI6NCwic2VhdE0iOjR9XSwicm93Q291bnQiOjQsInNpZ24iOiIzOGFmYTBjYzY3YzlhMWNiMmI0ODBjOTBlMzcwMmY3YSIsInN0aW1lIjoxNTc4NDUzODk4MjU2fQ=="
      *     },
-     *     "sgid": "201912052111280000001",
+     *     "sgid": "202001081124540000001",
      *     "cgid": ""
      * }
      */
-    @RequestMapping(value = "/getDataM", method = {RequestMethod.POST})
-    public JsonResult<Object> getActiveData(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+    @RequestMapping(value = "/getDataMList", method = {RequestMethod.POST})
+    public JsonResult<Object> getDataMList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
-        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
-        long memberId = 0;
 
-//        RequestAppeal requestAppeal = new RequestAppeal();
+        RequestQuestion requestModel = new RequestQuestion();
         try{
-//            // 解密
-//            data = StringUtil.decoderBase64(jsonData);
-//            requestAppeal  = JSON.parseObject(data, RequestAppeal.class);
-//            // check校验数据、校验用户是否登录、获得用户ID
-//            memberId = PublicMethod.checkActiveData(requestAppeal);
-//            token = requestAppeal.getToken();
-//            // 校验ctime
-//            // 校验sign
-//
-//            // 申诉数据
-//            AppealModel appealQuery = PublicMethod.assembleAppealQuery(requestAppeal, memberId, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO);
-//            List<AppealModel> appealList = ComponentUtil.appealService.queryByList(appealQuery);
-//            // 组装返回客户端的数据
-//            long stime = System.currentTimeMillis();
-//            String sign = SignUtil.getSgin(stime, token, secretKeySign); // stime+token+秘钥=sign
-//            String strData = PublicMethod.assembleAppealResult(stime, token, sign, appealList, appealQuery.getRowCount());
-//            // 数据加密
-//            String encryptionData = StringUtil.mergeCodeBase64(strData);
-//            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
-//            resultDataModel.jsonData = encryptionData;
-//            // 用户注册完毕则直接让用户处于登录状态
-////            ComponentUtil.redisService.set(token, String.valueOf(memberId), FIFTEEN_MIN, TimeUnit.SECONDS);
-//            // #添加流水
+            // 解密
+            data = StringUtil.decoderBase64(requestData.jsonData);
+            requestModel  = JSON.parseObject(data, RequestQuestion.class);
+            // 百问百答类别数据
+            QuestionMModel questionMQuery = BeanUtils.copy(requestModel, QuestionMModel.class);
+            List<QuestionMModel> questionMList = ComponentUtil.questionMService.queryByList(questionMQuery);
+            // 组装返回客户端的数据
+            long stime = System.currentTimeMillis();
+            String sign = SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
+            String strData = HodgepodgeMethod.assembleQuestionMResult(stime, sign, questionMList, questionMQuery.getRowCount());
+            // 数据加密
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            // #添加流水
             // 返回数据给客户端
-            return JsonResult.successResult(null, cgid, sgid);
+            return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
             // #添加异常
-            log.error(String.format("this QuestionController.getActiveData() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
+            log.error(String.format("this QuestionController.getDataMList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
+            e.printStackTrace();
+            return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
+        }
+    }
+
+
+    /**
+     * @Description: 获取百问百答-详情-集合数据
+     * @param request
+     * @param response
+     * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
+     * @author yoko
+     * @date 2019/11/25 22:58
+     * local:http://localhost:8082/mg/qt/getDataDList
+     * 请求的属性类:RequestAppeal
+     * 必填字段:{"questionMId":,"searchKey":"YY简述_1_1","agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * result={
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJxRExpc3QiOlt7ImNhdGVnb3J5TmFtZSI6Iui0puWPt+mXrumimF8xIiwiaWQiOjEsInBhZ2VBZHMiOiJodHRwczovL3d3dy5iYWlkdS5jb20vIzEiLCJzZWF0RCI6MSwic2tldGNoIjoi6LSm5Y+3566A6L+wXzFfMSIsInRpdGxlIjoi6LSm5Y+35qCH6aKYXzFfMSJ9LHsiY2F0ZWdvcnlOYW1lIjoi6LSm5Y+36Zeu6aKYXzEiLCJpZCI6MiwicGFnZUFkcyI6Imh0dHBzOi8vd3d3LmJhaWR1LmNvbS8jMiIsInNlYXREIjoyLCJza2V0Y2giOiLotKblj7fnroDov7BfMV8yIiwidGl0bGUiOiLotKblj7fmoIfpophfMV8yIn0seyJjYXRlZ29yeU5hbWUiOiLotKblj7fpl67pophfMSIsImlkIjozLCJwYWdlQWRzIjoiaHR0cHM6Ly93d3cuYmFpZHUuY29tLyMzIiwic2VhdEQiOjMsInNrZXRjaCI6Iui0puWPt+eugOi/sF8xXzMiLCJ0aXRsZSI6Iui0puWPt+agh+mimF8xXzMifSx7ImNhdGVnb3J5TmFtZSI6Iui0puWPt+mXrumimF8xIiwiaWQiOjQsInBhZ2VBZHMiOiJodHRwczovL3d3dy5iYWlkdS5jb20vIzQiLCJzZWF0RCI6NCwic2tldGNoIjoi6LSm5Y+3566A6L+wXzFfNCIsInRpdGxlIjoi6LSm5Y+35qCH6aKYXzFfNCJ9LHsiY2F0ZWdvcnlOYW1lIjoi6LSm5Y+36Zeu6aKYXzEiLCJpZCI6NSwicGFnZUFkcyI6Imh0dHBzOi8vd3d3LmJhaWR1LmNvbS8jNSIsInNlYXREIjo1LCJza2V0Y2giOiLotKblj7fnroDov7BfMV81IiwidGl0bGUiOiLotKblj7fmoIfpophfMV81In0seyJjYXRlZ29yeU5hbWUiOiLotKblj7fpl67pophfMSIsImlkIjo2LCJwYWdlQWRzIjoiaHR0cHM6Ly93d3cuYmFpZHUuY29tLyM2Iiwic2VhdEQiOjYsInNrZXRjaCI6Iui0puWPt+eugOi/sF8xXzYiLCJ0aXRsZSI6Iui0puWPt+agh+mimF8xXzYifSx7ImNhdGVnb3J5TmFtZSI6Iui0puWPt+mXrumimF8xIiwiaWQiOjcsInBhZ2VBZHMiOiJodHRwczovL3d3dy5iYWlkdS5jb20vIzciLCJzZWF0RCI6Nywic2tldGNoIjoi6LSm5Y+3566A6L+wXzFfNyIsInRpdGxlIjoi6LSm5Y+35qCH6aKYXzFfNyJ9LHsiY2F0ZWdvcnlOYW1lIjoi6LSm5Y+36Zeu6aKYXzEiLCJpZCI6OCwicGFnZUFkcyI6Imh0dHBzOi8vd3d3LmJhaWR1LmNvbS8jOCIsInNlYXREIjo4LCJza2V0Y2giOiLotKblj7fnroDov7BfMV84IiwidGl0bGUiOiLotKblj7fmoIfpophfMV84In0seyJjYXRlZ29yeU5hbWUiOiLotKblj7fpl67pophfMSIsImlkIjo5LCJwYWdlQWRzIjoiaHR0cHM6Ly93d3cuYmFpZHUuY29tLyM5Iiwic2VhdEQiOjksInNrZXRjaCI6Iui0puWPt+eugOi/sF8xXzkiLCJ0aXRsZSI6Iui0puWPt+agh+mimF8xXzkifSx7ImNhdGVnb3J5TmFtZSI6Iui0puWPt+mXrumimF8xIiwiaWQiOjEwLCJwYWdlQWRzIjoiaHR0cHM6Ly93d3cuYmFpZHUuY29tLyMxMCIsInNlYXREIjoxMCwic2tldGNoIjoi6LSm5Y+3566A6L+wXzFfMTAiLCJ0aXRsZSI6Iui0puWPt+agh+mimF8xXzEwIn1dLCJyb3dDb3VudCI6MTAsInNpZ24iOiJlM2VjYjYyOWViOTJjYzg5ZTA3ZjZiZmUzN2U1ZjI1MCIsInN0aW1lIjoxNTc4NDY1NzAxNzkzfQ=="
+     *     },
+     *     "sgid": "202001081441360000001",
+     *     "cgid": ""
+     * }
+     */
+    @RequestMapping(value = "/getDataDList", method = {RequestMethod.POST})
+    public JsonResult<Object> getDataDList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        String data = "";
+
+        RequestQuestion requestModel = new RequestQuestion();
+        try{
+            // 解密
+            data = StringUtil.decoderBase64(requestData.jsonData);
+            requestModel  = JSON.parseObject(data, RequestQuestion.class);
+            // 百问百答-详情集合数据
+            QuestionDModel questionDQuery = BeanUtils.copy(requestModel, QuestionDModel.class);
+            List<QuestionDModel> questionDList = ComponentUtil.questionDService.queryByList(questionDQuery);
+            // 组装返回客户端的数据
+            long stime = System.currentTimeMillis();
+            String sign = SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
+            String strData = HodgepodgeMethod.assembleQuestionDResult(stime, sign, questionDList, questionDQuery.getRowCount());
+            // 数据加密
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            // #添加流水
+            // 返回数据给客户端
+            return JsonResult.successResult(resultDataModel, cgid, sgid);
+        }catch (Exception e){
+            Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+            // #添加异常
+            log.error(String.format("this QuestionController.getDataDList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
+            e.printStackTrace();
+            return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
+        }
+    }
+
+
+    /**
+     * @Description: 获取百问百答-详情数据
+     * @param request
+     * @param response
+     * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
+     * @author yoko
+     * @date 2019/11/25 22:58
+     * local:http://localhost:8082/mg/qt/getDataD
+     * 请求的属性类:RequestAppeal
+     * 必填字段:{"id":1,"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * result={
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJxRCI6eyJjYXRlZ29yeU5hbWUiOiLotKblj7fpl67pophfMSIsImlkIjoxLCJwYWdlQWRzIjoiaHR0cHM6Ly93d3cuYmFpZHUuY29tLyMxIiwic2VhdEQiOjEsInNrZXRjaCI6Iui0puWPt+eugOi/sF8xXzEiLCJ0aXRsZSI6Iui0puWPt+agh+mimF8xXzEifSwic2lnbiI6IjQ2OWQwZTIzZmVmZjY4ODg1MDlmYzZkZTljOTRiYmU2Iiwic3RpbWUiOjE1Nzg0NjYyNTIwOTV9"
+     *     },
+     *     "sgid": "202001081450490000001",
+     *     "cgid": ""
+     * }
+     */
+    @RequestMapping(value = "/getDataD", method = {RequestMethod.POST})
+    public JsonResult<Object> getDataD(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        String data = "";
+
+        RequestQuestion requestModel = new RequestQuestion();
+        try{
+            // 解密
+            data = StringUtil.decoderBase64(requestData.jsonData);
+            requestModel  = JSON.parseObject(data, RequestQuestion.class);
+            // 百问百答详情数据
+            QuestionDModel questionDQuery = BeanUtils.copy(requestModel, QuestionDModel.class);
+            QuestionDModel questionDModel = (QuestionDModel) ComponentUtil.questionDService.findByObject(questionDQuery);
+            // 组装返回客户端的数据
+            long stime = System.currentTimeMillis();
+            String sign = SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
+            String strData = HodgepodgeMethod.assembleQuestionDDataResult(stime, sign, questionDModel, questionDQuery.getRowCount());
+            // 数据加密
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            // #添加流水
+            // 返回数据给客户端
+            return JsonResult.successResult(resultDataModel, cgid, sgid);
+        }catch (Exception e){
+            Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+            // #添加异常
+            log.error(String.format("this QuestionController.getDataD() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
         }

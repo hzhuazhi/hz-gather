@@ -17,6 +17,9 @@ public class ComponentUtil {
     public static GenerateService generateService;
     public static TransactionalService transactionalService;
     public static UserInfoService userInfoService;
+    public static QuestionMService questionMService;
+    public static QuestionDService questionDService;
+
 
 
 }
