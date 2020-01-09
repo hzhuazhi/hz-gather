@@ -35,6 +35,9 @@ public class Constant {
     /*************** 裂变数量****************/
     public  static  int   FISSION_NUMBER  =  3 ;
 
+    /*************** 支付宝最大数量****************/
+    public  static  int   PAY_MAX_NUMBER  =  3 ;
+
 
 
 

@@ -55,6 +55,9 @@ public class AutowireRunner implements ApplicationRunner {
     @Autowired
     private AlipayService alipayService;
 
+    @Autowired
+    private PayService payService;
+
     Thread runThread = null;
 
 
@@ -78,6 +81,7 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.questionMService = questionMService;
         ComponentUtil.questionDService = questionDService;
         ComponentUtil.alipayService = alipayService;
+        ComponentUtil.payService = payService;
         runThread = new RunThread();
         runThread.start();
 

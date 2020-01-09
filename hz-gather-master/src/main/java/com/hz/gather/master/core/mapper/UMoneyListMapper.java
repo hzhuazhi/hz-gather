@@ -10,7 +10,7 @@ public interface UMoneyListMapper<T> extends BaseDao<T> {
 
     int insertSelective(UMoneyList record);
 
-    UMoneyList selectByPrimaryKey(Long id);
+    UMoneyList selectByPrimaryKey(UMoneyList record);
 
     int updateByPrimaryKeySelective(UMoneyList record);
 

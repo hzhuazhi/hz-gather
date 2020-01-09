@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.UCashOutLogMapper" >
+  <sql id="Base_Column_List" >
+    id, member_id, receiva_pay_id, reward_type, money, curday, curhour, curminute, create_time, 
+    update_time, payment_type, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutLog" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from u_cash_out_log
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from u_cash_out_log
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutLog" >
+    insert into u_cash_out_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="receivaPayId != null" >
+        receiva_pay_id,
+      </if>
+      <if test="rewardType != null" >
+        reward_type,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="paymentType != null" >
+        payment_type,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="receivaPayId != null" >
+        #{receivaPayId},
+      </if>
+      <if test="rewardType != null" >
+        #{rewardType},
+      </if>
+      <if test="money != null" >
+        #{money},
+      </if>
+      <if test="curday != null" >
+        #{curday},
+      </if>
+      <if test="curhour != null" >
+        #{curhour},
+      </if>
+      <if test="curminute != null" >
+        #{curminute},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="paymentType != null" >
+        #{paymentType},
+      </if>
+      <if test="isValid != null" >
+        #{isValid},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutLog" >
+    update u_cash_out_log
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
+      <if test="receivaPayId != null" >
+        receiva_pay_id = #{receivaPayId},
+      </if>
+      <if test="rewardType != null" >
+        reward_type = #{rewardType},
+      </if>
+      <if test="money != null" >
+        money = #{money},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="paymentType != null" >
+        payment_type = #{paymentType},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

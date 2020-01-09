@@ -1,11 +1,9 @@
 package com.hz.gather.master.core.model.entity;
 
-import com.hz.gather.master.core.protocol.page.BasePage;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class UMoneyList extends BasePage {
+public class UCashOutLog {
     /**
      * 自增长
      *
@@ -21,18 +19,18 @@ public class UMoneyList extends BasePage {
     private Integer memberId;
 
     /**
+     * 收款支付宝账户
+     *
+     * @mbggenerated
+     */
+    private String receivaPayId;
+
+    /**
      * 类型:  1、领取  2、体现
      *
      * @mbggenerated
      */
-    private Integer rewardType;
-
-    /**
-     * 符号类型:1、加 2、减
-     *
-     * @mbggenerated
-     */
-    private Integer symbolType;
+    private Boolean rewardType;
 
     /**
      * 金额
@@ -53,14 +51,14 @@ public class UMoneyList extends BasePage {
      *
      * @mbggenerated
      */
-    private Integer curhour;
+    private Boolean curhour;
 
     /**
      * 创建所属分钟：60分钟制
      *
      * @mbggenerated
      */
-    private Integer curminute;
+    private Boolean curminute;
 
     /**
      * 创建时间
@@ -77,11 +75,18 @@ public class UMoneyList extends BasePage {
     private Date updateTime;
 
     /**
+     * 支付状态 1、未打款 2、打款失败 3、打款成功 
+     *
+     * @mbggenerated
+     */
+    private Boolean paymentType;
+
+    /**
      * 是否有效; 1有效 2无效
      *
      * @mbggenerated
      */
-    private Integer isValid;
+    private Boolean isValid;
 
     public Long getId() {
         return id;
@@ -99,20 +104,20 @@ public class UMoneyList extends BasePage {
         this.memberId = memberId;
     }
 
-    public Integer getRewardType() {
+    public String getReceivaPayId() {
+        return receivaPayId;
+    }
+
+    public void setReceivaPayId(String receivaPayId) {
+        this.receivaPayId = receivaPayId;
+    }
+
+    public Boolean getRewardType() {
         return rewardType;
     }
 
-    public void setRewardType(Integer rewardType) {
+    public void setRewardType(Boolean rewardType) {
         this.rewardType = rewardType;
-    }
-
-    public Integer getSymbolType() {
-        return symbolType;
-    }
-
-    public void setSymbolType(Integer symbolType) {
-        this.symbolType = symbolType;
     }
 
     public BigDecimal getMoney() {
@@ -131,19 +136,19 @@ public class UMoneyList extends BasePage {
         this.curday = curday;
     }
 
-    public Integer getCurhour() {
+    public Boolean getCurhour() {
         return curhour;
     }
 
-    public void setCurhour(Integer curhour) {
+    public void setCurhour(Boolean curhour) {
         this.curhour = curhour;
     }
 
-    public Integer getCurminute() {
+    public Boolean getCurminute() {
         return curminute;
     }
 
-    public void setCurminute(Integer curminute) {
+    public void setCurminute(Boolean curminute) {
         this.curminute = curminute;
     }
 
@@ -163,11 +168,19 @@ public class UMoneyList extends BasePage {
         this.updateTime = updateTime;
     }
 
-    public Integer getIsValid() {
+    public Boolean getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(Boolean paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public Boolean getIsValid() {
         return isValid;
     }
 
-    public void setIsValid(Integer isValid) {
+    public void setIsValid(Boolean isValid) {
         this.isValid = isValid;
     }
 }

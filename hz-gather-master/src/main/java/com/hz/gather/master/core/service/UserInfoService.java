@@ -1,11 +1,16 @@
 package com.hz.gather.master.core.service;
 
-import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.BaseService;
+import com.hz.gather.master.core.model.entity.UMoneyList;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
-import com.hz.gather.master.core.protocol.response.user.ReponseMyFriend;
+import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
+import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
+import com.hz.gather.master.core.protocol.response.user.ResponseFundList;
+import com.hz.gather.master.core.protocol.response.user.ResponseMyFriend;
 import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
+
+import java.util.List;
 
 /**
  * @Description TODO
@@ -36,8 +41,38 @@ public interface UserInfoService<T> extends BaseService<T> {
      */
     public ResponseUserInfo toResponseUserInfo(Integer  memberId)throws Exception;
 
+    /***
+     * 查询用户朋友信息
+     * @param memberId
+     * @return
+     */
+    public ResponseMyFriend queryMyFriend(Integer  memberId)throws Exception;
+
+    /***
+     * 查询用户自己详细信息
+     * @param memberId
+     * @return
+     */
+    public VcMember getMemeberInfo(Integer  memberId)throws Exception;
+
+    /***
+     * 用户编辑信息
+     * @param memberId
+     * @return
+     */
+    public Integer editMemeberInfo(Integer  memberId, RequestEditUser editUser)throws Exception;
 
 
-    public ReponseMyFriend queryMyFriend(Integer  memberId)throws Exception;
+    /***
+     * 查询用户资金信息
+     * @param memberId
+     * @return
+     */
+    public ResponseFundList getUMoneList(Integer  memberId,List<UMoneyList> list)throws Exception;
+
+
+
+
+
 
 }

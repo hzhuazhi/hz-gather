@@ -204,6 +204,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMember" >
     update vc_member
     <set >
@@ -303,5 +304,8 @@
     where 1=1
     and  a.superior_id  = #{superiorId}
   </select>
+
+
+
 
 </mapper>

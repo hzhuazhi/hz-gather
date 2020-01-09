@@ -1,24 +1,29 @@
 package com.hz.gather.master.util;
 
 import com.alibaba.fastjson.JSON;
+import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
-import com.hz.gather.master.core.model.entity.UBatchLog;
-import com.hz.gather.master.core.model.entity.ULimitedTimeLog;
-import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.DateModel;
+import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.CommonModel;
+import com.hz.gather.master.core.model.user.FriendModel;
 import com.hz.gather.master.core.protocol.request.login.*;
+import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
+import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
 import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
 import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
 import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
-import com.hz.gather.master.core.protocol.response.user.ReponseMyFriend;
+import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
+import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
+import com.hz.gather.master.core.protocol.response.user.ResponseEditUser;
+import com.hz.gather.master.core.protocol.response.user.ResponseMyFriend;
+import com.hz.gather.master.core.protocol.response.user.ResponseUser;
 import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
 import org.apache.commons.lang.StringUtils;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -511,17 +516,200 @@ public class PublicMethod {
         return vcMember;
     }
 
-
-    public  static ReponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource,List<VcMember>   list){
-        ReponseMyFriend  reponseMyFriend =  new  ReponseMyFriend();
+    /**
+     * @Description: 我的朋友信息
+     * @param vcMemberResource
+    * @param list
+     * @return com.hz.gather.master.core.protocol.response.user.ReponseMyFriend
+     * @author long
+     * @date 2020/1/9 11:39
+     */
+    public  static ResponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource, List<VcMember>   list){
+        ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
         reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamActive()+"");
         reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()+"");
         reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()+"");
-
-//        reponseMyFriend.setPush_people_list();
+        List <Object>   rsList = new ArrayList<>();
+        for(VcMember vcMember:list){
+            FriendModel  friendModel = new FriendModel();
+            friendModel.setNickname(vcMember.getNickname());
+            friendModel.setNickadd(vcMember.getMemberAdd());
+            friendModel.setMoney(vcMember.getTotalMoney()+"");
+            friendModel.setVip_type(vcMember.getGradeType()+"");
+            friendModel.setCreate_time(vcMember.getCreateTime()+"");
+            friendModel.setFission_people(vcMember.getPushPeople()+"");
+            rsList.add(friendModel);
+        }
+        reponseMyFriend.setPush_people_list(rsList);
         return reponseMyFriend;
     }
+
+    /**
+     * @Description: TODO
+     * @param vcMember
+     * @return com.hz.gather.master.core.protocol.response.user.ResponseUser
+     * @author long
+     * @date 2020/1/9 14:07
+     */
+    public  static ResponseUser   toResponseUser(VcMember vcMember){
+        ResponseUser  responseUser  =  new ResponseUser();
+        responseUser.setNickname(vcMember.getNickname());
+        responseUser.setMemberAdd(vcMember.getMemberAdd());
+        responseUser.setCreateTime(vcMember.getCreateTime()+"");
+        responseUser.setSex(vcMember.getSex()+"");
+        responseUser.setBirthday(vcMember.getBirthday());
+        return responseUser;
+    }
+
+
+    /**
+     * @Description: 验证修改用户信息是否通过
+     * @param editUser
+     * @return boolean
+     * @author long
+     * @date 2020/1/9 15:24
+     */
+    public  static  boolean   toResponseUser(RequestEditUser editUser){
+        boolean  flag  =  false;
+        if(StringUtils.isBlank(editUser.getToken())){
+            return flag;
+        }
+        if(!StringUtils.isBlank(editUser.getNickname())){
+            return true;
+        }else if(!StringUtils.isBlank(editUser.getMemberAdd())){
+            return true;
+        }else if(!StringUtils.isBlank(editUser.getBirthday())){
+            return true;
+        }else if(!StringUtils.isBlank(editUser.getSex())){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @Description: 拼装成用户修改信息
+     * @param memberId
+    * @param editUser
+     * @return com.hz.gather.master.core.model.entity.VcMember
+     * @author long
+     * @date 2020/1/9 15:43
+     */
+    public static  VcMember   toVcMember(Integer  memberId,RequestEditUser editUser){
+        VcMember  vcMember  =  new  VcMember();
+        vcMember.setMemberId(memberId);
+        if(!StringUtils.isBlank(editUser.getNickname())){
+            vcMember.setNickname(editUser.getNickname());
+        }
+        if(!StringUtils.isBlank(editUser.getSex())){
+            vcMember.setSex(Integer.parseInt(editUser.getSex()));
+        }
+        if(!StringUtils.isBlank(editUser.getMemberAdd())){
+            vcMember.setMemberAdd(editUser.getMemberAdd());
+        }
+        if(!StringUtils.isBlank(editUser.getBirthday())){
+            vcMember.setBirthday(editUser.getBirthday());
+        }
+        return   vcMember;
+    }
+
+    /**
+     * @Description: 返回出去给用户
+     * @param updateCount
+     * @return com.hz.gather.master.core.protocol.response.user.ResponseEditUser
+     * @author long
+     * @date 2020/1/9 16:08
+     */
+     public static ResponseEditUser rsResponseEditUser(Integer  updateCount){
+        ResponseEditUser  responseEditUser = new ResponseEditUser();
+        if(updateCount==0){
+            responseEditUser.setFlag(false);
+        }else{
+            responseEditUser.setFlag(true);
+        }
+        return responseEditUser;
+    }
+
+    /**
+     * @Description: 设置查询用户支付信息条件
+     * @param memberId
+     * @return com.hz.gather.master.core.model.entity.VcMemberPay
+     * @author long
+     * @date 2020/1/9 21:32
+     */
+    public static VcMemberPay toVcMemberPay(Integer  memberId){
+        VcMemberPay  vcMemberPay = new VcMemberPay();
+        vcMemberPay.setMemberId(memberId);
+        return vcMemberPay;
+    }
+
+    /**
+     * @Description: TODO
+     * @param memberId
+    * @param payId
+     * @return com.hz.gather.master.core.model.entity.VcMemberPay
+     * @author long
+     * @date 2020/1/9 22:57
+     */
+    public static VcMemberPay toVcMemberPay(Integer  memberId,String payId){
+        VcMemberPay  vcMemberPay = new VcMemberPay();
+        DateModel dateModel= PublicMethod.getDate();
+        BeanUtils.copy(dateModel,vcMemberPay);
+        vcMemberPay.setMemberId(memberId);
+        vcMemberPay.setZfbPayid(payId);
+        return vcMemberPay;
+    }
+
+    /**
+     * @Description: 获取当前系统时间
+     * @param
+     * @return com.pf.play.rule.core.model.DateModel
+     * @author long
+     * @date 2019/11/20 22:15
+     */
+    public  static DateModel getDate(){
+        Date   date  = new Date();
+        DateModel dateModel = new DateModel();
+        dateModel.setCurday(DateUtil.getDayNumber(date));
+        dateModel.setCurhour(DateUtil.getHour(date));
+        dateModel.setCurminute(DateUtil.getCurminute(date));
+        dateModel.setCreateTime(date);
+        dateModel.setUpdateTime(date);
+        return dateModel;
+    }
+
+    public static ResponeseAddZFBPay updateRs(Integer  updateCount){
+        ResponeseAddZFBPay  responeseAddZFBPay = new ResponeseAddZFBPay();
+        if(updateCount==0){
+            responeseAddZFBPay.setFlag(false);
+        }else{
+            responeseAddZFBPay.setFlag(true);
+        }
+        return responeseAddZFBPay;
+    }
+
+    /**
+     * @Description: 支付宝列表信息转换
+     * @param list
+     * @return com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo
+     * @author long
+     * @date 2020/1/9 23:19
+     */
+    public static ResponeseHavaPayInfo toQueryHavaPayInfo(List<VcMemberPay>  list){
+        ResponeseHavaPayInfo  responeseHavaPayInfo = new ResponeseHavaPayInfo();
+        List<String>  payList = new ArrayList<>();
+        for(VcMemberPay vcMemberPay:list){
+            payList.add(vcMemberPay.getZfbPayid());
+        }
+        responeseHavaPayInfo.setPayList(payList);
+        return responeseHavaPayInfo;
+    }
+
+
+
+
+
+
 
 
 }

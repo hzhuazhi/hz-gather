@@ -8,7 +8,7 @@ import java.util.List;
  * @Date 2020/1/8 21:13
  * @Version 1.0
  */
-public class ReponseMyFriend {
+public class ResponseMyFriend {
     /**
      * 直推人数(成为了永久vip)
      */

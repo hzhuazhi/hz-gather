@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.VcMemberPayMapper" >
+  <sql id="Base_Column_List" >
+    id, member_id, zfb_payid, reward_type, create_time, update_time, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberPay" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vc_member_pay
+    where member_id = #{memberId}
+    and  is_valid =1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vc_member_pay
+    where id = #{id}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberPay" >
+    insert into vc_member_pay
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="zfbPayid != null" >
+        zfb_payid,
+      </if>
+      <if test="rewardType != null" >
+        reward_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="zfbPayid != null" >
+        #{zfbPayid},
+      </if>
+      <if test="rewardType != null" >
+        #{rewardType},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="isValid != null" >
+        #{isValid},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberPay" >
+    update vc_member_pay
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
+      <if test="zfbPayid != null" >
+        zfb_payid = #{zfbPayid},
+      </if>
+      <if test="rewardType != null" >
+        reward_type = #{rewardType},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

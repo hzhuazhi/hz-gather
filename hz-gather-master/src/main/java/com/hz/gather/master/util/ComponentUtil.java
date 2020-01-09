@@ -20,6 +20,7 @@ public class ComponentUtil {
     public static QuestionMService questionMService;
     public static QuestionDService questionDService;
     public static AlipayService alipayService;
+    public static PayService payService;
 
 
 
