@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.UBatchLogMapper" >
+
+  <sql id="Base_Column_List" >
+    id, batch_num, member_id, curday, curhour, curminute, create_time, is_finish,data_type,receive_money
+  </sql>
+
+  <sql id="Base_Column_List_Member" >
+       b.member_add,b.phone,b.nickname,a.batch_num
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UBatchLog" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from u_batch_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from u_batch_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.UBatchLog" >
+    insert into u_batch_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="batchNum != null" >
+        batch_num,
+      </if>
+      <if test="dataType != null" >
+        data_type,
+      </if>
+      <if test="receiveMoney != null" >
+        receive_money,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="isFinish != null" >
+        is_finish,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="batchNum != null" >
+        #{batchNum},
+      </if>
+      <if test="dataType != null" >
+        #{dataType},
+      </if>
+      <if test="receiveMoney != null" >
+        #{receiveMoney},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="curday != null" >
+        #{curday},
+      </if>
+      <if test="curhour != null" >
+        #{curhour},
+      </if>
+      <if test="curminute != null" >
+        #{curminute},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="isFinish != null" >
+        #{isFinish},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.UBatchLog" >
+    update u_batch_log
+    <set >
+      <if test="batchNum != null" >
+        batch_num = #{batchNum},
+      </if>
+      <if test="dataType != null" >
+        data_type = #{dataType},
+      </if>
+      <if test="receiveMoney != null" >
+        receive_money = #{receiveMoney},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="isFinish != null" >
+        is_finish = #{isFinish},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+
+
+  <select id="selectByBatchNum" resultType="com.hz.gather.master.core.model.entity.UBatchLog" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List_Member" />
+    from u_batch_log  a  LEFT JOIN
+    vc_member b
+    on  a.member_id = b.member_id
+    where batch_num = #{batchNum}
+  </select>
+
+</mapper>

@@ -11,6 +11,7 @@ import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.user.CommonModel;
+import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
@@ -54,17 +55,48 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            VcMember  vcMember =ComponentUtil.userInfoService.queryMemberInfo(memberId);
-            VcMemberResource vcMemberResource =ComponentUtil.userInfoService.queryMemberResourceInfo(memberId);
-
-            if(vcMember==null||vcMemberResource==null){
-                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
-            }
-            String encryptionData = StringUtil.mergeCodeBase64(PublicMethod.toSendSmsDto(time));
+            ResponseUserInfo ResponseUserInfo =ComponentUtil.userInfoService.toResponseUserInfo(memberId);
+            data=PublicMethod.toJson(ResponseUserInfo);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
             log.info("----------:register_sms 进来啦!");
-            return JsonResult.successResult(resultDataModel);
+            return JsonResult.successResult(encryptionData);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+
+    @PostMapping("/myFriend")
+    public JsonResult<Object> getFriend(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+        String data = "";
+        CommonModel commonModel = new CommonModel();
+        String time ="";
+        try{
+            data        = StringUtil.decoderBase64(jsonData);
+            commonModel  = JSON.parseObject(data, CommonModel.class);
+
+            boolean   flag  = PublicMethod.isCommonModel(commonModel);
+            if(flag){
+                throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
+            }
+
+            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+//            ReponseMyFriend ResponseUserInfo =ComponentUtil.userInfoService.toResponseUserInfo(memberId);
+            data=PublicMethod.toJson(ReponseMyFriend);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            log.info("----------:register_sms 进来啦!");
+            return JsonResult.successResult(encryptionData);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);

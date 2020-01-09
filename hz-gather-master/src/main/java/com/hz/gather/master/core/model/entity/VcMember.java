@@ -1,5 +1,7 @@
 package com.hz.gather.master.core.model.entity;
 
+import java.math.BigDecimal;
+
 public class VcMember {
     /**
      * 会员id
@@ -175,6 +177,12 @@ public class VcMember {
      * @mbggenerated
      */
     private String isQuestions;
+    /**
+     * 奖励收益人id
+     *
+     * @mbggenerated
+     */
+    private String benefitMemberId;
 
     /**
      * 是否有效; 1有效 2无效
@@ -182,6 +190,31 @@ public class VcMember {
      * @mbggenerated
      */
     private Integer isValid;
+
+    /**
+     * 总共产生金额
+     *
+     * @mbggenerated
+     */
+    private BigDecimal totalMoney;
+
+
+    /**
+     * 直推人数(成为了永久vip)
+     *
+     * @mbggenerated
+     */
+    private Integer pushPeople;
+
+    /**
+     * 下级人数(成为了永久vip)
+     *
+     * @mbggenerated
+     */
+    private Integer teamActive;
+
+
+
 
     public Integer getMemberId() {
         return memberId;
@@ -389,5 +422,37 @@ public class VcMember {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getBenefitMemberId() {
+        return benefitMemberId;
+    }
+
+    public void setBenefitMemberId(String benefitMemberId) {
+        this.benefitMemberId = benefitMemberId;
+    }
+
+    public BigDecimal getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(BigDecimal totalMoney) {
+        this.totalMoney = totalMoney;
+    }
+
+    public Integer getPushPeople() {
+        return pushPeople;
+    }
+
+    public void setPushPeople(Integer pushPeople) {
+        this.pushPeople = pushPeople;
+    }
+
+    public Integer getTeamActive() {
+        return teamActive;
+    }
+
+    public void setTeamActive(Integer teamActive) {
+        this.teamActive = teamActive;
     }
 }

@@ -5,8 +5,19 @@
     member_id, owner_member_id, member_add, nickname, phone, sex, birthday, country,
     province, city, password, member_code, member_type, invite_code, trading_address,
     create_time, is_active, login_time, device_id, superior_id, pay_password, extension_member_id,
-    grade_type, is_questions, is_valid
+    grade_type, is_questions, is_valid,benefit_member_id
   </sql>
+
+
+
+
+  <sql id="Base_Column_myFriend" >
+    a.member_id,  a.owner_member_id,  a.member_add,  a.nickname,  a.phone,  a.sex, a.birthday, a.country,
+    a.province, a.city, a.password, a.member_code, a.member_type, a.invite_code,a.trading_address,
+    a.create_time, a.is_active, a.login_time, a.device_id, a.superior_id, a.pay_password, a.extension_member_id,
+    a.grade_type, a.is_questions, a.is_valid,a.benefit_member_id,b.total_money,b.push_people,b.team_active
+  </sql>
+
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMember" >
     select
     <include refid="Base_Column_List" />
@@ -107,6 +118,10 @@
       <if test="isValid != null" >
         is_valid,
       </if>
+      <if test="benefitMemberId != null" >
+        benefit_member_id,
+      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="memberId != null" >
@@ -183,6 +198,9 @@
       </if>
       <if test="isValid != null" >
         #{isValid,jdbcType=BIT},
+      </if>
+      <if test="benefitMemberId != null" >
+        #{benefitMemberId,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -274,6 +292,16 @@
     from vc_member
     where 1=1
     and (invite_code = #{inviteCode} or trading_address  = #{tradingAddress} or token=#{token} )
+  </select>
+
+
+
+  <select id="selectBySuperiorId" resultType="com.hz.gather.master.core.model.entity.VcMember" >
+    select
+    <include refid="Base_Column_myFriend" />
+    from vc_member  a INNER JOIN  vc_member_resource b
+    where 1=1
+    and  a.superior_id  = #{superiorId}
   </select>
 
 </mapper>

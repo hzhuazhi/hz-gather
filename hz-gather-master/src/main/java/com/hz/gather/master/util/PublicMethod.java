@@ -2,6 +2,10 @@ package com.hz.gather.master.util;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.DateUtil;
+import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.model.entity.UBatchLog;
+import com.hz.gather.master.core.model.entity.ULimitedTimeLog;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.user.CommonModel;
@@ -10,9 +14,14 @@ import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
 import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
 import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
 import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
+import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
 import org.apache.commons.lang.StringUtils;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description TODO
@@ -400,6 +409,105 @@ public class PublicMethod {
             return  flag ;
         }
         return true;
+    }
+
+    /**
+     * @Description: 根据 batchNum  设置 ULimitedTimeLog 条件
+     * @param batchNum
+     * @return com.hz.gather.master.core.model.entity.ULimitedTimeLog
+     * @author long
+     * @date 2020/1/8 17:03
+     */
+    public  static ULimitedTimeLog toULimitedTimeLog(String batchNum){
+        ULimitedTimeLog  uLimitedTimeLog =  new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(batchNum);
+        return  uLimitedTimeLog;
+    }
+
+
+    /**
+     * 根据批次号查询这个批次号的用户
+     * @param batchNum
+     * @return
+     */
+    public  static UBatchLog toUBatchLog(String batchNum){
+        UBatchLog  uBatchLog =  new UBatchLog();
+        uBatchLog.setBatchNum(batchNum);
+        return  uBatchLog;
+    }
+
+    /**
+     * @Description: TODO
+     * @param
+     * @return com.hz.gather.master.core.protocol.response.user.ResponseUserInfo
+     * @author long
+     * @date 2020/1/8 17:51
+     */
+    public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog, List<UBatchLog> list)throws  Exception{
+        ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
+        responseUserInfo.setVip_type(vcMember.getGradeType());
+        responseUserInfo.setAlready_money(vcMemberResource.getAlreadyMoney()+"");
+        responseUserInfo.setTotal_money(vcMemberResource.getTotalMoney()+"");
+        responseUserInfo.setSurplus_money(vcMemberResource.getSurplusMoney()+"");
+        if (vcMember.getGradeType()==0){//普通用户信息
+
+        }else if(vcMember.getGradeType()==1){//限时用户信息
+            String recommendMoney = "";
+            List<String>  addList  =   new ArrayList<>();
+            int pushCount =0;
+            int fissionCount =0;
+            for(UBatchLog uBatchLog:list){
+                if(uBatchLog.getDataType()==1){
+                    recommendMoney = StringUtil.getBigDecimalAdd(recommendMoney,uBatchLog.getReceiveMoney()+"");
+//                    recommendMoney=recommendMoney+uBatchLog.getReceiveMoney();
+                    addList.add(uBatchLog.getMemberAdd());
+                    pushCount++;
+                }else{
+                    fissionCount++;
+                }
+            }
+            responseUserInfo.setPush_count(pushCount+"");
+            responseUserInfo.setAddList(addList);
+            SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);
+            responseUserInfo.setExpire_time(expireTime);
+            responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
+            responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
+            responseUserInfo.setRequire_fission_count(fissionCount+"");
+        }else if(vcMember.getGradeType()==2){
+            responseUserInfo.setRecommend_money(vcMemberResource.getPushMoney()+"");
+            responseUserInfo.setFission_money(vcMemberResource.getFissionMoney()+"");
+            responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
+            responseUserInfo.setRequire_fission_count(vcMemberResource.getTeamActive()+"");
+        }
+
+        return responseUserInfo;
+    }
+
+    /**
+     * @Description: 对象赚json
+     * @param o
+     * @return java.lang.String
+     * @author long
+     * @date 2020/1/9 10:17
+     */
+    public  static  String  toJson(Object o){
+        return  JSON.toJSONString(o);
+    }
+
+
+
+    /**
+     * @Description: 转换成VcMember 信息
+     * @param superiorId
+     * @return com.hz.gather.master.core.model.dao.VcMember
+     * @author long
+     * @date 2020/1/6 10:39
+     */
+    public  static  VcMember  toVcMemberSuperiorId(Integer superiorId){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setSuperiorId(superiorId);
+        return vcMember;
     }
 
 

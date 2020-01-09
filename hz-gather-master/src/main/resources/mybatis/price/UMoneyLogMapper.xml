@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.UMoneyLogMapper" >
+
+  <sql id="Base_Column_List" >
+    id, out_trade_no, member_id, create_member_id, receive_money, reward_type, curday, 
+    curhour, curminute, create_time, update_time, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UMoneyLog" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from u_money_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from u_money_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.UMoneyLog" >
+    insert into u_money_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="createMemberId != null" >
+        create_member_id,
+      </if>
+      <if test="receiveMoney != null" >
+        receive_money,
+      </if>
+      <if test="rewardType != null" >
+        reward_type,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="createMemberId != null" >
+        #{createMemberId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveMoney != null" >
+        #{receiveMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardType != null" >
+        #{rewardType,jdbcType=BIT},
+      </if>
+      <if test="curday != null" >
+        #{curday,jdbcType=INTEGER},
+      </if>
+      <if test="curhour != null" >
+        #{curhour,jdbcType=BIT},
+      </if>
+      <if test="curminute != null" >
+        #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UMoneyLog" >
+    update u_money_log
+    <set >
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="createMemberId != null" >
+        create_member_id = #{createMemberId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveMoney != null" >
+        receive_money = #{receiveMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardType != null" >
+        reward_type = #{rewardType,jdbcType=BIT},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday,jdbcType=INTEGER},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour,jdbcType=BIT},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

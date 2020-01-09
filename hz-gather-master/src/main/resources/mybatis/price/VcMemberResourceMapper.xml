@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.VcMemberResourceMapper" >
   <sql id="Base_Column_List" >
     id, member_id, total_money, already_money, surplus_money, cash_money, push_people, 
-    team_active, push_people_all, team_active_all, create_time, update_time, is_valid
+    team_active, push_people_all, team_active_all, create_time, update_time, is_valid,push_money,fission_money
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberResource">
     select 
@@ -57,6 +57,9 @@
       <if test="isValid != null" >
         is_valid,
       </if>
+      <if test="pushMoney != null" >
+        push_money,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -98,6 +101,9 @@
       <if test="isValid != null" >
         #{isValid,jdbcType=BIT},
       </if>
+      <if test="pushMoney != null" >
+        #{pushMoney},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
@@ -138,6 +144,12 @@
       </if>
       <if test="isValid != null" >
         is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="pushMoney != null" >
+        push_money = #{pushMoney},
+      </if>
+      <if test="fissionMoney != null" >
+        fission_money = #{fissionMoney},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

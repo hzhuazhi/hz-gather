@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.ULimitedTimeLogMapper" >
+
+  <sql id="Base_Column_List" >
+    id, batch_num, push_number,fission_money, member_id, curday, curhour, curminute, create_time, update_time,
+    invalid_time, is_finish, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from u_limited_time_log
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from u_limited_time_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
+    insert into u_limited_time_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="batchNum != null" >
+        batch_num,
+      </if>
+
+      <if test="pushNumber != null" >
+        push_number,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time,
+      </if>
+      <if test="isFinish != null" >
+        is_finish,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="fissionMoney != null" >
+        fission_money,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="batchNum != null" >
+        #{batchNum},
+      </if>
+      <if test="pushNumber != null" >
+        #{pushNumber},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="curday != null" >
+        #{curday},
+      </if>
+      <if test="curhour != null" >
+        #{curhour},
+      </if>
+      <if test="curminute != null" >
+        #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="invalidTime != null" >
+        #{invalidTime},
+      </if>
+      <if test="isFinish != null" >
+        #{isFinish},
+      </if>
+      <if test="isValid != null" >
+        #{isValid},
+      </if>
+      <if test="fissionMoney != null" >
+        #{fissionMoney},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
+    update u_limited_time_log
+    <set >
+      <if test="batchNum != null" >
+        batch_num = #{batchNum,jdbcType=VARCHAR},
+      </if>
+      <if test="pushNumber != null" >
+        push_number = #{pushNumber,jdbcType=INTEGER},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday,jdbcType=INTEGER},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour,jdbcType=BIT},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isFinish != null" >
+        is_finish = #{isFinish,jdbcType=BIT},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=BIT},
+      </if>
+      <if test="fissionMoney != null" >
+        fission_money = #{fissionMoney,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="selectByMaxBatchNum" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from u_limited_time_log
+    where memberId = #{memberId}
+    and   is_valid = 1
+    and   is_finish = 1
+    order by  create_time DESC
+    limit  1
+  </select>
+
+</mapper>

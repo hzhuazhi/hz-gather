@@ -44,6 +44,20 @@ public class ResponseUserInfo {
      * 裂变金额
      */
     private String    fission_money;
+    /****
+     * 推荐人数
+     */
+    private String    push_count;
+
+    /****
+     * 裂变要求数量数量
+     */
+    private String    require_fission_count;
+
+    /****
+     * 裂变实际数量
+     */
+    private String    reality_push_count;
 
     public String getSurplus_money() {
         return surplus_money;
@@ -107,5 +121,29 @@ public class ResponseUserInfo {
 
     public void setFission_money(String fission_money) {
         this.fission_money = fission_money;
+    }
+
+    public String getPush_count() {
+        return push_count;
+    }
+
+    public void setPush_count(String push_count) {
+        this.push_count = push_count;
+    }
+
+    public String getRequire_fission_count() {
+        return require_fission_count;
+    }
+
+    public void setRequire_fission_count(String require_fission_count) {
+        this.require_fission_count = require_fission_count;
+    }
+
+    public String getReality_push_count() {
+        return reality_push_count;
+    }
+
+    public void setReality_push_count(String reality_push_count) {
+        this.reality_push_count = reality_push_count;
     }
 }

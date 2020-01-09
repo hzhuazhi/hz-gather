@@ -95,6 +95,24 @@ public class VcMemberResource {
      */
     private Integer isValid;
 
+    /**
+     * 裂变未达成奖励
+     *
+     * @mbggenerated
+     */
+    private BigDecimal fissionMoney;
+
+
+    /**
+     * 直推金额
+     *
+     * @mbggenerated
+     */
+    private BigDecimal pushMoney;
+
+
+
+
     public Long getId() {
         return id;
     }
@@ -197,5 +215,21 @@ public class VcMemberResource {
 
     public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public BigDecimal getFissionMoney() {
+        return fissionMoney;
+    }
+
+    public void setFissionMoney(BigDecimal fissionMoney) {
+        this.fissionMoney = fissionMoney;
+    }
+
+    public BigDecimal getPushMoney() {
+        return pushMoney;
+    }
+
+    public void setPushMoney(BigDecimal pushMoney) {
+        this.pushMoney = pushMoney;
     }
 }
