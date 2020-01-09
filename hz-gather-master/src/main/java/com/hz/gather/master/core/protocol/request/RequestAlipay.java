@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class RequestAlipay extends BaseRequest implements Serializable {
     private static final long   serialVersionUID = 1233223332241L;
 
+    public Long memberId;
     public String body;
     public String subject;
     public String outTradeNo;
@@ -24,6 +25,14 @@ public class RequestAlipay extends BaseRequest implements Serializable {
 
     public RequestAlipay(){
 
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
     }
 
     public String getBody() {

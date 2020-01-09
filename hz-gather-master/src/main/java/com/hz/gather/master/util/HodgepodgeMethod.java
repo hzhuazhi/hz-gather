@@ -2,8 +2,10 @@ package com.hz.gather.master.util;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.BeanUtils;
+import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
+import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
@@ -16,7 +18,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description 公共方法类
@@ -55,12 +59,12 @@ public class HodgepodgeMethod {
             if (!StringUtils.isBlank(requestAlipay.body)){
                 resBean.body = requestAlipay.body;
             }else {
-                resBean.body = "实名认证";
+                resBean.body = "费用缴纳";
             }
             if (!StringUtils.isBlank(requestAlipay.subject)){
                 resBean.subject = requestAlipay.subject;
             }else {
-                resBean.subject = "趣红人实名认证";
+                resBean.subject = "500费用";
             }
             if (!StringUtils.isBlank(requestAlipay.outTradeNo)){
                 resBean.outTradeNo = requestAlipay.outTradeNo;
@@ -80,14 +84,34 @@ public class HodgepodgeMethod {
             if (!StringUtils.isBlank(requestAlipay.productCode)){
                 resBean.productCode = requestAlipay.productCode;
             }else {
-                resBean.productCode = "QHR_SMRZ";
+                resBean.productCode = "500_HY";
             }
         }
         return resBean;
     }
 
     /**
-     * @Description: 开市时间的数据组装返回客户端的方法
+     * @Description: 组装阿里支付请求的纪录数据
+     * @param alipayModel - 阿里支付的数据
+     * @param aliOrder - 阿里支付宝请求之后返回的订单串
+     * @return
+     * @author yoko
+     * @date 2019/12/26 14:42
+     */
+    public static AlipayModel assembleAlipayModel(AlipayModel alipayModel, String aliOrder){
+        AlipayModel resBean = new AlipayModel();
+        resBean = alipayModel;
+        if (!StringUtils.isBlank(aliOrder)){
+            resBean.setAliOrder(aliOrder);
+        }
+        resBean.setCurday(DateUtil.getDayNumber(new Date()));
+        resBean.setCurhour(DateUtil.getHour(new Date()));
+        resBean.setCurminute(DateUtil.getCurminute(new Date()));
+        return resBean;
+    }
+
+    /**
+     * @Description: 阿里支付宝订单生成的数据组装返回客户端的方法
      * @param stime - 服务器的时间
      * @param token - 登录token
      * @param sign - 签名
@@ -103,6 +127,144 @@ public class HodgepodgeMethod {
         dataModel.setToken(token);
         dataModel.setSign(sign);
         return JSON.toJSONString(dataModel);
+    }
+
+    /**
+     * @Description: 组装阿里云支付宝的订单回调结果数据
+     * @param map - 阿里云支付宝返回的订单结果数据
+     * @return AlipayNotifyModel
+     * @author yoko
+     * @date 2019/12/27 15:54
+     */
+    public static AlipayNotifyModel assembleAlipayNotify(Map<String, String> map) throws Exception{
+        if (map == null){
+            return null;
+        }
+        AlipayNotifyModel resBean = new AlipayNotifyModel();
+        if (map.containsKey("app_id")){
+            if (!StringUtils.isBlank(map.get("app_id"))){
+                resBean.appId = map.get("app_id");
+            }
+        }
+        if (map.containsKey("auth_app_id")){
+            if (!StringUtils.isBlank(map.get("auth_app_id"))){
+                resBean.authAppId = map.get("auth_app_id");
+            }
+        }
+        if (map.containsKey("body")){
+            if (!StringUtils.isBlank(map.get("body"))){
+                resBean.body = map.get("body");
+            }
+        }
+        if (map.containsKey("buyer_id")){
+            if (!StringUtils.isBlank(map.get("buyer_id"))){
+                resBean.buyerId = map.get("buyer_id");
+            }
+        }
+        if (map.containsKey("buyer_logon_id")){
+            if (!StringUtils.isBlank(map.get("buyer_logon_id"))){
+                resBean.buyerLogonId = map.get("buyer_logon_id");
+            }
+        }
+        if (map.containsKey("buyer_pay_amount")){
+            if (!StringUtils.isBlank(map.get("buyer_pay_amount"))){
+                resBean.buyerPayAmount = map.get("buyer_pay_amount");
+            }
+        }
+        if (map.containsKey("charset")){
+            if (!StringUtils.isBlank(map.get("charset"))){
+                resBean.dataCharset = map.get("charset");
+            }
+        }
+        if (map.containsKey("fund_bill_list")){
+            if (!StringUtils.isBlank(map.get("fund_bill_list"))){
+                resBean.fundBillList = map.get("fund_bill_list");
+            }
+        }
+        if (map.containsKey("gmt_create")){
+            if (!StringUtils.isBlank(map.get("gmt_create"))){
+                resBean.gmtCreate = map.get("gmt_create");
+            }
+        }
+        if (map.containsKey("gmt_payment")){
+            if (!StringUtils.isBlank(map.get("gmt_payment"))){
+                resBean.gmtPayment = map.get("gmt_payment");
+            }
+        }
+        if (map.containsKey("invoice_amount")){
+            if (!StringUtils.isBlank(map.get("invoice_amount"))){
+                resBean.invoiceAmount = map.get("invoice_amount");
+            }
+        }
+        if (map.containsKey("notify_id")){
+            if (!StringUtils.isBlank(map.get("notify_id"))){
+                resBean.notifyId = map.get("notify_id");
+            }
+        }
+        if (map.containsKey("notify_time")){
+            if (!StringUtils.isBlank(map.get("notify_time"))){
+                resBean.notifyTime = map.get("notify_time");
+            }
+        }
+        if (map.containsKey("notify_type")){
+            if (!StringUtils.isBlank(map.get("notify_type"))){
+                resBean.notifyType = map.get("notify_type");
+            }
+        }
+        if (map.containsKey("out_trade_no")){
+            if (!StringUtils.isBlank(map.get("out_trade_no"))){
+                resBean.outTradeNo = map.get("out_trade_no");
+            }
+        }
+        if (map.containsKey("point_amount")){
+            if (!StringUtils.isBlank(map.get("point_amount"))){
+                resBean.pointAmount = map.get("point_amount");
+            }
+        }
+        if (map.containsKey("receipt_amount")){
+            if (!StringUtils.isBlank(map.get("receipt_amount"))){
+                resBean.receiptAmount = map.get("receipt_amount");
+            }
+        }
+        if (map.containsKey("seller_email")){
+            if (!StringUtils.isBlank(map.get("seller_email"))){
+                resBean.sellerEmail = map.get("seller_email");
+            }
+        }
+        if (map.containsKey("seller_id")){
+            if (!StringUtils.isBlank(map.get("seller_id"))){
+                resBean.sellerId = map.get("seller_id");
+            }
+        }
+        if (map.containsKey("subject")){
+            if (!StringUtils.isBlank(map.get("subject"))){
+                resBean.subject = map.get("subject");
+            }
+        }
+        if (map.containsKey("total_amount")){
+            if (!StringUtils.isBlank(map.get("total_amount"))){
+                resBean.totalAmount = map.get("total_amount");
+            }
+        }
+        if (map.containsKey("trade_no")){
+            if (!StringUtils.isBlank(map.get("trade_no"))){
+                resBean.tradeNo = map.get("trade_no");
+            }
+        }
+        if (map.containsKey("trade_status")){
+            if (!StringUtils.isBlank(map.get("trade_status"))){
+                resBean.tradeStatus = map.get("trade_status");
+            }
+        }
+        if (map.containsKey("version")){
+            if (!StringUtils.isBlank(map.get("version"))){
+                resBean.dataVersion = map.get("version");
+            }
+        }
+        resBean.setCurday(DateUtil.getDayNumber(new Date()));
+        resBean.setCurhour(DateUtil.getHour(new Date()));
+        resBean.setCurminute(DateUtil.getCurminute(new Date()));
+        return resBean;
     }
 
 

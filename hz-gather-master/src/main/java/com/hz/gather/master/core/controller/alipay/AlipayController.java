@@ -91,8 +91,6 @@ public class AlipayController {
         RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
         RequestAlipay requestAlipay = new RequestAlipay();
         try{
-//            String tempToken = "111111";
-//            ComponentUtil.redisService.set(tempToken, "3");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestAlipay  = JSON.parseObject(data, RequestAlipay.class);
@@ -111,8 +109,8 @@ public class AlipayController {
             AlipayModel alipayModel = HodgepodgeMethod.assembleAlipayData(requestAlipay, sgid, totalAmount);
             String aliOrder = Alipay.createAlipaySend(alipayModel, alipayNotifyUrl);
             // 添加请求阿里支付的纪录
-//            AlipayModel addAlipayModel = PublicMethod.assembleAlipayModel(alipayModel, aliOrder, memberId);
-//            ComponentUtil.alipayService.add(addAlipayModel);
+            AlipayModel addAlipayModel = HodgepodgeMethod.assembleAlipayModel(alipayModel, aliOrder);
+            ComponentUtil.alipayService.add(addAlipayModel);
 
 
             // 组装返回客户端的数据
@@ -175,8 +173,10 @@ public class AlipayController {
             log.info(String.format("the AlipayController.notify() , the resultData=%s ", resultData));
             boolean flag = AlipaySignature.rsaCheckV1(params, Alipay.ALIPAY_PUBLIC_KEY, "UTF-8","RSA2");
             if (flag){
-//                AlipayNotifyModel alipayNotifyModel = PublicMethod.assembleAlipayNotify(params);
-//                ComponentUtil.alipayService.addAlipayNotify(alipayNotifyModel);
+                AlipayNotifyModel alipayNotifyModel = HodgepodgeMethod.assembleAlipayNotify(params);
+                if (alipayNotifyModel != null){
+                    ComponentUtil.alipayService.addAlipayNotify(alipayNotifyModel);
+                }
             }
             log.info(String.format("the AlipayController.notify() , the flag=%s ", flag));
             // 返回数据给客户端
