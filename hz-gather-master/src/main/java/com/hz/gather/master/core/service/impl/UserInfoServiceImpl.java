@@ -96,6 +96,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
         VcMemberResource    vcMemberResource  =  PublicMethod.toVcMemberResource(memberId);
         VcMemberResource  rsVcMemberResource = vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
+
         VcMember    vcMember  = PublicMethod.toVcMemberSuperiorId(memberId);
         List<VcMember>   list = vcMemberMapper.selectBySuperiorId(vcMember);
 

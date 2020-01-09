@@ -14,6 +14,7 @@ import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
 import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
 import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
 import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
+import com.hz.gather.master.core.protocol.response.user.ReponseMyFriend;
 import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
 import org.apache.commons.lang.StringUtils;
 
@@ -508,6 +509,18 @@ public class PublicMethod {
         VcMember  vcMember =  new  VcMember();
         vcMember.setSuperiorId(superiorId);
         return vcMember;
+    }
+
+
+    public  static ReponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource,List<VcMember>   list){
+        ReponseMyFriend  reponseMyFriend =  new  ReponseMyFriend();
+        reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
+        reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamActive()+"");
+        reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()+"");
+        reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()+"");
+
+//        reponseMyFriend.setPush_people_list();
+        return reponseMyFriend;
     }
 
 

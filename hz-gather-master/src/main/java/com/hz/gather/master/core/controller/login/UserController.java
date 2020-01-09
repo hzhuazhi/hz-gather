@@ -91,7 +91,7 @@ public class UserController {
             }
 
 //            ReponseMyFriend ResponseUserInfo =ComponentUtil.userInfoService.toResponseUserInfo(memberId);
-            data=PublicMethod.toJson(ReponseMyFriend);
+//            data=PublicMethod.toJson(ReponseMyFriend);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

@@ -86,7 +86,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.dao.UBatchLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UBatchLog" >
     update u_batch_log
     <set >
       <if test="batchNum != null" >
