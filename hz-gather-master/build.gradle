@@ -123,6 +123,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
     compile group: 'com.aliyun', name: 'aliyun-java-sdk-core', version: '4.4.9'
     compile group: 'com.alipay.sdk', name: 'alipay-sdk-java', version: '4.8.73.ALL'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.64'
 }
 
 test {

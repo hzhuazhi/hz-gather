@@ -1437,4 +1437,90 @@ public class StringUtil {
 		return str;
 	}
 
+
+
+	/**
+	 * @Description: 计算两数相加
+	 * @param x
+	*@param y
+	 * @return java.lang.String
+	 * @author yoko
+	 * @date 2019/11/28 22:24
+	 */
+	public static BigDecimal getBigDecimalAdd(BigDecimal x, BigDecimal y){
+		BigDecimal resDoble;
+		resDoble = x.add(y);
+		DecimalFormat sb = new DecimalFormat("###.##");
+		String str = sb.format(resDoble);
+		BigDecimal res = new BigDecimal(str);
+		return res;
+	}
+
+
+	/**
+	 * @Description: 计算两数相减
+	 * <p>值相减，如果不为负数，则返回true；反之则返回fasle</p>
+	 * @param x
+	*@param y
+	 * @return java.lang.String
+	 * @author yoko
+	 * @date 2019/11/28 22:24
+	 */
+	public static BigDecimal getBigDecimalSubtract(BigDecimal x, BigDecimal y){
+		BigDecimal resDoble;
+		resDoble = x.subtract(y);
+		DecimalFormat sb = new DecimalFormat("###.##");
+		String str = sb.format(resDoble);
+		BigDecimal res = new BigDecimal(str);
+		return res;
+	}
+
+	/**
+	 * @Description: 计算两数相乘
+	 * @param x
+	*@param y
+	 * @return java.lang.String
+	 * @author yoko
+	 * @date 2019/11/28 22:24
+	 */
+	public static BigDecimal getMultiply(BigDecimal x, BigDecimal y){
+		BigDecimal resDoble;
+		resDoble = x.multiply(y);
+		DecimalFormat sb = new DecimalFormat("###.##");
+		String str = sb.format(resDoble);
+		BigDecimal res = new BigDecimal(str);
+		return res;
+	}
+
+
+	/**
+	 * @Description: 计算两数相除
+	 * @param x
+	*@param y
+	 * @return java.lang.String
+	 * @author yoko
+	 * @date 2019/11/28 22:24
+	 */
+	public static BigDecimal getBigDecimalDivide(BigDecimal x, BigDecimal y){
+		BigDecimal resDoble;
+		resDoble = x.divide(y,  2, BigDecimal.ROUND_HALF_UP);
+//		DecimalFormat sb = new DecimalFormat("###.##");
+//		String str = sb.format(resDoble);
+//		BigDecimal res = new BigDecimal(str);
+		return resDoble;
+	}
+
+	public static void main(String [] args){
+		BigDecimal x = new BigDecimal(5.243);
+		BigDecimal y = new BigDecimal(2.244);
+		BigDecimal add = getBigDecimalAdd(x, y);// 相加
+		BigDecimal subtract = getBigDecimalSubtract(x, y);// 减
+		BigDecimal multiply = getMultiply(x, y);// 乘
+		BigDecimal divide = getBigDecimalDivide(x, y);// 除
+		System.out.println("add:" + add);
+		System.out.println("subtract:" + subtract);
+		System.out.println("multiply:" + multiply);
+		System.out.println("divide:" + divide);
+	}
+
 }
