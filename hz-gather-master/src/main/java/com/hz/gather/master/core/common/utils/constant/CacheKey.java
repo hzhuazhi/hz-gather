@@ -64,4 +64,10 @@ public interface CacheKey {
      * 登陆_sms
      */
     String SIGN_IN_SMS  = "signin-sms-";
+
+    /**
+     * task操作支付宝转账
+     * 如果多台服务器运行，会出现问题，所以在变量名称前加了lock
+     */
+    String LOCK_TRANSFER = "-9";
 }
