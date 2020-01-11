@@ -13,6 +13,10 @@ public class RequestAddZFBPay extends CommonModel {
      * 支付宝信息
      */
     private  String   zfbPayId;
+    /**
+     * 真实姓名
+     */
+    private  String   zfbName;
 
     public String getZfbPayId() {
         return zfbPayId;
@@ -20,5 +24,13 @@ public class RequestAddZFBPay extends CommonModel {
 
     public void setZfbPayId(String zfbPayId) {
         this.zfbPayId = zfbPayId;
+    }
+
+    public String getZfbName() {
+        return zfbName;
+    }
+
+    public void setZfbName(String zfbName) {
+        this.zfbName = zfbName;
     }
 }

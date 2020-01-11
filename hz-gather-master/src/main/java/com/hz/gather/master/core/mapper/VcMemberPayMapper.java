@@ -16,4 +16,6 @@ public interface VcMemberPayMapper <T> extends BaseDao<T>  {
 
     int updateByPrimaryKeySelective(VcMemberPay record);
 
+    List<VcMemberPay>  selectByMemberIdPayId(VcMemberPay record);
+
 }

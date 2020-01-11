@@ -23,13 +23,19 @@ public class VcMemberPay {
      * @mbggenerated
      */
     private String zfbPayid;
+    /**
+     * 支付宝Id
+     *
+     * @mbggenerated
+     */
+    private String zfbName;
 
     /**
      * 类型:  1、领取  2、体现
      *
      * @mbggenerated
      */
-    private Boolean rewardType;
+    private Integer rewardType;
 
     /**
      * 创建时间
@@ -50,7 +56,7 @@ public class VcMemberPay {
      *
      * @mbggenerated
      */
-    private Boolean isValid;
+    private Integer isValid;
 
     public Long getId() {
         return id;
@@ -76,14 +82,6 @@ public class VcMemberPay {
         this.zfbPayid = zfbPayid;
     }
 
-    public Boolean getRewardType() {
-        return rewardType;
-    }
-
-    public void setRewardType(Boolean rewardType) {
-        this.rewardType = rewardType;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -100,11 +98,23 @@ public class VcMemberPay {
         this.updateTime = updateTime;
     }
 
-    public Boolean getIsValid() {
+    public String getZfbName() {
+        return zfbName;
+    }
+
+    public void setZfbName(String zfbName) {
+        this.zfbName = zfbName;
+    }
+
+    public void setRewardType(Integer rewardType) {
+        this.rewardType = rewardType;
+    }
+
+    public Integer getIsValid() {
         return isValid;
     }
 
-    public void setIsValid(Boolean isValid) {
+    public void setIsValid(Integer isValid) {
         this.isValid = isValid;
     }
 }

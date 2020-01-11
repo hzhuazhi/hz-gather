@@ -24,13 +24,24 @@ public class UCashOutLog {
      * @mbggenerated
      */
     private String receivaPayId;
-
     /**
-     * 类型:  1、领取  2、体现
+     * 收款支付宝账户
      *
      * @mbggenerated
      */
-    private Boolean rewardType;
+    private String outTradeNo;
+    /**
+     * 支付宝姓名
+     *
+     * @mbggenerated
+     */
+    private String zfbName;
+    /**
+     * 提示文案
+     *
+     * @mbggenerated
+     */
+    private String remarks;
 
     /**
      * 金额
@@ -51,14 +62,14 @@ public class UCashOutLog {
      *
      * @mbggenerated
      */
-    private Boolean curhour;
+    private Integer curhour;
 
     /**
      * 创建所属分钟：60分钟制
      *
      * @mbggenerated
      */
-    private Boolean curminute;
+    private Integer curminute;
 
     /**
      * 创建时间
@@ -79,14 +90,27 @@ public class UCashOutLog {
      *
      * @mbggenerated
      */
-    private Boolean paymentType;
+    private Integer paymentType;
 
     /**
      * 是否有效; 1有效 2无效
      *
      * @mbggenerated
      */
-    private Boolean isValid;
+    private Integer isValid;
+
+    /**
+     * 运算次数
+     *
+     * @mbggenerated
+     */
+    private Integer runNum;
+    /**
+     * 运算状态
+     *
+     * @mbggenerated
+     */
+    private Integer runStatus;
 
     public Long getId() {
         return id;
@@ -112,14 +136,6 @@ public class UCashOutLog {
         this.receivaPayId = receivaPayId;
     }
 
-    public Boolean getRewardType() {
-        return rewardType;
-    }
-
-    public void setRewardType(Boolean rewardType) {
-        this.rewardType = rewardType;
-    }
-
     public BigDecimal getMoney() {
         return money;
     }
@@ -136,21 +152,6 @@ public class UCashOutLog {
         this.curday = curday;
     }
 
-    public Boolean getCurhour() {
-        return curhour;
-    }
-
-    public void setCurhour(Boolean curhour) {
-        this.curhour = curhour;
-    }
-
-    public Boolean getCurminute() {
-        return curminute;
-    }
-
-    public void setCurminute(Boolean curminute) {
-        this.curminute = curminute;
-    }
 
     public Date getCreateTime() {
         return createTime;
@@ -168,19 +169,75 @@ public class UCashOutLog {
         this.updateTime = updateTime;
     }
 
-    public Boolean getPaymentType() {
+    public Integer getCurhour() {
+        return curhour;
+    }
+
+    public void setCurhour(Integer curhour) {
+        this.curhour = curhour;
+    }
+
+    public Integer getCurminute() {
+        return curminute;
+    }
+
+    public void setCurminute(Integer curminute) {
+        this.curminute = curminute;
+    }
+
+    public Integer getPaymentType() {
         return paymentType;
     }
 
-    public void setPaymentType(Boolean paymentType) {
+    public void setPaymentType(Integer paymentType) {
         this.paymentType = paymentType;
     }
 
-    public Boolean getIsValid() {
+    public Integer getIsValid() {
         return isValid;
     }
 
-    public void setIsValid(Boolean isValid) {
+    public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+    }
+
+    public String getZfbName() {
+        return zfbName;
+    }
+
+    public void setZfbName(String zfbName) {
+        this.zfbName = zfbName;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Integer getRunNum() {
+        return runNum;
+    }
+
+    public void setRunNum(Integer runNum) {
+        this.runNum = runNum;
+    }
+
+    public Integer getRunStatus() {
+        return runStatus;
+    }
+
+    public void setRunStatus(Integer runStatus) {
+        this.runStatus = runStatus;
     }
 }

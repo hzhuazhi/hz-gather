@@ -11,6 +11,7 @@ import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
+import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
@@ -138,10 +139,9 @@ public class PayController {
         RequestAddZFBPay requestAddZFBPay = new RequestAddZFBPay();
         log.info("----------:addZFBPay 进来啦!");
         try{
-
             data        = StringUtil.decoderBase64(jsonData);
             requestAddZFBPay  = JSON.parseObject(data, RequestAddZFBPay.class);
-            boolean  flag  =   PublicMethod.isCommonModel(requestAddZFBPay);
+            boolean  flag  =   PublicMethod.isCheckPayAdd(requestAddZFBPay);
             if(flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -154,12 +154,67 @@ public class PayController {
             //该用户是否超出支付宝最大值
             flag = ComponentUtil.payService.isAddPayZFB(memberId);
             if(!flag){
-                throw  new ServiceException(ENUM_ERROR.A00017.geteCode(),ENUM_ERROR.A00017.geteDesc());
+                throw  new ServiceException(ENUM_ERROR.P00001.geteCode(),ENUM_ERROR.P00001.geteDesc());
             }
-            Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId());
+            Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId(),requestAddZFBPay.getZfbName());
 
             ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
             data = PublicMethod.toJson(responeseAddZFBPay);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(encryptionData);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+    @PostMapping("/payCashOut")
+    public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        String data = "";
+        RequestPayCashOut requestPayCashOut = new RequestPayCashOut();
+        log.info("----------:payCashOut 进来啦!");
+        try{
+            data        = StringUtil.decoderBase64(jsonData);
+            requestPayCashOut  = JSON.parseObject(data, RequestPayCashOut.class);
+            boolean  flag  =  PublicMethod.isCheckCashOut(requestPayCashOut);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+            flag = PublicMethod.cheakMoney(requestPayCashOut.getMoney());
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.P00005.geteCode(),ENUM_ERROR.P00005.geteDesc());
+            }
+
+            Integer   memberId = PublicMethod.tokenGetMemberId(requestPayCashOut.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            //该用户是否超出支付宝最大值
+            flag = ComponentUtil.payService.isAddPayZFB(memberId);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.P00001.geteCode(),ENUM_ERROR.P00001.geteDesc());
+            }
+
+            List<VcMemberPay>  list =ComponentUtil.payService.checkMemberIdToAliPayId(memberId,requestPayCashOut.getAlPayId());
+            if(list.size()==0){
+                throw  new ServiceException(ENUM_ERROR.P00002.geteCode(),ENUM_ERROR.P00002.geteDesc());
+            }
+
+            ComponentUtil.payService.addUCashOutLog(memberId,list.get(0).getZfbPayid(),list.get(0).getZfbName(),sgid,requestPayCashOut.getMoney());
+
+
+//            Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId());
+
+//            ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
+//            data = PublicMethod.toJson(responeseAddZFBPay);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

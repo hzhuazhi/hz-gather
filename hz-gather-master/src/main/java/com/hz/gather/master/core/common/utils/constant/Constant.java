@@ -38,7 +38,19 @@ public class Constant {
     /*************** 支付宝最大数量****************/
     public  static  int   PAY_MAX_NUMBER  =  3 ;
 
+    /*************** 支付宝最大金额****************/
+    public  static  Double   PAY_MAX_MOMNEY  =  500D ;
+    /*************** 支付宝最小金额****************/
+    public  static  Double   PAY_MIN_MOMNEY  =  1D ;
 
+    /*************** 支付宝手续费****************/
+    public  static  Double   SERVICE_MOMNEY  =  0.01;
+
+    /*************** 提示文案****************/
+    public  static  String   PAY_REMARKS  =  "《500理财》提现到账通知";
+
+    /*************** 奖励裂变层级数****************/
+    public  static  Integer   REWARD_FISSION_COUNT  =  9;
 
 
 }

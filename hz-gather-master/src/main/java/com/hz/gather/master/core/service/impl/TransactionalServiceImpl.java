@@ -2,8 +2,12 @@ package com.hz.gather.master.core.service.impl;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
+import com.hz.gather.master.core.mapper.UCashOutLogMapper;
+import com.hz.gather.master.core.mapper.UCashOutProcedLogMapper;
 import com.hz.gather.master.core.mapper.VcMemberMapper;
 import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
+import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.service.TransactionalService;
@@ -26,6 +30,10 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
 
     @Autowired
     private VcMemberResourceMapper vcMemberResourceMapper;
+    @Autowired
+    private UCashOutProcedLogMapper uCashOutProcedLogMapper;
+    @Autowired
+    private UCashOutLogMapper uCashOutLogMapper;
 
     @Override
     public BaseDao<T> getDao() {
@@ -37,5 +45,14 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         vcMemberMapper.insertSelective(vcMember);
         vcMemberResourceMapper.insertSelective(vcMemberResource);
         vcMemberResourceMapper.updateUpPeople(uqVcMemberResource);
+    }
+
+    @Override
+    public void addCashOut(UCashOutLog uCashOutLog, UCashOutProcedLog uCashOutProcedLog, VcMemberResource uqVcMemberResource) {
+        if(uCashOutProcedLog!=null){
+            uCashOutProcedLogMapper.insertSelective(uCashOutProcedLog);
+        }
+        uCashOutLogMapper.insertSelective(uCashOutLog);
+        vcMemberResourceMapper.updateByPrimaryKeySelective(uqVcMemberResource);
     }
 }

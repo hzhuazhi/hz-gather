@@ -9,11 +9,11 @@
     select 
     <include refid="Base_Column_List" />
     from vc_member_resource
-    where id = #{id,jdbcType=BIGINT}
+    where member_id = #{memberId}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from vc_member_resource
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </delete>
   <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     insert into vc_member_resource
@@ -63,43 +63,43 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id},
       </if>
       <if test="memberId != null" >
-        #{memberId,jdbcType=DECIMAL},
+        #{memberId},
       </if>
       <if test="totalMoney != null" >
-        #{totalMoney,jdbcType=DECIMAL},
+        #{totalMoney},
       </if>
       <if test="alreadyMoney != null" >
-        #{alreadyMoney,jdbcType=DECIMAL},
+        #{alreadyMoney},
       </if>
       <if test="surplusMoney != null" >
-        #{surplusMoney,jdbcType=DECIMAL},
+        #{surplusMoney},
       </if>
       <if test="cashMoney != null" >
-        #{cashMoney,jdbcType=DECIMAL},
+        #{cashMoney},
       </if>
       <if test="pushPeople != null" >
-        #{pushPeople,jdbcType=INTEGER},
+        #{pushPeople},
       </if>
       <if test="teamActive != null" >
-        #{teamActive,jdbcType=INTEGER},
+        #{teamActiveR},
       </if>
       <if test="pushPeopleAll != null" >
-        #{pushPeopleAll,jdbcType=INTEGER},
+        #{pushPeopleAll},
       </if>
       <if test="teamActiveAll != null" >
-        #{teamActiveAll,jdbcType=INTEGER},
+        #{teamActiveAll},
       </if>
       <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
+        #{createTime},
       </if>
       <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
+        #{updateTime},
       </if>
       <if test="isValid != null" >
-        #{isValid,jdbcType=BIT},
+        #{isValid},
       </if>
       <if test="pushMoney != null" >
         #{pushMoney},
@@ -109,41 +109,38 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     update vc_member_resource
     <set >
-      <if test="memberId != null" >
-        member_id = #{memberId,jdbcType=DECIMAL},
-      </if>
       <if test="totalMoney != null" >
-        total_money = #{totalMoney,jdbcType=DECIMAL},
+        total_money = #{totalMoney},
       </if>
       <if test="alreadyMoney != null" >
-        already_money = #{alreadyMoney,jdbcType=DECIMAL},
+        already_money = #{alreadyMoney},
       </if>
       <if test="surplusMoney != null" >
-        surplus_money = #{surplusMoney,jdbcType=DECIMAL},
+        surplus_money = #{surplusMoney},
       </if>
       <if test="cashMoney != null" >
-        cash_money = #{cashMoney,jdbcType=DECIMAL},
+        cash_money = #{cashMoney},
       </if>
       <if test="pushPeople != null" >
-        push_people = #{pushPeople,jdbcType=INTEGER},
+        push_people = #{pushPeople},
       </if>
       <if test="teamActive != null" >
-        team_active = #{teamActive,jdbcType=INTEGER},
+        team_active = #{teamActive},
       </if>
       <if test="pushPeopleAll != null" >
-        push_people_all = #{pushPeopleAll,jdbcType=INTEGER},
+        push_people_all = #{pushPeopleAll},
       </if>
       <if test="teamActiveAll != null" >
-        team_active_all = #{teamActiveAll,jdbcType=INTEGER},
+        team_active_all = #{teamActiveAll},
       </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime},
       </if>
       <if test="isValid != null" >
-        is_valid = #{isValid,jdbcType=BIT},
+        is_valid = #{isValid},
       </if>
       <if test="pushMoney != null" >
         push_money = #{pushMoney},
@@ -152,7 +149,7 @@
         fission_money = #{fissionMoney},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where member_id = #{memberId}
   </update>
 
   <update id="updateUpPeople" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >

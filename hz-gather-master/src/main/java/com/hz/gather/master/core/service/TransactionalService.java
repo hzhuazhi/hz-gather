@@ -1,6 +1,8 @@
 package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
+import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 
@@ -18,4 +20,6 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param uqVcMemberResource   上级需要修改的
      */
     void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource);
+
+    void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
 }

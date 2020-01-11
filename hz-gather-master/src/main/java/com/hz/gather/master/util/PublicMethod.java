@@ -11,6 +11,7 @@ import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.model.user.FriendModel;
 import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
+import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
 import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
@@ -24,6 +25,7 @@ import com.hz.gather.master.core.protocol.response.user.ResponseUser;
 import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
 import org.apache.commons.lang.StringUtils;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,6 +127,8 @@ public class PublicMethod {
         memberModel.setLoginTime(loginTime);
         memberModel.setSuperiorId(superiorId);
         memberModel.setPassword(loginModel.getPassWrod());
+        String    benefitMemberId   =  PublicMethod.getBenefitMemberId(extensionMemberId,Constant.REWARD_FISSION_COUNT);
+        memberModel.setBenefitMemberId(benefitMemberId);
         memberModel.setExtensionMemberId(extensionMemberId+","+memberId);
         return   memberModel;
     }
@@ -651,12 +655,13 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/9 22:57
      */
-    public static VcMemberPay toVcMemberPay(Integer  memberId,String payId){
+    public static VcMemberPay toVcMemberPay(Integer  memberId,String payId,String payName){
         VcMemberPay  vcMemberPay = new VcMemberPay();
         DateModel dateModel= PublicMethod.getDate();
         BeanUtils.copy(dateModel,vcMemberPay);
         vcMemberPay.setMemberId(memberId);
         vcMemberPay.setZfbPayid(payId);
+        vcMemberPay.setZfbName(payName);
         return vcMemberPay;
     }
 
@@ -705,9 +710,186 @@ public class PublicMethod {
         return responeseHavaPayInfo;
     }
 
+    /**
+     * @Description: check 是否成功
+     * @param requestPayCashOut
+     * @return java.lang.Integer
+     * @author long
+     * @date 2020/1/10 11:11
+     */
+    public static boolean isCheckCashOut(RequestPayCashOut requestPayCashOut){
+        boolean  flag = false ;
+        if(StringUtils.isBlank(requestPayCashOut.getToken())){
+            return  flag;
+        }
+        if(requestPayCashOut.getMoney()>0){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestPayCashOut.getAlPayId())){
+            return  flag;
+        }
+        return true;
+    }
 
 
 
+    public static boolean isCheckPayAdd(RequestAddZFBPay requestAddZFBPay){
+        boolean  flag = false ;
+        if(StringUtils.isBlank(requestAddZFBPay.getToken())){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestAddZFBPay.getZfbPayId())){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestAddZFBPay.getZfbName())){
+            return  flag;
+        }
+        return true;
+    }
+
+    /**
+     * @Description: 设置查询用户支付信息条件
+     * @param memberId
+     * @return com.hz.gather.master.core.model.entity.VcMemberPay
+     * @author long
+     * @date 2020/1/9 21:32
+     */
+    public static VcMemberPay queryVcMemberPay(Integer  memberId,String alipay){
+        VcMemberPay  vcMemberPay = new VcMemberPay();
+        vcMemberPay.setMemberId(memberId);
+        vcMemberPay.setZfbPayid(alipay);
+        return vcMemberPay;
+    }
+
+
+    /**
+     * @Description: 用户提现表信息
+     * @param memberId
+    * @param aliPayNo
+    * @param outTradeNo
+    * @param money
+     * @return com.hz.gather.master.core.model.entity.UCashOutLog
+     * @author long
+     * @date 2020/1/10 14:39
+     */
+    public static  UCashOutLog   toUCashOutLog(Integer  memberId,String aliPayNo,String aliName,String outTradeNo,Double money){
+        UCashOutLog  uCashOutLog  = new  UCashOutLog();
+        DateModel dateModel= PublicMethod.getDate();
+        BeanUtils.copy(dateModel,uCashOutLog);
+        uCashOutLog.setMemberId(memberId);
+        uCashOutLog.setZfbName(aliName);
+        uCashOutLog.setRemarks(Constant.PAY_REMARKS);
+        uCashOutLog.setReceivaPayId(aliPayNo);
+        uCashOutLog.setOutTradeNo(outTradeNo);
+        uCashOutLog.setMoney(new BigDecimal(Double.toString(money)));
+        return uCashOutLog;
+    }
+
+
+    /**
+     * @Description: 用户提现表信息
+     * @param memberId
+    * @param aliPayNo
+    * @param outTradeNo
+    * @param money
+     * @return com.hz.gather.master.core.model.entity.UCashOutLog
+     * @author long
+     * @date 2020/1/10 14:39
+     */
+    public static  UCashOutProcedLog   toUCashOutProcedLog(Integer  memberId,String aliPayNo,String outTradeNo,Double money){
+        UCashOutProcedLog  uCashOutProcedLog  = new  UCashOutProcedLog();
+        DateModel dateModel= PublicMethod.getDate();
+        BeanUtils.copy(dateModel,uCashOutProcedLog);
+        uCashOutProcedLog.setMemberId(memberId);
+        uCashOutProcedLog.setReceivaPayId(aliPayNo);
+        uCashOutProcedLog.setOutTradeNo(outTradeNo);
+        uCashOutProcedLog.setProcedMoney(new BigDecimal(Double.toString(money)));
+        return uCashOutProcedLog;
+    }
+
+    /**
+     * @Description: 提现金额是否正常访问
+     * @param money
+     * @return boolean
+     * @author long
+     * @date 2020/1/10 16:26
+     */
+    public static  boolean cheakMoney(Double money){
+        boolean  flag   = false;
+        if(Constant.PAY_MIN_MOMNEY<=money&& money<=Constant.PAY_MAX_MOMNEY){
+            flag=  true;
+        }
+        return flag;
+    }
+
+
+    /**
+     * @Description: TODO
+     * @param money
+    * @param vcMemberResource
+     * @return com.hz.gather.master.core.model.entity.VcMemberResource
+     * @author long
+     * @date 2020/1/10 17:37
+     */
+    public   static   VcMemberResource  updateVcMemberResource(double  money,VcMemberResource  vcMemberResource){
+        VcMemberResource   vcMemberResource1 =  new  VcMemberResource();
+
+        BigDecimal   moneyDec  =  new BigDecimal(Double.valueOf(money));
+        BigDecimal   surplusMoney     =  null;//剩余金额 减去
+        BigDecimal   cashMoney     =  null; //已兑现金额 增加
+
+        surplusMoney = StringUtil.getBigDecimalSubtract(vcMemberResource.getSurplusMoney(),moneyDec);
+        cashMoney  =StringUtil.getBigDecimalAdd(vcMemberResource.getCashMoney(),moneyDec);
+        vcMemberResource1.setMemberId(vcMemberResource.getMemberId());
+        vcMemberResource1.setSurplusMoney(surplusMoney);
+        vcMemberResource1.setCashMoney(cashMoney);
+        vcMemberResource1.setUpdateTime(new Date());
+
+        return  vcMemberResource;
+    }
+
+    /**
+     * @Description: 能领取裂变奖励id 计算方式
+     * @param benefitMemberId  层级关系
+     * @param fissionCount  裂变有效数
+     * @return java.lang.String
+     * @author long
+     * @date 2020/1/11 13:40
+     */
+    public   static   String   getBenefitMemberId(String  benefitMemberId,Integer fissionCount){
+        String   rsStr ="";
+        String   []  str =  benefitMemberId.split(",");
+        if(str.length<fissionCount){
+            rsStr = benefitMemberId;
+        }else{
+            for(int  i=1;i<str.length+1;i++){
+                if(i>fissionCount){
+                    break;
+                }
+                if(i==1){
+                    rsStr=str[str.length-i];
+                }else{
+                    rsStr=rsStr+","+str[str.length-i];
+                }
+            }
+            String  []  orderStr =rsStr.split(",");
+            rsStr="";
+            for(int i=1;i<orderStr.length+1;i++){
+                if(i==1){
+                    rsStr=orderStr[orderStr.length-i];
+                }else{
+                    rsStr=rsStr+","+orderStr[orderStr.length-i];
+                }
+            }
+        }
+        return rsStr;
+    }
+
+
+    public  static  void   main(String [] args){
+        String   dd ="3,4,5,6,7,8,9,10,11,1,2";
+        System.out.println(PublicMethod.getBenefitMemberId(dd,9));
+    }
 
 
 

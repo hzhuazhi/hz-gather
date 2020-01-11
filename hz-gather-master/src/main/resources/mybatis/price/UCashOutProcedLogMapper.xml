@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hz.gather.master.core.mapper.UCashOutLogMapper" >
+<mapper namespace="com.hz.gather.master.core.mapper.UCashOutProcedLogMapper" >
   <sql id="Base_Column_List" >
-    id, member_id, receiva_pay_id, reward_type, money, curday, curhour, curminute, create_time, 
-    update_time, payment_type, is_valid,zfb_name,remarks,run_status,run_num
+    id, member_id, out_trade_no, receiva_pay_id, proced_money, curday, curhour, curminute, 
+    create_time, update_time, is_valid
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutLog" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutProcedLog" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from u_cash_out_log
+    from u_cash_out_proced_log
     where id = #{id}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from u_cash_out_log
-    where id = #{id}
+    delete from u_cash_out_proced_log
+    where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutLog" >
-    insert into u_cash_out_log
+
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutProcedLog" >
+    insert into u_cash_out_proced_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -24,14 +25,14 @@
       <if test="memberId != null" >
         member_id,
       </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
       <if test="receivaPayId != null" >
         receiva_pay_id,
       </if>
-      <if test="rewardType != null" >
-        reward_type,
-      </if>
-      <if test="money != null" >
-        money,
+      <if test="procedMoney != null" >
+        proced_money,
       </if>
       <if test="curday != null" >
         curday,
@@ -48,17 +49,8 @@
       <if test="updateTime != null" >
         update_time,
       </if>
-      <if test="paymentType != null" >
-        payment_type,
-      </if>
       <if test="isValid != null" >
         is_valid,
-      </if>
-      <if test="zfbName != null" >
-        zfbName,
-      </if>
-      <if test="remarks != null" >
-        remarks,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -68,11 +60,14 @@
       <if test="memberId != null" >
         #{memberId},
       </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo},
+      </if>
       <if test="receivaPayId != null" >
         #{receivaPayId},
       </if>
-      <if test="money != null" >
-        #{money},
+      <if test="procedMoney != null" >
+        #{procedMoney},
       </if>
       <if test="curday != null" >
         #{curday},
@@ -89,31 +84,25 @@
       <if test="updateTime != null" >
         #{updateTime},
       </if>
-      <if test="paymentType != null" >
-        #{paymentType},
-      </if>
       <if test="isValid != null" >
         #{isValid},
       </if>
-      <if test="zfb_name != null" >
-        #{zfbName},
-      </if>
-      <if test="remarks != null" >
-        #{remarks},
-      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutLog" >
-    update u_cash_out_log
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutProcedLog" >
+    update u_cash_out_proced_log
     <set >
       <if test="memberId != null" >
         member_id = #{memberId},
       </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo},
+      </if>
       <if test="receivaPayId != null" >
         receiva_pay_id = #{receivaPayId},
       </if>
-      <if test="money != null" >
-        money = #{money},
+      <if test="procedMoney != null" >
+        proced_money = #{procedMoney},
       </if>
       <if test="curday != null" >
         curday = #{curday},
@@ -130,19 +119,11 @@
       <if test="updateTime != null" >
         update_time = #{updateTime},
       </if>
-      <if test="paymentType != null" >
-        payment_type = #{paymentType},
-      </if>
       <if test="isValid != null" >
         is_valid = #{isValid},
-      </if>
-      <if test="zfbName != null" >
-        zfb_name = #{zfbName},
-      </if>
-      <if test="remarks != null" >
-        remarks = #{remarks},
       </if>
     </set>
     where id = #{id}
   </update>
+
 </mapper>
