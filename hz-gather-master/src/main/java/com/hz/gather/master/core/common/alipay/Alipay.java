@@ -2,11 +2,16 @@ package com.hz.gather.master.core.common.alipay;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
+import com.alipay.api.CertAlipayRequest;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
+import com.alipay.api.request.AlipayFundTransUniTransferRequest;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.response.AlipayFundTransUniTransferResponse;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
+import com.hz.gather.master.core.common.utils.constant.LoadConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
+import com.hz.gather.master.util.ComponentUtil;
 
 /**
  * @Description 阿里支付的公共方法（支付宝）
@@ -18,6 +23,9 @@ public class Alipay {
 
     public static String APP_PRIVATE_KEY = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCQz9TKf+gTF6OZqxDpZ8wBp7k2ablZxdzJi5NGON9LK6H9nIkWpgnJLB8Lm2Gde3ZIZ9X6n34GKDGg2Dpe9b0q7BQt13sJ/yEE8H+W9H4Q/hjzvQs6UYuHAcK+d2tno4MM6KIT2X6zhbOj6kGkThuf7U0D+Eg29ydUyuWNfE0SkdkNxvAeQwe1S+1a/Fyy0EtvCYZpp+RrUFI5vgpqoCkAqDRUODJ4T4ceHbfnliE5TRoGPVI/CUc9Ni1rNptNk6ussdC4zcoTjHqJpcUwE2q62KiZm88FmBQo/R1pRfJFvjWqvWt6+gzTtIjetkY2cj+AqisKPKKxYvLsWuCBz+/tAgMBAAECggEATe05QjtwZI3NAQ2YTTIJCz75oTllf9TFCkQs3ZYPO0Fgq7xH3UM+ct5mWnWkIv3kWfRepr6bL68Dfd2+E4nD4UwnU7/oOynq1+CfmFk7WeOTA97QIvLs1Zrx9FMJHj1UcWbiiTH6R5sEX4nZBxTtMrOdRSyfl8yKgsuomemxA/Nc2LJxETSeotmaBh3YBV12Ix6VVka1rWNL5tjufa/9FQ5f4z4W51QHo5SYSxQp2PTximKczOgjtIzRNGn+bi7cC8ecomCUP8q2b7zMcwcuRBKt2Mutcg2k0lvigg1k1KBzjzfmbog5KV+2lwCwlTllOceMOnDAVWYCS3L2FYTW1QKBgQDe8f9S2Hkm/aWbqVCbKo0NODtUr5ZUCNVbDlYtQwHWzS42ckomrC18OV5UiE16rOKhn7ItiDjWjarKJX4/fNnw5i6Fi/ebHfHuB7cZ+qs3mfxSelv+dKh/gGNLITcyfm04vVQ4A3Gr4bwkS7DHobJSZPzvrP89rwGOK8W+1uIqzwKBgQCmSD0M+4g+bwtZfCFR/2KZDh0wjUm9tWgEhIRuuG//FDdiZkKNom5XWONzjCP6pjzDvQhHRvvfgKQQBoXLUXPysYXHy9O31oV1xtFR1La5d5kKJZjWE98W4Ez1MKX5kQ3QDEXCIWLwgBYNlAzZyjY09nn2T277WPZViMYwzI14gwKBgQDeCJrk8ixudYyaY1ygvBbwBIGqTJjlpkp+Pd/7gdFyELQmi1pn+2/tWOEmRP0M4ONwXbBBAnrAyyQ94GtEZV5UOZo5bHUzafZIvixP1kLwxA30QmIeICaznLTG3RSw2BKEwKIAiwWJTe5nI26y0snanzL8rAkjcIiXA+cTscRbJwKBgQCG+Qo9WIs+CosO5vhxA7k3/cHp4DXkPLUjPaH18dZPGkzenZ0WNKwWULvH1hB6a6fVRsLKgK8Au/3wWCsQX5ybekfaZvQDPKl2cZ0FLIHpyE+8cco+s0CZ5BXzzLpc+sZYgy24p7sU9xNvkCZiPoaDtTJIoi+27H5/7Zbak5+eGwKBgQCfvBLhUTC2PxJbCenxc0BBsTj27GI4dW/tzDXqS18yEJuozhuhGrbv1O8YRaKBp1AIgUwFbY4jjmmhswbfTqQZ204cQPK1YpdT3PrvvysJGiDe8T/a4xyaU+kwew8ZYMyyfwhra8c/bs2JdoCes3AYLZNGF6y6EfdeFyG4C8up+A==";
     public static String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlSOnfZNaMb/hbw7Gy1xZSDFw9nIWlgr90V0ttmEZ2EYsEyNljqcgItj3kAD30SlA2Ce9kkPO5Dhbm+MKXarVtTsCFq1g2WrngHmS6oF5xbIsI+nCPQygp36ATrj1MOjMkr4OvE6bdDLVkcV5GTMGSlIk5pXbjb0+W2IreWj9ZtotJvCToraJIw2pjmoDXkKq8IajevOBFiZSUY1WOIp2PWJ06Rhp5akr+2ItKWxgB65yLZoXT7pzd7CScVi+ONyh3VJp85Kp23qpGIz7gDQG9hBkiCV7le/dNcVTfVWdXtqH7Zs4X3d+36iDKU7C91yq11ptnAamGFeNjbaj+xpkVwIDAQAB";
+
+
+    public static String privateKey = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDbx1v3H8wJmmZ/08HLiYo1nByvgys3UnRu+PjmtvEM11o9E/t6Y40AQwhIhAXbbAAxYjrhoixDYJ9eZ8hC59eJsoIINwLwCO+vwen956XQdAaVPLgwR0mUXABXKcHuN17QFBJNXt+Cux7Oq/OzJJud0wVuaXt1oZ6Gx3/+iqITqHgfZBUgl1gnTbnxJ6P3zMqb/2SNG6arGkZGdkveGLzSa6S2qLIn42nI8n1GxrEOhLZJ5XWFbNWtE2ksRjir/I6LXGQS7v0RiXHqrEa8DWm0q/pXytWJZ6iKhBQ5VitLmLTn9PVgf7CRd0uX0ptWnWlI+V9T19uH/8A9yAgTvHBRAgMBAAECggEBALcU0dWBVXVCe9RMUIn/X3TdQUAsIpoJRBkVqjJ3f0JVO0TaGomP2Gu5a3MNF9v7kgWRcL95WyodmWUJS1gAzhpU6+FwAjB3IUPmY8gxan3FyZ4UYNNG71J5eYcir/yDf6YSslRljgfXXQiJUY+QFVpZ6ZJaqJALPIXGNyeR0QZRq90QHczyjzVInVvOgy954BfUJoaHCcqSSNZMa+bWPkB7GKxXC2BwJC1IysOrT+tn5pEX3W/b2/sirH2/MNWIsV7hOR99JgrYsQiYkQ4Iq26CnDMNePm4sDF0s9sh/4gnOolFcZUTc/GY5rU08M+V2dGsB1b6PlY12FNR1McEg2kCgYEA7mUNVxhaqiElkhMwyrjgu8PQ/NLlRj3KuQjrDF0Pwetp3mKQep0CNKpUBzkfa+AdXCY07Ol6Y0hNGX+9J40f2BHp/JtMFJTt2k0qxfTabMBNSnPOyCzbdVYW6Vlw1qsaLgq600aeu3UNz4uK7JHhY53mjpSY/vCyu77jVEkYJnsCgYEA7AJdSzCNgFybZyP+JlEe1ZAlL0RINnX52JVFsCjvONyNnAQi6Nn4J0LaLpts05QL+rEMBqoaLJYN/dFplyu9pcYL1V5XfWocPDetjf1GnpMzblGllX3aBY9RISjQHRtH8RcNzEJGk38bA8VAEUHUKivBD1LovmjSL+vUyW7I0KMCgYEA03kg1FnuU20D/wi3B53o/ac/BIewixbVdj7LAzSqfcNvLq8QqzQMeNt/nsi1buRoJw5ddKvIvbmtayk9ipBN50Y84rCAVOGn/Tbm8qO5/y63YYxJqpjgNL4hpO6KgmNV3fH2uOS0emXj0nBe1Gy0G8I+e8yly8GJS7KRxnrwyXECgYBq4tM/x1h+hvJ2rs1eqySM0kCU/Ja724hw94HdO1zEYtbbjuAElxsVJOjNbOTHmegm/GIW7pj2Emt5xYrNxSiZ2GzpkFWNXi41c33trYR7Mu17DA0y/BFurS6wFtzSIdXeMXO1S1rNWCZy+bV/W1HsW26PMxxnh++RdnwjUkIugwKBgQDSehj0piK4TgMibFs1DYMJIFse+rm8CPXgOt12bSW3MjjjQg7J4M2EHrqfUP7UQPfdeThyEYqlGGKd2CcFy0BeQi+OPAyVw0E6mQVcXzzLDWE1KBQdjv/NP4MMxV3rBN4Oy4z6j8Zk14O6sL6gsE9CrweDxTsAiaeU/Cjyzk3CIQ==";
 
     /**
      * @Description: 组装阿里支付的订单号
@@ -65,6 +73,60 @@ public class Alipay {
         }
         return resultData;
     }
+    
+    
+    /**
+     * @Description: 支付宝单笔转账到账户
+     * @param data - 要转账（提现）的数据
+     * @return 
+     * @author yoko
+     * @date 2020/1/10 21:01 
+    */
+    public static boolean transferAlipay(String data){
+        try{
+            CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
+            certAlipayRequest.setServerUrl("https://openapi.alipay.com/gateway.do");
+            certAlipayRequest.setAppId("2017072507891356");
+            certAlipayRequest.setPrivateKey(privateKey);
+            certAlipayRequest.setFormat("json");
+            certAlipayRequest.setCharset("UTF-8");
+            certAlipayRequest.setSignType("RSA2");
+            certAlipayRequest.setCertPath(ComponentUtil.loadConstant.certPath);
+            certAlipayRequest.setAlipayPublicCertPath(ComponentUtil.loadConstant.alipayPublicCertPath);
+            certAlipayRequest.setRootCertPath(ComponentUtil.loadConstant.rootCertPath);
+            DefaultAlipayClient alipayClient = new DefaultAlipayClient(certAlipayRequest);
+
+            AlipayFundTransUniTransferRequest request = new AlipayFundTransUniTransferRequest();
+            request.setBizContent(data);
+//            request.setBizContent("{" +
+//                    "\"out_biz_no\":\"df-alipay-test-1\"," +
+//                    "\"trans_amount\":1.00," +
+//                    "\"product_code\":\"TRANS_ACCOUNT_NO_PWD\"," +
+//                    "\"biz_scene\":\"DIRECT_TRANSFER\"," +
+//                    "\"order_title\":\"段峰-测试-提现-1\"," +
+//                    "\"payee_info\":{" +
+//                    "\"identity\":\"duanfeng_1712@qq.com\"," +
+//                    "\"identity_type\":\"ALIPAY_LOGON_ID\"," +
+//                    "\"name\":\"段峰\"," +
+//                    "    }," +
+//                    "\"remark\":\"测试金额-哈哈\"," +
+//                    "\"business_params\":\"\"," +
+////                    "\"business_params\":\"{\\\"payer_show_name\\\":\\\"服务代理\\\"}\"," +
+//                    "  }");
+            AlipayFundTransUniTransferResponse response = alipayClient.certificateExecute(request);
+            if(response.isSuccess()){
+                System.out.println("调用成功");
+                return true;
+            } else {
+                System.out.println("调用失败");
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public static void main(String [] args){
         createAlipaySend(new AlipayModel(), null);

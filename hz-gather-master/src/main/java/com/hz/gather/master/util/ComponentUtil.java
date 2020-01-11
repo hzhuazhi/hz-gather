@@ -3,6 +3,7 @@ package com.hz.gather.master.util;
 
 import com.hz.gather.master.core.common.redis.RedisIdService;
 import com.hz.gather.master.core.common.redis.RedisService;
+import com.hz.gather.master.core.common.utils.constant.LoadConstant;
 import com.hz.gather.master.core.service.*;
 
 /**
@@ -11,7 +12,7 @@ import com.hz.gather.master.core.service.*;
 public class ComponentUtil {
     public static RedisIdService redisIdService;
     public static RedisService redisService;
-
+    public static LoadConstant loadConstant;
 //    public static VirtualCoinPriceService virtualCoinPriceService;
     public static LoginService loginService;
     public static GenerateService generateService;

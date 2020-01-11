@@ -1,7 +1,10 @@
 package com.hz.gather.master.core.runner;
 
+import com.alipay.api.CertAlipayRequest;
+import com.alipay.api.DefaultAlipayClient;
 import com.hz.gather.master.core.common.redis.RedisIdService;
 import com.hz.gather.master.core.common.redis.RedisService;
+import com.hz.gather.master.core.common.utils.constant.LoadConstant;
 import com.hz.gather.master.core.service.*;
 import com.hz.gather.master.util.ComponentUtil;
 import org.slf4j.Logger;
@@ -12,6 +15,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 
 @Component
@@ -31,6 +36,9 @@ public class AutowireRunner implements ApplicationRunner {
     private RedisIdService redisIdService;
     @Autowired
     private RedisService redisService;
+
+    @Resource
+    private LoadConstant loadConstant;
 //    @Autowired
 //    private VirtualCoinPriceService virtualCoinPriceService;
 
@@ -73,6 +81,7 @@ public class AutowireRunner implements ApplicationRunner {
         log.info("AutowireRunner ...");
         ComponentUtil.redisIdService = redisIdService;
         ComponentUtil.redisService = redisService;
+        ComponentUtil.loadConstant = loadConstant;
 //        ComponentUtil.virtualCoinPriceService = virtualCoinPriceService;
         ComponentUtil.loginService = loginService;
         ComponentUtil.generateService = generateService;
@@ -104,11 +113,7 @@ public class AutowireRunner implements ApplicationRunner {
         public void run() {
             log.info("启动啦............");
         }
-
-
     }
-
-
 
 
 
