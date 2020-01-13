@@ -135,4 +135,19 @@ public class TaskMethod {
         }
         return resBean;
     }
+
+    /**
+     * @Description: 组装查询支付宝订单同步的数据的查询条件
+     * @param limitNum
+     * @return StatusModel
+     * @author yoko
+     * @date 2019/12/6 22:48
+     */
+    public static StatusModel assembleTaskAlipayNotifyStatusQuery(int limitNum){
+        StatusModel resBean = new StatusModel();
+        resBean.setRunStatus(ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
+        resBean.setRunNum(ServerConstant.PUBLIC_CONSTANT.RUN_NUM_FIVE);
+        resBean.setLimitNum(limitNum);
+        return resBean;
+    }
 }

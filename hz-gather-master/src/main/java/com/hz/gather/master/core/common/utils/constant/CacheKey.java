@@ -70,4 +70,9 @@ public interface CacheKey {
      * 如果多台服务器运行，会出现问题，所以在变量名称前加了lock
      */
     String LOCK_TRANSFER = "-9";
+
+    /**
+     * task跑阿里支付宝订单同步数据时：锁住这条任务
+     */
+    String LOCK_TASK_ALIPAY_NOTIFY = "-10";
 }

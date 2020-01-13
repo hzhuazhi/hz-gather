@@ -4,6 +4,7 @@ import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.mapper.TaskMapper;
 import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.task.TaskAlipayNotifyModel;
 import com.hz.gather.master.core.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,15 @@ public class TaskServiceImpl<T> extends BaseServiceImpl<T> implements TaskServic
     @Override
     public long addTransData(Object obj) {
         return taskMapper.addTransData(obj);
+    }
+
+    @Override
+    public List<TaskAlipayNotifyModel> getTaskAlipayNotify(Object obj) {
+        return taskMapper.getTaskAlipayNotify(obj);
+    }
+
+    @Override
+    public int updateTaskAlipayNotifyStatus(Object obj) {
+        return taskMapper.updateTaskAlipayNotifyStatus(obj);
     }
 }
