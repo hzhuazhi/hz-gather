@@ -33,6 +33,10 @@ public class AlipayTransferModel {
      */
     public String order_title;
 
+    public AlipayTransferModel(){
+
+    }
+
     public String getOut_biz_no() {
         return out_biz_no;
     }

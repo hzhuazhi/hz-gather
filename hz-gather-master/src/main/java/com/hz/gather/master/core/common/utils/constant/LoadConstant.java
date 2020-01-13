@@ -21,12 +21,13 @@ public class LoadConstant {
     /**
      * 支付宝公钥证书文件路径
      */
-    @Value("alipay.public.cert.path")
+
+    @Value("${alipay.public.cert.path}")
     public String alipayPublicCertPath;
 
     /**
      * 支付宝CA根证书文件路径
      */
-    @Value("alipay.root.cert.path")
+    @Value("${alipay.root.cert.path}")
     public String rootCertPath;
 }

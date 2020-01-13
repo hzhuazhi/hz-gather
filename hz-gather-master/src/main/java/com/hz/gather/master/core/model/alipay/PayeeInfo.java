@@ -21,6 +21,9 @@ public class PayeeInfo {
      */
     public String name;
 
+    public PayeeInfo(){
+
+    }
 
     public String getIdentity() {
         return identity;

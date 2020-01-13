@@ -82,7 +82,7 @@ public class Alipay {
      * @author yoko
      * @date 2020/1/10 21:01 
     */
-    public static boolean transferAlipay(String data){
+    public static AlipayFundTransUniTransferResponse transferAlipay(String data){
         try{
             CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
             certAlipayRequest.setServerUrl("https://openapi.alipay.com/gateway.do");
@@ -114,17 +114,18 @@ public class Alipay {
 ////                    "\"business_params\":\"{\\\"payer_show_name\\\":\\\"服务代理\\\"}\"," +
 //                    "  }");
             AlipayFundTransUniTransferResponse response = alipayClient.certificateExecute(request);
-            if(response.isSuccess()){
-                System.out.println("调用成功");
-                return true;
-            } else {
-                System.out.println("调用失败");
-                return false;
-            }
+            return response;
+//            if(response.isSuccess()){
+//                System.out.println("调用成功");
+//                return response;
+//            } else {
+//                System.out.println("调用失败");
+//                return null;
+//            }
         }catch (Exception e){
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
 

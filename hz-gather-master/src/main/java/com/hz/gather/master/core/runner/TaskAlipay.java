@@ -1,9 +1,21 @@
 package com.hz.gather.master.core.runner;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.CertAlipayRequest;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayFundTransUniTransferRequest;
 import com.alipay.api.response.AlipayFundTransUniTransferResponse;
+import com.hz.gather.master.core.common.alipay.Alipay;
+import com.hz.gather.master.core.common.exception.ExceptionMethod;
+import com.hz.gather.master.core.common.utils.constant.CacheKey;
+import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
+import com.hz.gather.master.core.common.utils.constant.ServerConstant;
+import com.hz.gather.master.core.model.alipay.AlipayData;
+import com.hz.gather.master.core.model.alipay.AlipayTransferModel;
+import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.task.base.StatusModel;
+import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.TaskMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,45 +52,47 @@ public class TaskAlipay {
 //    @Scheduled(fixedDelay = 1000) // 每秒执行
     public void taskTransferAlipay() throws Exception{
         log.info("TaskAlipay.taskTransferAlipay()------------------进来了!");
-        // 查询要跑的数据
-//        try{
-//            CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
-//            certAlipayRequest.setServerUrl("https://openapi.alipay.com/gateway.do");
-//            certAlipayRequest.setAppId("2017072507891356");
-//            certAlipayRequest.setPrivateKey(privateKey);
-//            certAlipayRequest.setFormat("json");
-//            certAlipayRequest.setCharset("UTF-8");
-//            certAlipayRequest.setSignType("RSA2");
-//            certAlipayRequest.setCertPath(certPath);
-//            certAlipayRequest.setAlipayPublicCertPath(alipayPublicCertPath);
-//            certAlipayRequest.setRootCertPath(rootCertPath);
-//            DefaultAlipayClient alipayClient = new DefaultAlipayClient(certAlipayRequest);
-//
-//            AlipayFundTransUniTransferRequest request = new AlipayFundTransUniTransferRequest();
-//            request.setBizContent("{" +
-//                    "\"out_biz_no\":\"df-alipay-test-1\"," +
-//                    "\"trans_amount\":1.00," +
-//                    "\"product_code\":\"TRANS_ACCOUNT_NO_PWD\"," +
-//                    "\"biz_scene\":\"DIRECT_TRANSFER\"," +
-//                    "\"order_title\":\"段峰-测试-提现-1\"," +
-//                    "\"payee_info\":{" +
-//                    "\"identity\":\"duanfeng_1712@qq.com\"," +
-//                    "\"identity_type\":\"ALIPAY_LOGON_ID\"," +
-//                    "\"name\":\"段峰\"," +
-//                    "    }," +
-//                    "\"remark\":\"测试金额-哈哈\"," +
-//                    "\"business_params\":\"\"," +
-////                    "\"business_params\":\"{\\\"payer_show_name\\\":\\\"服务代理\\\"}\"," +
-//                    "  }");
-//            AlipayFundTransUniTransferResponse response = alipayClient.certificateExecute(request);
-//            if(response.isSuccess()){
-//                System.out.println("调用成功");
-//            } else {
-//                System.out.println("调用失败");
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+        StatusModel statusQuery = TaskMethod.assembleTaskByAliapyTransferStatusQuery(limitNum);
+        List<UCashOutLog> synchroList = ComponentUtil.taskService.getTransferList(statusQuery);
+        for (UCashOutLog data : synchroList){
+            if (data != null){
+                try{
+                    String lockKey = CachedKeyUtils.getPfCacheKey(CacheKey.LOCK_TRANSFER, data.getId());
+                    boolean flagLock = ComponentUtil.redisIdService.lock(lockKey);
+                    if (flagLock){
+                        // 组装阿里支付宝转账所需的数据
+                        AlipayTransferModel alipayTransferModel = TaskMethod.assembleAlipayTransfer(data);
+                        String strData = JSON.toJSONString(alipayTransferModel);
+                        AlipayFundTransUniTransferResponse alipayFundTransUniTransferResponse = Alipay.transferAlipay(strData);
+                        if (alipayFundTransUniTransferResponse != null){
+                            if (alipayFundTransUniTransferResponse.isSuccess()){
+                                // 更新此次task的状态：更新成成功
+                                StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_THREE);
+                                ComponentUtil.taskService.updateTransStatus(statusModel);
+                            }else{
+                                // 更新此次task的状态：更新成失败
+                                StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+                                ComponentUtil.taskService.updateTransStatus(statusModel);
+                            }
+                            AlipayData addAlipayData = TaskMethod.assembleAlipayData(alipayTransferModel, alipayFundTransUniTransferResponse, data);
+                            ComponentUtil.taskService.addTransData(addAlipayData);
+                        }else{
+                            // 更新此次task的状态：更新成失败
+                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+                            ComponentUtil.taskService.updateTransStatus(statusModel);
+                        }
+                    }
+                    // 解锁
+                    ComponentUtil.redisIdService.delLock(lockKey);
+                }catch (Exception e){
+                    // 更新此次task的状态：更新成失败
+                    StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+                    ComponentUtil.taskService.updateTransStatus(statusModel);
+                    log.error(String.format("this TaskAlipay.taskTransferAlipay() is error , the id=%s !", data.getId()));
+                    e.printStackTrace();
+                }
+            }
+        }
         log.info("TaskAlipay.taskTransferAlipay()------------------结束了!");
     }
 

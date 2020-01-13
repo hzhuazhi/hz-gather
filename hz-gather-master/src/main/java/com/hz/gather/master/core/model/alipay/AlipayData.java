@@ -84,6 +84,16 @@ public class AlipayData {
     public String trans_date;
 
     /**
+     * 状态码：10000为成功，其它属于失败
+     */
+    public String code;
+
+    /**
+     * 错误说明
+     */
+    public String subMsg;
+
+    /**
      * 创建日期：存的日期格式20160530
      */
     public Integer curday;
@@ -112,6 +122,10 @@ public class AlipayData {
      * 是否有效：0有效，1无效/删除
      */
     public Integer yn;
+
+    public AlipayData(){
+
+    }
 
     public String getOut_biz_no() {
         return out_biz_no;
@@ -279,5 +293,21 @@ public class AlipayData {
 
     public void setYn(Integer yn) {
         this.yn = yn;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getSubMsg() {
+        return subMsg;
+    }
+
+    public void setSubMsg(String subMsg) {
+        this.subMsg = subMsg;
     }
 }
