@@ -68,7 +68,6 @@ public class LoginController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
-
             if(sendSmsModel.getSmsType()==1){
                 time  =  ComponentUtil.loginService.sendRegister(sendSmsModel.getPhone(),sendSmsModel.getCountry());
             }else if(sendSmsModel.getSmsType()==2){
