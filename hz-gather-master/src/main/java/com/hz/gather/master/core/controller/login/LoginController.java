@@ -7,6 +7,7 @@ import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.protocol.request.login.*;
@@ -15,10 +16,7 @@ import com.hz.gather.master.util.PublicMethod;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,22 +41,31 @@ public class LoginController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
-     * 字段格式 { "smsType": 1: "13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
-     * 字段格式 { "smsType": 2: "13606768872","version": "1.0.1" }
-     * 字段格式 { "smsType": 3: "13606768872","version": "1.0.1" }
+     * 字段格式 { "smsType": 1,"phone":"13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
+     * 字段格式 { "smsType": 2,"phone": "13606768872","version": "1.0.1" }
+     * 字段格式 { "smsType": 3,"phone":"13606768872","version": "1.0.1" }
+     * return
+     * {
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJ0aW1lU3RhbXAiOiIxNTc4NzI0MTQzIn0="
+     *     }
+     * }
      * @date 2020/1/2 21:02
      */
     @PostMapping("/register_sms")
-    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+//    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         SendSmsModel sendSmsModel = new SendSmsModel();
         String time ="";
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             sendSmsModel  = JSON.parseObject(data, SendSmsModel.class);
 
             boolean  flag =PublicMethod.checkPhoneIsType(sendSmsModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
@@ -94,15 +101,23 @@ public class LoginController {
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * 字段格式: { "phone": "13606768872","smsCode": "中国","timeStamp": "1578053576","passWrod": "111111","inviteCode": "382032","version": "1.0.1" }
      * @author long
+     * {
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJ0aW1lU3RhbXAiOiIxNTc4NzI0MTQzIn0="
+     *     }
+     * }
      * @date 2020/1/2 20:59
      */
     @PostMapping("/register_info")
-    public JsonResult<Object> getRegisterInfo(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+//    public JsonResult<Object> getRegisterInfo(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getRegisterInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         LoginModel loginModel = new LoginModel();
         try{
             log.info("----------:register_info 进来啦!");
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             loginModel  = JSON.parseObject(data, LoginModel.class);
             boolean   flag  = PublicMethod.isCheakRegister(loginModel);
 
@@ -153,12 +168,12 @@ public class LoginController {
      * @date 2020/1/3 21:57
      */
     @PostMapping("/forget_password")
-    public JsonResult<Object> getForgetPassword(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getForgetPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         ForgetPasswordModel forgetPasswordModel = new ForgetPasswordModel();
         String   dtoken ="";
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             forgetPasswordModel  = JSON.parseObject(data, ForgetPasswordModel.class);
 
             boolean    flag =  PublicMethod.checkPwToken(forgetPasswordModel);
@@ -209,12 +224,13 @@ public class LoginController {
      * @date 2020/1/3 21:57
      */
     @PostMapping("/forget_phone")
-    public JsonResult<Object> getForgetPhone(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+  public JsonResult<Object> getForgetPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+
         log.info("----------:进来啦!");
         String data = "";
         ForgetPhoneModel forgetPhoneModel = new ForgetPhoneModel();
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             forgetPhoneModel  = JSON.parseObject(data, ForgetPhoneModel.class);
 
             boolean  flag = PublicMethod.checkPhoneVerificaCode(forgetPhoneModel);
@@ -262,13 +278,13 @@ public class LoginController {
      * @date 2020/1/7 13:46
      */
     @PostMapping("/sign_in")
-    public JsonResult<Object> getSignIn(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getSignIn(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         log.info("----------:进来啦!");
         String data = "";
         SignInModel signInModel = new SignInModel();
         String   token ="";
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             signInModel  = JSON.parseObject(data, SignInModel.class);
             boolean  flag = PublicMethod.checkSignIn(signInModel);
 
@@ -304,10 +320,5 @@ public class LoginController {
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
-
-
-
-
-
 
 }

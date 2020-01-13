@@ -314,6 +314,12 @@ public class PublicMethod {
         return memberId;
     }
 
+    /**
+     * 二次密码是否一致
+     * @param passWord
+     * @param passwordConfirm
+     * @return
+     */
     public  static  boolean  pwIsOK(String passWord,String passwordConfirm){
        boolean   flag =  false ;
        if (!passWord.equals(passwordConfirm)){
@@ -459,6 +465,20 @@ public class PublicMethod {
         responseUserInfo.setAlready_money(vcMemberResource.getAlreadyMoney()+"");
         responseUserInfo.setTotal_money(vcMemberResource.getTotalMoney()+"");
         responseUserInfo.setSurplus_money(vcMemberResource.getSurplusMoney()+"");
+        if(!StringUtils.isBlank(vcMember.getPassword())){
+            responseUserInfo.setIsPw(1);
+        }else{
+            responseUserInfo.setIsPw(0);
+        }
+
+        if(!StringUtils.isBlank(vcMember.getPayPassword())){
+            responseUserInfo.setIsPayPw(1);
+        }else{
+            responseUserInfo.setIsPayPw(0);
+        }
+        responseUserInfo.setIsprotection(vcMember.getIsQuestions());
+
+
         if (vcMember.getGradeType()==0){//普通用户信息
 
         }else if(vcMember.getGradeType()==1){//限时用户信息
@@ -728,11 +748,19 @@ public class PublicMethod {
         if(StringUtils.isBlank(requestPayCashOut.getAlPayId())){
             return  flag;
         }
+
+        if(StringUtils.isBlank(requestPayCashOut.getPayPassword())){
+            return  flag;
+        }
         return true;
     }
 
 
-
+    /**
+     * 支付宝添加，必要信息是否为空
+     * @param requestAddZFBPay
+     * @return
+     */
     public static boolean isCheckPayAdd(RequestAddZFBPay requestAddZFBPay){
         boolean  flag = false ;
         if(StringUtils.isBlank(requestAddZFBPay.getToken())){
@@ -890,6 +918,58 @@ public class PublicMethod {
         String   dd ="3,4,5,6,7,8,9,10,11,1,2";
         System.out.println(PublicMethod.getBenefitMemberId(dd,9));
     }
+
+
+    /***
+     * memberId 设置VcMember
+     * @param memberId
+     * @return
+     */
+    public  static  VcMember  toPayPassword(Integer memberId,String  payPassword){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setMemberId(memberId);
+        vcMember.setPayPassword(payPassword);
+        return vcMember;
+    }
+
+
+
+    /***
+     * memberId 设置VcMember
+     * @param memberId
+     * @return
+     */
+    public  static  VcMember  toList(String  [] memberId){
+        VcMember  vcMember =  new  VcMember();
+        List<Integer>  list  = new ArrayList<>();
+        for (int  i =0; i<memberId.length; i++){
+            list.add(Integer.parseInt(memberId[i]));
+        }
+        vcMember.setIdList(list);
+        return vcMember;
+    }
+
+    /**
+     * @Description: 下级裂变人购买需要更新信息
+     * @param memberId
+    * @param money
+    * @param type
+     * @return com.hz.gather.master.core.model.entity.VcMemberResource
+     * @author long
+     * @date 2020/1/13 13:56
+     */
+    public static  VcMemberResource   toUqdateVcMemberResource(Integer  memberId,Double money,Integer  type ){
+        VcMemberResource  vcMemberResource = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setSurplusMoney(new BigDecimal(Double.valueOf(money)));
+        if(type==1){
+            vcMemberResource.setPushPeople(1);
+        }else{
+            vcMemberResource.setTeamActive(1);
+        }
+        return vcMemberResource;
+    }
+
 
 
 

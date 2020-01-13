@@ -147,10 +147,14 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         VcMember    vcMember   =  PublicMethod.queryInviteCode(inviteCode);
         VcMember    vcMemberRs  = vcMemberMapper.selectByPrimaryKey(vcMember);
         if(vcMemberRs!=null){
-            String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.INVITE_INFO, inviteCode);
-            ComponentUtil.redisService.set(strKeyCache,vcMemberRs.getMemberId()+"");
-            return true;
+            if(vcMemberRs.getGradeType()!=1){
+                String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.INVITE_INFO, inviteCode);
+                ComponentUtil.redisService.set(strKeyCache,vcMemberRs.getMemberId()+"");
+                return true;
+            }
         }
+
+
         return false;
     }
 
@@ -219,12 +223,12 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     @Override
     public void addRedis(LoginModel loginModel,String [] InviteAdd,Integer memberId)throws  Exception{
         String phoneKeyCache = CachedKeyUtils.getCacheKey(CacheKey.PHONE_INFO, loginModel.getPhone());
-        String inviteCode= CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, InviteAdd[0]);
+//        String inviteCode= CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, InviteAdd[0]);
         String tradingAddress = CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, InviteAdd[1]);
 
         ComponentUtil.redisService.set(InviteAdd[2],memberId+"");
         ComponentUtil.redisService.onlyData(phoneKeyCache, "1");
-        ComponentUtil.redisService.onlyData(inviteCode, "1");
+//        ComponentUtil.redisService.onlyData(inviteCode, "1");
         ComponentUtil.redisService.onlyData(tradingAddress, "1");
     }
 

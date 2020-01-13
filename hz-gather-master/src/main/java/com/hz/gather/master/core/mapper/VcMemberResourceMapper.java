@@ -16,4 +16,6 @@ public interface VcMemberResourceMapper<T> extends BaseDao<T> {
 
     int updateUpPeople(VcMemberResource record);
 
+    int updateByChargeMoney(VcMemberResource record);
+
 }

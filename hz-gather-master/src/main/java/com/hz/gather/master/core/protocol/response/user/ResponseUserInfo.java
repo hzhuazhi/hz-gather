@@ -58,6 +58,18 @@ public class ResponseUserInfo {
      * 裂变实际数量
      */
     private String    reality_push_count;
+    /**
+     * 是否设置password  0、未设置 1、设置了
+     */
+    private Integer    isPw;
+    /**
+     * 是否设置支付password 0、未设置 1、设置了
+     */
+    private Integer    isPayPw;
+    /**
+     * 是否设置密保  0、未设置 1、设置了
+     */
+    private Integer    isprotection;
 
     public String getSurplus_money() {
         return surplus_money;
@@ -145,5 +157,29 @@ public class ResponseUserInfo {
 
     public void setReality_push_count(String reality_push_count) {
         this.reality_push_count = reality_push_count;
+    }
+
+    public Integer getIsPw() {
+        return isPw;
+    }
+
+    public void setIsPw(Integer isPw) {
+        this.isPw = isPw;
+    }
+
+    public Integer getIsPayPw() {
+        return isPayPw;
+    }
+
+    public void setIsPayPw(Integer isPayPw) {
+        this.isPayPw = isPayPw;
+    }
+
+    public Integer getIsprotection() {
+        return isprotection;
+    }
+
+    public void setIsprotection(Integer isprotection) {
+        this.isprotection = isprotection;
     }
 }

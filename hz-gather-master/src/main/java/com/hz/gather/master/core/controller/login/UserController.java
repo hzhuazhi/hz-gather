@@ -8,6 +8,7 @@ import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.UMoneyList;
 import com.hz.gather.master.core.model.entity.VcMember;
@@ -18,10 +19,7 @@ import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,13 +48,13 @@ public class UserController {
      * @date 2020/1/9 14:15
      */
     @PostMapping("/queryUserInfo")
-    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
         log.info("----------:queryUserInfo 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
 
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
@@ -94,13 +92,13 @@ public class UserController {
      * @date 2020/1/9 14:15
      */
     @PostMapping("/myFriend")
-    public JsonResult<Object> getFriend(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> getFriend(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
         log.info("----------:getFriend 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
             if(flag){
@@ -138,13 +136,13 @@ public class UserController {
      * @date 2020/1/9 14:20
      */
     @PostMapping("/queryUser")
-    public JsonResult<Object> queryUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> queryUser(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
         log.info("----------:queryUser 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
             if(flag){
@@ -187,12 +185,12 @@ public class UserController {
      * @date 2020/1/9 16:11
      */
     @PostMapping("/editUserInfo")
-    public JsonResult<Object> editUserInfo(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> editUserInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequestEditUser editUser = new RequestEditUser();
         log.info("----------:editUserInfo 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             editUser  = JSON.parseObject(data, RequestEditUser.class);
 
             boolean  flag  =   PublicMethod.toResponseUser(editUser);
@@ -230,13 +228,12 @@ public class UserController {
      * @date 2020/1/9 19:54
      */
     @PostMapping("/myFundList")
-    public JsonResult<Object> myFundList(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
-
+    public JsonResult<Object> myFundList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequestEditUser editUser = new RequestEditUser();
         log.info("----------:myFundList 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             editUser  = JSON.parseObject(data, RequestEditUser.class);
 
             boolean  flag  =   PublicMethod.toResponseUser(editUser);

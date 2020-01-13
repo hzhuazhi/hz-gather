@@ -18,6 +18,11 @@ public class RequestPayCashOut extends CommonModel {
      */
     private  String    alPayId ;
 
+    /**
+     * 提现密码
+     */
+    private  String    payPassword ;
+
 
     public String getAlPayId() {
         return alPayId;
@@ -33,5 +38,13 @@ public class RequestPayCashOut extends CommonModel {
 
     public void setMoney(double money) {
         this.money = money;
+    }
+
+    public String getPayPassword() {
+        return payPassword;
+    }
+
+    public void setPayPassword(String payPassword) {
+        this.payPassword = payPassword;
     }
 }

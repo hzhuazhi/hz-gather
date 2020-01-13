@@ -1,6 +1,7 @@
 package com.hz.gather.master.core.model.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class VcMember {
     /**
@@ -176,7 +177,7 @@ public class VcMember {
      *
      * @mbggenerated
      */
-    private String isQuestions;
+    private Integer isQuestions;
     /**
      * 奖励收益人id
      *
@@ -214,6 +215,13 @@ public class VcMember {
     private Integer teamActive;
 
 
+
+    /**
+     * 查询一群用户 id
+     *
+     * @mbggenerated
+     */
+    private List<Integer> idList;
 
 
     public Integer getMemberId() {
@@ -400,11 +408,11 @@ public class VcMember {
         this.gradeType = gradeType;
     }
 
-    public String getIsQuestions() {
+    public Integer getIsQuestions() {
         return isQuestions;
     }
 
-    public void setIsQuestions(String isQuestions) {
+    public void setIsQuestions(Integer isQuestions) {
         this.isQuestions = isQuestions;
     }
 
@@ -454,5 +462,13 @@ public class VcMember {
 
     public void setTeamActive(Integer teamActive) {
         this.teamActive = teamActive;
+    }
+
+    public List<Integer> getIdList() {
+        return idList;
+    }
+
+    public void setIdList(List<Integer> idList) {
+        this.idList = idList;
     }
 }

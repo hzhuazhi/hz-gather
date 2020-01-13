@@ -7,6 +7,7 @@ import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
 import com.hz.gather.master.core.model.user.CommonModel;
@@ -19,10 +20,7 @@ import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,12 +48,13 @@ public class PayController {
      * @date 2020/1/9 20:49
      */
     @PostMapping("/havaPay")
-    public JsonResult<Object> havaPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> havaPay(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+//    public JsonResult<Object> havaPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
         log.info("----------:havaPay 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean  flag  =   PublicMethod.isCommonModel(commonModel);
             if(flag){
@@ -92,12 +91,13 @@ public class PayController {
      * @date 2020/1/9 20:49
      */
     @PostMapping("/havaPayInfo")
-    public JsonResult<Object> havaPayinfo(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> havaPayinfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+    //public JsonResult<Object> havaPayinfo(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
         log.info("----------:havaPay 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean  flag  =   PublicMethod.isCommonModel(commonModel);
             if(flag){
@@ -134,12 +134,13 @@ public class PayController {
      * @date 2020/1/9 22:36
      */
     @PostMapping("/addZFBPay")
-    public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+    //public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         RequestAddZFBPay requestAddZFBPay = new RequestAddZFBPay();
         log.info("----------:addZFBPay 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             requestAddZFBPay  = JSON.parseObject(data, RequestAddZFBPay.class);
             boolean  flag  =   PublicMethod.isCheckPayAdd(requestAddZFBPay);
             if(flag){
@@ -173,7 +174,8 @@ public class PayController {
 
 
     @PostMapping("/payCashOut")
-    public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+    public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+    //public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
         String ip = StringUtil.getIpAddress(request);
@@ -181,7 +183,7 @@ public class PayController {
         RequestPayCashOut requestPayCashOut = new RequestPayCashOut();
         log.info("----------:payCashOut 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(jsonData);
+            data        = StringUtil.decoderBase64(requestData.jsonData);
             requestPayCashOut  = JSON.parseObject(data, RequestPayCashOut.class);
             boolean  flag  =  PublicMethod.isCheckCashOut(requestPayCashOut);
             if(!flag){

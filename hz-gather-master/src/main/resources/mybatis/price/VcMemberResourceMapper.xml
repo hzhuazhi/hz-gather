@@ -165,4 +165,23 @@
     where member_id = #{memberId}
   </update>
 
+  <update id="updateByChargeMoney" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="pushPeople != null" >
+        push_people =push_people+ #{pushPeople},
+      </if>
+      <if test="teamActive != null" >
+        team_active =team_active+ #{teamActive},
+      </if>
+      <if test="totalMoney != null" >
+        total_money =total_money+ #{totalMoney},
+      </if>
+      <if test="surplusMoney != null" >
+        surplus_money =surplus_money+ #{surplusMoney},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
 </mapper>

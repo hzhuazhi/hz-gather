@@ -1,10 +1,12 @@
 package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
+import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -68,4 +70,58 @@ public interface PayService<T> extends BaseService<T> {
      * @return
      */
     public void addUCashOutLog(Integer  memberId,String aliPayNo,String alname,String outTradeNo,Double money)throws Exception;
+
+
+    /**
+     * 查看用户的password是否有效
+     * @param memberId
+     * @param password
+     * @return
+     * @throws Exception
+     */
+    public  boolean   queryPayPassword(Integer  memberId,String password)throws Exception;
+
+
+    /**
+     * 查看用户的password是否有效
+     * @param memberId
+     * @param outTradeNo  支付订单号
+     * @return
+     * @throws Exception
+     */
+    public  boolean   paymentSuccess(Integer  memberId,String outTradeNo)throws Exception;
+
+
+    /**
+     * 根据benefitMemberId 查询用户详细信息
+     * @param benefitMemberId
+     * @return
+     * @throws Exception
+     */
+    public  List<VcMember>   queryMemberInfo(String benefitMemberId )throws Exception;
+
+    /**
+     * 修改状态信息
+     * @param list    所以的list
+     * @param superiorId   上级id
+     * @return
+     * @throws Exception
+     */
+    public  boolean    updateMemberInfo(List<VcMember> list,Integer  superiorId)throws Exception;
+
+
+    /***
+     * 永久VIP
+     * @param memberId
+     * @return
+     */
+    public  Integer    updateTypePermanentVIP(Integer  memberId,Integer type,Double money);
+
+    /***
+     * 零时VIP
+     * @param memberId
+     * @return
+     */
+    public  Integer    updateTypeNOPermanentVIP(Integer  memberId,Integer type,Double money);
+
 }

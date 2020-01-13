@@ -9,21 +9,22 @@ import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.common.utils.constant.PfCacheKey;
 import com.hz.gather.master.core.mapper.UCashOutLogMapper;
+import com.hz.gather.master.core.mapper.VcMemberMapper;
 import com.hz.gather.master.core.mapper.VcMemberPayMapper;
 import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
-import com.hz.gather.master.core.model.entity.UCashOutLog;
-import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
-import com.hz.gather.master.core.model.entity.VcMemberPay;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 import com.hz.gather.master.core.service.PayService;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -35,6 +36,9 @@ import java.util.List;
 public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<T> {
     @Autowired
     private VcMemberPayMapper vcMemberPayMapper;
+
+    @Autowired
+    private VcMemberMapper vcMemberMapper;
 
     @Autowired
     private VcMemberResourceMapper vcMemberResourceMapper;
@@ -142,5 +146,81 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         }
         ComponentUtil.redisIdService.delLock(lockKey);
         ComponentUtil.redisIdService.delLock(lockKey_consumer);
+    }
+
+    @Override
+    public boolean queryPayPassword(Integer memberId, String payPassword) throws Exception {
+        VcMember    vcMember=PublicMethod.toPayPassword(memberId,payPassword);
+        VcMember    vcMember1 =  vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(vcMember1!=null){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean paymentSuccess(Integer memberId, String outTradeNo) throws Exception {
+        boolean    flag  =  false ;
+        //首先check     outTradeNo   是否真实支付
+        VcMember  vcMember = PublicMethod.toVcMember(memberId);
+        VcMember  rsVc = vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(rsVc==null){ //用户信息异常
+            flag = false;
+        }
+
+        List<VcMember>  list = ComponentUtil.payService.queryMemberInfo(rsVc.getBenefitMemberId());
+
+        // 查询该用户下收益人有那些
+
+        //添加明细表信息
+        //查看所有用户的锁情况
+        // 修改用户详情信息
+        //关闭所有用户锁信息
+
+        //需要给当前用户的邀请码 丢到redis 里面
+        return false;
+    }
+
+
+    @Override
+    public List<VcMember> queryMemberInfo(String benefitMemberId) throws Exception {
+        List<VcMember>  list = null;
+        String []  memberId  =benefitMemberId.split(",");
+        VcMember  vcMember  = PublicMethod.toList(memberId);
+        if(vcMember.getIdList().size()>9){
+            return list;
+        }
+        List<VcMember>    listVcMember  =   vcMemberMapper.selectByList(vcMember);
+        list = listVcMember;
+        return list;
+    }
+
+    @Override
+    public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId) throws Exception {
+        for(VcMember vcMember:list){
+
+        }
+        return false;
+    }
+
+    @Override
+    public Integer updateTypePermanentVIP(Integer memberId, Integer type,Double money) {
+        if(type==1){//直推
+            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResource(memberId,money,type);
+//            vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+        }else{
+
+        }
+        return null;
+    }
+
+    @Override
+    public Integer updateTypeNOPermanentVIP(Integer memberId, Integer type,Double money) {
+        if(type==1){//直推
+
+        }else{
+
+        }
+        return null;
     }
 }

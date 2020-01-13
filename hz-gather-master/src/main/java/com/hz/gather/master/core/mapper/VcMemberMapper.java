@@ -18,4 +18,6 @@ public interface VcMemberMapper<T> extends BaseDao<T> {
 
     List<VcMember> selectByCodeOrAddress(VcMember record);
     List<VcMember> selectBySuperiorId(VcMember record);
+
+    List<VcMember> selectByList(VcMember record);
 }
