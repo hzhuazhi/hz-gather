@@ -82,6 +82,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         if (amsVerification.startsWith("0")){
             amsVerification = amsVerification.replaceFirst("0" , "1");
         }
+        SendSms.aliSendSms(phone,amsVerification);
         //缺少一个发送短信
         if(type==1){
             ComponentUtil.redisService.set(CacheKey.REGISTER_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
