@@ -63,8 +63,8 @@ public class JsonResult<T> implements Serializable {
 	 */
 	public static <T> JsonResult<T> failedResult(String msg, String code) {
 		JsonResult<T> jsonResult = new JsonResult<T>();
-		jsonResult.setResultCode("0");
-		jsonResult.setMessage("success");
+		jsonResult.setResultCode(msg);
+		jsonResult.setMessage(code);
 		jsonResult.setData(null);
 		return jsonResult;
 	}
@@ -79,8 +79,8 @@ public class JsonResult<T> implements Serializable {
 	 */
 	public static <T> JsonResult<T> failedResult(String msg, String code, String cgid, String sgid) {
 		JsonResult<T> jsonResult = new JsonResult<T>();
-		jsonResult.setResultCode("0");
-		jsonResult.setMessage("success");
+		jsonResult.setResultCode(msg);
+		jsonResult.setMessage(code);
 		jsonResult.setData(null);
 //		jsonResult.setData(null);
 		jsonResult.setCgid(cgid);
@@ -97,8 +97,8 @@ public class JsonResult<T> implements Serializable {
 	 */
 	public static <T> JsonResult<T> failedResult(T data, String msg, String resultCode) {
 		JsonResult<T> jsonResult = new JsonResult<T>();
-		jsonResult.setResultCode("0");
-		jsonResult.setMessage("success");
+		jsonResult.setResultCode(msg);
+		jsonResult.setMessage(resultCode);
 		jsonResult.setData(null);
 //		jsonResult.setData(data);
 		return jsonResult;
