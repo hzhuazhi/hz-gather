@@ -5,13 +5,11 @@ import com.hz.gather.master.core.common.enums.ENUM_ERROR;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.common.utils.constant.PfCacheKey;
-import com.hz.gather.master.core.mapper.UCashOutLogMapper;
-import com.hz.gather.master.core.mapper.VcMemberMapper;
-import com.hz.gather.master.core.mapper.VcMemberPayMapper;
-import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
+import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 import com.hz.gather.master.core.service.PayService;
@@ -46,6 +44,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
     @Autowired
     private UCashOutLogMapper uCashOutLogMapper;
+    @Autowired
+    private ULimitedTimeLogMapper uLimitedTimeLogMapper;
     @Override
     public BaseDao<T> getDao() {
         return null;
@@ -167,7 +167,15 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         if(rsVc==null){ //用户信息异常
             flag = false;
         }
+        //更加自己的数据数据
+        flag=ComponentUtil.payService.paymentUpdateMyInfo(rsVc);
+        if(!flag){
+            return true;
+        }
+        //查看上级是否需要修改信息
+        boolean  isUpdate = ComponentUtil.payService.handleSuperiorId(rsVc.getSuperiorId());
 
+        //查询所有的上级状态信息
         List<VcMember>  list = ComponentUtil.payService.queryMemberInfo(rsVc.getBenefitMemberId());
 
         // 查询该用户下收益人有那些
@@ -196,7 +204,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     }
 
     @Override
-    public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId) throws Exception {
+    public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag) throws Exception {
         for(VcMember vcMember:list){
 
         }
@@ -222,5 +230,38 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
         }
         return null;
+    }
+
+    @Override
+    public boolean paymentUpdateMyInfo(VcMember  vcMember) {
+        boolean  flag = false ;
+        if (vcMember.getGradeType()!=0){
+            return flag;
+        }
+        //修改2个状态，一个是裂变人数
+        VcMemberResource  vcMemberResource = PublicMethod.updateFissionPeople(vcMember.getMemberId());
+        //会员表信息状态
+        VcMember   updatevcMember = PublicMethod.updateGradeType(vcMember.getMemberId(),vcMember.getMemberId());
+        //插入一条用户限时表信息数据
+        String  batchNum = ComponentUtil.generateService.getBatchNum();
+        ULimitedTimeLog  uLimitedTimeLog = PublicMethod.insertULimitedTimeLog(vcMember.getMemberId(),batchNum);
+        ComponentUtil.transactionalService.memberPayment(updatevcMember,vcMemberResource,uLimitedTimeLog);
+        return true;
+    }
+
+
+    @Override
+    public boolean handleSuperiorId(Integer superiorId) throws Exception {
+        boolean  flag = false;
+        VcMember  vcMember = PublicMethod.toVcMember(superiorId);
+        VcMember  superIdVcMember = vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(superIdVcMember.getGradeType()==1){
+            ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(superiorId);
+            ULimitedTimeLog  rsLimitedTimeLog=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
+            if(rsLimitedTimeLog.getPushNumber()==2){
+                flag=true;
+            }
+        }
+        return flag;
     }
 }

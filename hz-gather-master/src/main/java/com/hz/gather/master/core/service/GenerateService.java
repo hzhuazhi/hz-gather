@@ -10,4 +10,5 @@ import com.hz.gather.master.core.common.service.BaseService;
  */
 public interface GenerateService<T> extends BaseService<T> {
     public String getNonexistentInformation(int type)throws  Exception;
+    public String getBatchNum();
 }

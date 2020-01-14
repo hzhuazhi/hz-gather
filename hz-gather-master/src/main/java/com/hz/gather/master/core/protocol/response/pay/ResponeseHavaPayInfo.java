@@ -1,5 +1,7 @@
 package com.hz.gather.master.core.protocol.response.pay;
 
+import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
+
 import java.util.List;
 
 /**
@@ -9,13 +11,13 @@ import java.util.List;
  * @Version 1.0
  */
 public class ResponeseHavaPayInfo {
-    private  List<String> payList;
+    private  List<RequestAddZFBPay> payList;
 
-    public List<String> getPayList() {
+    public List<RequestAddZFBPay> getPayList() {
         return payList;
     }
 
-    public void setPayList(List<String> payList) {
+    public void setPayList(List<RequestAddZFBPay> payList) {
         this.payList = payList;
     }
 }

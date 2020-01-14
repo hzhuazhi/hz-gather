@@ -10,7 +10,13 @@
     select 
     <include refid="Base_Column_List" />
     from u_limited_time_log
-    where id = #{id}
+    where 1=1
+    <if test="memberId != null and memberId != '' " >
+      and member_id = #{memberId}
+    </if>
+    <if test="batchNum != null and batchNum != '' " >
+      and batch_num = #{batchNum}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from u_limited_time_log

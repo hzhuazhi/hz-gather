@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.VcMemberResourceMapper" >
   <sql id="Base_Column_List" >
     id, member_id, total_money, already_money, surplus_money, cash_money, push_people, 
-    team_active, push_people_all, team_active_all, create_time, update_time, is_valid,push_money,fission_money
+    team_people, push_people_all, team_active_all, create_time, update_time, is_valid
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberResource">
     select 
@@ -39,8 +39,8 @@
       <if test="pushPeople != null" >
         push_people,
       </if>
-      <if test="teamActive != null" >
-        team_active,
+      <if test="teamPeople != null" >
+        team_people,
       </if>
       <if test="pushPeopleAll != null" >
         push_people_all,
@@ -83,8 +83,8 @@
       <if test="pushPeople != null" >
         #{pushPeople},
       </if>
-      <if test="teamActive != null" >
-        #{teamActiveR},
+      <if test="teamPeople != null" >
+        #{teamPeople},
       </if>
       <if test="pushPeopleAll != null" >
         #{pushPeopleAll},
@@ -124,8 +124,8 @@
       <if test="pushPeople != null" >
         push_people = #{pushPeople},
       </if>
-      <if test="teamActive != null" >
-        team_active = #{teamActive},
+      <if test="teamPeople != null" >
+        team_people = #{teamPeople},
       </if>
       <if test="pushPeopleAll != null" >
         push_people_all = #{pushPeopleAll},
@@ -156,10 +156,10 @@
     update vc_member_resource
     <set >
       <if test="teamActiveAll != null" >
-        team_active_all =teamActiveAll+ #{teamActiveAll},
+        team_active_all =team_active_all+ #{teamActiveAll},
       </if>
       <if test="pushPeopleAll != null" >
-        push_people_all =pushPeopleAll+ #{pushPeopleAll},
+        push_people_all =push_people_all+ #{pushPeopleAll},
       </if>
     </set>
     where member_id = #{memberId}
@@ -183,5 +183,17 @@
     </set>
     where member_id = #{memberId}
   </update>
+
+
+  <update id="updateByFissionPeople" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="fissionPeopleNum != null" >
+        fission_people_num =fission_people_num + #{fissionPeopleNum},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
 
 </mapper>

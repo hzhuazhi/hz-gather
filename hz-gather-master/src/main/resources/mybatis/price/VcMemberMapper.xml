@@ -311,6 +311,89 @@
 
 
 
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMember" >
+    update vc_member
+    <set >
+      <if test="ownerMemberId != null" >
+        owner_member_id = #{ownerMemberId},
+      </if>
+      <if test="memberAdd != null" >
+        member_add = #{memberAdd},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday},
+      </if>
+      <if test="country != null" >
+        country = #{country},
+      </if>
+      <if test="province != null" >
+        province = #{province},
+      </if>
+      <if test="city != null" >
+        city = #{city},
+      </if>
+      <if test="password != null" >
+        password = #{password},
+      </if>
+      <if test="memberCode != null" >
+        member_code = #{memberCode},
+      </if>
+      <if test="memberType != null" >
+        member_type = #{memberType},
+      </if>
+      <if test="inviteCode != null" >
+        invite_code = #{inviteCode},
+      </if>
+      <if test="tradingAddress != null" >
+        trading_address = #{tradingAddress},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive},
+      </if>
+      <if test="loginTime != null" >
+        login_time = #{loginTime},
+      </if>
+      <if test="deviceId != null" >
+        device_id = #{deviceId},
+      </if>
+      <if test="superiorId != null" >
+        superior_id = #{superiorId},
+      </if>
+      <if test="payPassword != null" >
+        pay_password = #{payPassword},
+      </if>
+      <if test="extensionMemberId != null" >
+        extension_member_id = #{extensionMemberId},
+      </if>
+      <if test="gradeType != null" >
+        grade_type = #{gradeType},
+      </if>
+      <if test="isQuestions != null" >
+        is_questions = #{isQuestions},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+      <if test="token != null" >
+        token = #{token},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
+
   <select id="selectByList" resultType="com.hz.gather.master.core.model.entity.VcMember" >
     select
     <include refid="Base_Column_List" />
@@ -324,8 +407,6 @@
     </if>
     order by  create_time
   </select>
-
-
 
 
 </mapper>

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.DateModel;
 import com.hz.gather.master.core.model.entity.*;
@@ -115,11 +116,12 @@ public class PublicMethod {
      * @author long
      * @date 2019/11/24 16:14
      */
-    public  static VcMember insertVcMember(Integer memberId, LoginModel loginModel,String [] SecureUUID,Integer superiorId,String extensionMemberId){
+    public  static VcMember insertVcMember(Integer memberId, LoginModel loginModel,String [] SecureUUID,Integer superiorId,String extensionMemberId,String phone){
         VcMember  memberModel = new VcMember();
         Integer  createTime  =  Integer.parseInt(DateUtil.timeStamp());
         Integer  loginTime  =  createTime;
         memberModel.setMemberId(memberId);
+        memberModel.setPhone(phone);
         memberModel.setMemberCode("C"+loginModel.getPhone());
         memberModel.setInviteCode(SecureUUID[0]);
         memberModel.setTradingAddress(SecureUUID[1]);
@@ -364,6 +366,7 @@ public class PublicMethod {
     public  static  VcMember  toVcMember(Integer memberId,String token){
         VcMember  vcMember =  new  VcMember();
         vcMember.setMemberId(memberId);
+//        vcMember.setLoginTime(new Date());
         vcMember.setToken(token);
         return vcMember;
     }
@@ -440,6 +443,19 @@ public class PublicMethod {
         return  uLimitedTimeLog;
     }
 
+    /**
+     * @Description: 根据memberId 查询现有批次号信息
+     * @param memberId
+     * @return com.hz.gather.master.core.model.entity.ULimitedTimeLog
+     * @author long
+     * @date 2020/1/8 17:03
+     */
+    public  static ULimitedTimeLog toULimitedTimeLog(Integer memberId){
+        ULimitedTimeLog  uLimitedTimeLog =  new ULimitedTimeLog();
+        uLimitedTimeLog.setMemberId(memberId);
+        return  uLimitedTimeLog;
+    }
+
 
     /**
      * 根据批次号查询这个批次号的用户
@@ -508,7 +524,7 @@ public class PublicMethod {
             responseUserInfo.setRecommend_money(vcMemberResource.getPushMoney()+"");
             responseUserInfo.setFission_money(vcMemberResource.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
-            responseUserInfo.setRequire_fission_count(vcMemberResource.getTeamActive()+"");
+            responseUserInfo.setRequire_fission_count(vcMemberResource.getTeamPeople()+"");
         }
 
         return responseUserInfo;
@@ -551,7 +567,7 @@ public class PublicMethod {
     public  static ResponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource, List<VcMember>   list){
         ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
-        reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamActive()+"");
+        reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamPeople()+"");
         reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()+"");
         reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()+"");
         List <Object>   rsList = new ArrayList<>();
@@ -722,9 +738,12 @@ public class PublicMethod {
      */
     public static ResponeseHavaPayInfo toQueryHavaPayInfo(List<VcMemberPay>  list){
         ResponeseHavaPayInfo  responeseHavaPayInfo = new ResponeseHavaPayInfo();
-        List<String>  payList = new ArrayList<>();
+        List<RequestAddZFBPay>  payList = new ArrayList<>();
         for(VcMemberPay vcMemberPay:list){
-            payList.add(vcMemberPay.getZfbPayid());
+            RequestAddZFBPay requestAddZFBPay =new  RequestAddZFBPay();
+            requestAddZFBPay.setZfbName(vcMemberPay.getZfbName());
+            requestAddZFBPay.setZfbPayId(vcMemberPay.getZfbPayid());
+            payList.add(requestAddZFBPay);
         }
         responeseHavaPayInfo.setPayList(payList);
         return responeseHavaPayInfo;
@@ -914,10 +933,7 @@ public class PublicMethod {
     }
 
 
-    public  static  void   main(String [] args){
-        String   dd ="3,4,5,6,7,8,9,10,11,1,2";
-        System.out.println(PublicMethod.getBenefitMemberId(dd,9));
-    }
+
 
 
     /***
@@ -965,13 +981,82 @@ public class PublicMethod {
         if(type==1){
             vcMemberResource.setPushPeople(1);
         }else{
-            vcMemberResource.setTeamActive(1);
+            vcMemberResource.setTeamPeople(1);
         }
         return vcMemberResource;
     }
 
+    /**
+     * 修改资源表里面的裂变人数
+     * @param memberId
+     * @return
+     */
+    public  static  VcMemberResource  updateFissionPeople(Integer memberId){
+        VcMemberResource   vcMemberResource = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setFissionPeopleNum(1);
+        return  vcMemberResource;
+    }
 
 
+    /**
+     * @Description: 修改等级状态
+     * @param memberId
+    * @param type
+     * @return com.hz.gather.master.core.model.entity.VcMember
+     * @author long
+     * @date 2020/1/13 21:20
+     */
+    public  static  VcMember  updateGradeType(Integer memberId,Integer type){
+        VcMember   vcMember = new VcMember();
+        vcMember.setMemberId(memberId);
+        vcMember.setGradeType(type);
+        return  vcMember;
+    }
 
 
+    /**
+     * @Description: TODO
+     * @param memberId   用户id
+    * @param batchNum  批次号
+     * @return com.hz.gather.master.core.model.entity.ULimitedTimeLog
+     * @author long
+     * @date 2020/1/13 21:45
+     */
+    public  static ULimitedTimeLog  insertULimitedTimeLog(Integer memberId,String batchNum){
+        DateModel dateModel= PublicMethod.getDate();
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        BeanUtils.copy(dateModel,uLimitedTimeLog);
+        uLimitedTimeLog.setMemberId(memberId);
+        uLimitedTimeLog.setBatchNum(batchNum);
+        return uLimitedTimeLog;
+    }
+
+    /**
+     * @Description: 设置批次号
+     * @param batchNum
+     * @return com.hz.gather.master.core.model.entity.ULimitedTimeLog
+     * @author long
+     * @date 2020/1/13 21:47
+     */
+    public  static ULimitedTimeLog  queryULimitedTimeLog(String batchNum){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(batchNum);
+        return uLimitedTimeLog;
+    }
+
+
+    public static  void  main(String [] args){
+        String    rs ="";
+        Object    reStr ="";
+        ULimitedTimeLog uLimitedTime=new ULimitedTimeLog();
+        while(true){
+            if(uLimitedTime==null){
+                break;
+            }
+            rs = UUIDUtils.createUUID();
+            ULimitedTimeLog uLimitedTimeLog=PublicMethod.queryULimitedTimeLog(rs);
+            uLimitedTime = null;
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.hz.gather.master.core.service;
 import com.hz.gather.master.core.common.service.BaseService;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 
 import java.util.List;
@@ -107,7 +108,7 @@ public interface PayService<T> extends BaseService<T> {
      * @return
      * @throws Exception
      */
-    public  boolean    updateMemberInfo(List<VcMember> list,Integer  superiorId)throws Exception;
+    public  boolean    updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag)throws Exception;
 
 
     /***
@@ -123,5 +124,21 @@ public interface PayService<T> extends BaseService<T> {
      * @return
      */
     public  Integer    updateTypeNOPermanentVIP(Integer  memberId,Integer type,Double money);
+
+
+    /**
+     * 支付成功是否需要修改以下的信息
+     * @param vcMember
+     * @return
+     */
+    public   boolean    paymentUpdateMyInfo(VcMember  vcMember);
+
+    /**
+     * 是否需要执行修改上级状态，成为永久vip
+     * @param superiorId
+     * @return
+     * @throws Exception
+     */
+    public   boolean    handleSuperiorId(Integer superiorId)throws Exception;
 
 }

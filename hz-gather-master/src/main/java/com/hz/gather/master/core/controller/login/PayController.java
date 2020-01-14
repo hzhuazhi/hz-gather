@@ -38,12 +38,12 @@ import java.util.Map;
 public class PayController {
     private static Logger log = LoggerFactory.getLogger(PayController.class);
     /**
-     * @Description: 支付宝是否有效
+     * @Description: 是否设置了支付宝
      * @param request
-    * @param response
-    * @param jsonData
+     * @param response
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     * local:   http://localhost:8082/mg/pay/havaPay
      * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad"}
      * @date 2020/1/9 20:49
      */

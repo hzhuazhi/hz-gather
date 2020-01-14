@@ -88,7 +88,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 //            ULimitedTimeLog
         }
 
-        PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list);
+        responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list);
 
 
         return responseUserInfo;

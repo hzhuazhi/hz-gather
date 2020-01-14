@@ -2,14 +2,8 @@ package com.hz.gather.master.core.service.impl;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
-import com.hz.gather.master.core.mapper.UCashOutLogMapper;
-import com.hz.gather.master.core.mapper.UCashOutProcedLogMapper;
-import com.hz.gather.master.core.mapper.VcMemberMapper;
-import com.hz.gather.master.core.mapper.VcMemberResourceMapper;
-import com.hz.gather.master.core.model.entity.UCashOutLog;
-import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
-import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.mapper.*;
+import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.service.TransactionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +21,8 @@ import javax.transaction.Transactional;
 public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements TransactionalService<T> {
     @Autowired
     private VcMemberMapper vcMemberMapper;
+    @Autowired
+    private ULimitedTimeLogMapper uLimitedTimeLogMapper;
 
     @Autowired
     private VcMemberResourceMapper vcMemberResourceMapper;
@@ -54,5 +50,12 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         }
         uCashOutLogMapper.insertSelective(uCashOutLog);
         vcMemberResourceMapper.updateByPrimaryKeySelective(uqVcMemberResource);
+    }
+
+    @Override
+    public void memberPayment(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog uLimitedTimeLog) {
+        vcMemberResourceMapper.updateUpPeople(vcMemberResource);
+        vcMemberMapper.updateByPrimaryKeySelective(vcMember);
+        uLimitedTimeLogMapper.insertSelective(uLimitedTimeLog);
     }
 }

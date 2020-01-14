@@ -1,10 +1,7 @@
 package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
-import com.hz.gather.master.core.model.entity.UCashOutLog;
-import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
-import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.entity.*;
 
 /**
  * @Description TODO
@@ -22,4 +19,6 @@ public interface TransactionalService <T> extends BaseService<T> {
     void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource);
 
     void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
+
+    void   memberPayment(VcMember vcMember , VcMemberResource vcMemberResource, ULimitedTimeLog uLimitedTimeLog );
 }

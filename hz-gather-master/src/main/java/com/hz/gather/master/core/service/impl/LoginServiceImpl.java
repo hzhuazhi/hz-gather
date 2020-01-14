@@ -106,14 +106,13 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         }else if(type==3){
             verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.SIGN_IN_SMS+(phone+time));
         }
-
         if (StringUtils.isBlank(verifCode)){
             throw  new ServiceException(ENUM_ERROR.A00008.geteCode(),ENUM_ERROR.A00008.geteDesc());
         }
 
         //验证码是否一致
         if (!verifCodeRedis.equals(verifCode)){
-            throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
+            throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
         }
         return true;
     }
@@ -130,7 +129,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         }
         VcMember queryInviteCode=PublicMethod.queryInviteCode(loginModel.getInviteCode());
         VcMember   vcMember  =  vcMemberMapper.selectByPrimaryKey(queryInviteCode);
-        addUserInfo(loginModel,memberId,InviteAdd,vcMember);
+        addUserInfo(loginModel,memberId,InviteAdd,vcMember,loginModel.getPhone());
         addRedis(loginModel,InviteAdd,memberId);
 
         return InviteAdd[2];
@@ -148,7 +147,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         VcMember    vcMember   =  PublicMethod.queryInviteCode(inviteCode);
         VcMember    vcMemberRs  = vcMemberMapper.selectByPrimaryKey(vcMember);
         if(vcMemberRs!=null){
-            if(vcMemberRs.getGradeType()!=1){
+            if(vcMemberRs.getGradeType()!=0){
                 String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.INVITE_INFO, inviteCode);
                 ComponentUtil.redisService.set(strKeyCache,vcMemberRs.getMemberId()+"");
                 return true;
@@ -206,8 +205,8 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     }
 
     @Override
-    public void addUserInfo(LoginModel loginModel,Integer memberId,String[]  inviteAdd,VcMember vcMember) throws Exception {
-        VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getSuperiorId(),vcMember.getExtensionMemberId());
+    public void addUserInfo(LoginModel loginModel,Integer memberId,String[]  inviteAdd,VcMember vcMember,String phone) throws Exception {
+        VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getSuperiorId(),vcMember.getExtensionMemberId(),phone);
         VcMemberResource vcMemberResourceModel  =  PublicMethod.insertVcMemberResource(memberId);
         VcMemberResource updateResourcePeople  =PublicMethod.updateResourcePeople(memberId);
         ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople);

@@ -41,6 +41,8 @@ public class LoginController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     * local:   http://localhost:8082/mg/login/register_sms
+     *
      * 字段格式 { "smsType": 1,"phone":"13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
      * 字段格式 { "smsType": 2,"phone": "13606768872","version": "1.0.1" }
      * 字段格式 { "smsType": 3,"phone":"13606768872","version": "1.0.1" }
@@ -98,6 +100,7 @@ public class LoginController {
     * @param response
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
+     * local:   http://localhost:8082/mg/login/register_info
      * 字段格式: { "phone": "13606768872","smsCode": "中国","timeStamp": "1578053576","passWrod": "111111","inviteCode": "382032","version": "1.0.1" }
      * @author long
      * {
@@ -164,6 +167,8 @@ public class LoginController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     *  local:   http://localhost:8082/mg/login/forget_password
+     * { "pwToken": "sxxxxx","passWord": "1578053576","passWordConfirm": "111111"}
      * @date 2020/1/3 21:57
      */
     @PostMapping("/forget_password")
@@ -186,7 +191,7 @@ public class LoginController {
             }
 
             flag = PublicMethod.pwIsOK(forgetPasswordModel.getPassWord(),forgetPasswordModel.getPassWordConfirm());
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00005.geteCode(),ENUM_ERROR.A00005.geteDesc());
             }
 
@@ -214,12 +219,14 @@ public class LoginController {
     }
 
     /**
-     * @Description: 忘记密码接口
+     * @Description: 忘记密码接口,根据手机号和验证码修改信息
      * @param request
     * @param response
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     * local:   http://localhost:8082/mg/login/forget_phone
+     *{ "phone": "1362723292","verificationCode": "827323","timeStamp": "111111"}
      * @date 2020/1/3 21:57
      */
     @PostMapping("/forget_phone")
@@ -233,7 +240,7 @@ public class LoginController {
             forgetPhoneModel  = JSON.parseObject(data, ForgetPhoneModel.class);
 
             boolean  flag = PublicMethod.checkPhoneVerificaCode(forgetPhoneModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
@@ -272,6 +279,7 @@ public class LoginController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     * local:   http://localhost:8082/mg/login/sign_in
      * 字段格式 { "type": 1, "phone":"13606768872","password":"111111"}
      * 字段格式 { "type": 1, "phone":"13606768872","smsCode": "888888" ,"timeStamp": "123124123" }
      * @date 2020/1/7 13:46

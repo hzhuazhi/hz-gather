@@ -58,8 +58,8 @@ public class UserController {
             commonModel  = JSON.parseObject(data, CommonModel.class);
 
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
-            if(flag){
-                throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
             Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
@@ -82,13 +82,24 @@ public class UserController {
     }
 
     /**
-     * @Description: TODO
+     * @Description: 我的好友
      * @param request
     * @param response
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
      * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad"}
+     *
+     * local:   http://localhost:8082/mg/user/myFriend
+     * 字段格式: { "token":"xxxaxxsadasqweqeqweqsad"}
+     * @author long
+     * {
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJ0aW1lU3RhbXAiOiIxNTc4NzI0MTQzIn0="
+     *     }
+     * }
      * @date 2020/1/9 14:15
      */
     @PostMapping("/myFriend")
@@ -101,7 +112,7 @@ public class UserController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
             }
 
@@ -133,6 +144,16 @@ public class UserController {
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
      * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad"}
+     * @author long
+     * local:   http://localhost:8082/mg/user/queryUser
+     * 字段格式: { "token":"xxxaxxsadasqweqeqweqsad"}
+     * {
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJ0aW1lU3RhbXAiOiIxNTc4NzI0MTQzIn0="
+     *     }
+     * }
      * @date 2020/1/9 14:20
      */
     @PostMapping("/queryUser")
@@ -145,7 +166,7 @@ public class UserController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean   flag  = PublicMethod.isCommonModel(commonModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
             }
 
@@ -181,7 +202,17 @@ public class UserController {
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
      * token 是必须的需要+ 如何一个字段才能进行通过
-     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","memberAdd":"http://xx","nickname":"我还是个孩子","sex":"1","birthday":"2012-12-12"}
+     * 字段格式
+     *
+     * local:   http://localhost:8082/mg/user/editUserInfo
+     * 字段格式: { "token":"xxxaxxsadasqweqeqweqsad","memberAdd":"http://xx","nickname":"我还是个孩子","sex":"1","birthday":"2012-12-12"}
+     * {
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJ0aW1lU3RhbXAiOiIxNTc4NzI0MTQzIn0="
+     *      }
+     * }
      * @date 2020/1/9 16:11
      */
     @PostMapping("/editUserInfo")
@@ -224,6 +255,7 @@ public class UserController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
+     * local:   http://localhost:8082/mg/user/myFundList
      * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","pageNumber":1,"pageSize":3}
      * @date 2020/1/9 19:54
      */
@@ -251,7 +283,7 @@ public class UserController {
             List<UMoneyList> uMoneyList = ComponentUtil.userInfoService.queryByList(uMoneyList1);
 
 //            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-//            data = PublicMethod.toJson(responseEditUser);
+            data = PublicMethod.toJson(uMoneyList);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
@@ -262,13 +294,4 @@ public class UserController {
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
-
-
-
-
-
-
-
-
-
 }

@@ -58,7 +58,7 @@ public class VcMemberResource {
      *
      * @mbggenerated
      */
-    private Integer teamActive;
+    private Integer teamPeople;
 
     /**
      * 直推总人数(所有的人包括所有状态)
@@ -66,6 +66,12 @@ public class VcMemberResource {
      * @mbggenerated
      */
     private Integer pushPeopleAll;
+    /**
+     * 裂变收益总人数(包括自己的级数)
+     *
+     * @mbggenerated
+     */
+    private Integer fissionPeopleNum;
 
     /**
      * 下级总人数(所有的人包括所有状态)
@@ -109,7 +115,6 @@ public class VcMemberResource {
      * @mbggenerated
      */
     private BigDecimal pushMoney;
-
 
 
 
@@ -169,12 +174,12 @@ public class VcMemberResource {
         this.pushPeople = pushPeople;
     }
 
-    public Integer getTeamActive() {
-        return teamActive;
+    public Integer getTeamPeople() {
+        return teamPeople;
     }
 
-    public void setTeamActive(Integer teamActive) {
-        this.teamActive = teamActive;
+    public void setTeamPeople(Integer teamPeople) {
+        this.teamPeople = teamPeople;
     }
 
     public Integer getPushPeopleAll() {
@@ -231,5 +236,13 @@ public class VcMemberResource {
 
     public void setPushMoney(BigDecimal pushMoney) {
         this.pushMoney = pushMoney;
+    }
+
+    public Integer getFissionPeopleNum() {
+        return fissionPeopleNum;
+    }
+
+    public void setFissionPeopleNum(Integer fissionPeopleNum) {
+        this.fissionPeopleNum = fissionPeopleNum;
     }
 }

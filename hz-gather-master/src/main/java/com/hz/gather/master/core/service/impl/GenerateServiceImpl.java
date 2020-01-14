@@ -6,8 +6,13 @@ import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.CacheKey;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.mapper.ULimitedTimeLogMapper;
+import com.hz.gather.master.core.mapper.VcMemberMapper;
+import com.hz.gather.master.core.model.entity.ULimitedTimeLog;
 import com.hz.gather.master.core.service.GenerateService;
 import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.PublicMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,10 +26,12 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class GenerateServiceImpl<T> extends BaseServiceImpl<T> implements GenerateService<T> {
     private int  ONE_YEAR =366;
+    @Autowired
+    private ULimitedTimeLogMapper uLimitedTimeLogMapper;
 
     @Override
     public BaseDao<T> getDao() {
-        return null;
+        return uLimitedTimeLogMapper;
     }
 
     @Override
@@ -57,4 +64,30 @@ public class GenerateServiceImpl<T> extends BaseServiceImpl<T> implements Genera
 
         return rs;
     }
+
+
+    @Override
+    public String getBatchNum() {
+        String    rs ="";
+        Object    reStr ="";
+        ULimitedTimeLog uLimitedTime=new ULimitedTimeLog();
+        while(true){
+            if(uLimitedTime==null){
+                break;
+            }
+            rs = UUIDUtils.createUUID();
+            ULimitedTimeLog uLimitedTimeLog=PublicMethod.queryULimitedTimeLog(rs);
+            uLimitedTime= uLimitedTimeLogMapper.selectByPrimaryKey(uLimitedTimeLog);
+        }
+//        do{
+//            rs = UUIDUtils.createUUID();
+//            ULimitedTimeLog uLimitedTimeLog=PublicMethod.queryULimitedTimeLog(rs);
+//            uLimitedTime= uLimitedTimeLogMapper.selectByPrimaryKey(uLimitedTimeLog);
+////            reStr = ComponentUtil.redisService.get(token1);
+//        }while(uLimitedTime==null);
+
+        return rs;
+    }
+
+
 }

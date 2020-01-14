@@ -68,7 +68,7 @@ public interface LoginService<T> extends BaseService<T>  {
      * @return
      * @throws Exception
      */
-    public void addUserInfo(LoginModel loginModel, Integer memberId, String[]   InviteAdd, VcMember vcMember)throws  Exception;
+    public void addUserInfo(LoginModel loginModel, Integer memberId, String[]   InviteAdd, VcMember vcMember,String phone)throws  Exception;
 
     /**
      * 给用户信息添加到缓存里面
