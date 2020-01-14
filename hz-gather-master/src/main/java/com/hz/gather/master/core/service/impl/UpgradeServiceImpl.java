@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description TODO
+ * @Description 客户端升级更新的Service层的实现层
  * @Author yoko
  * @Date 2020/1/14 13:49
  * @Version 1.0

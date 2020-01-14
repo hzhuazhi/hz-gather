@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hz.gather.master.core.mapper.NoticeMapper">
+
+
+
+
+    <!-- 定义数据库基本列,只适用代替单表的*-->
+    <sql id="Base_Column_List">
+        a.id,a.member_id,a.nickname,a.data_type,a.receive_money,a.curday,a.curhour,a.curminute,a.is_valid
+    </sql>
+
+
+    <!-- 查询条件 -->
+    <sql id="Example_Where_Clause">
+        where 1=1
+        <trim  suffixOverrides="," >
+            <if test="id != null and id != '' " >
+                and a.id = #{id}
+            </if>
+            <if test="memberId != null and memberId != '' " >
+                and a.member_id = #{memberId}
+            </if>
+            <if test="dataType != null and dataType != '' " >
+                and a.data_type = #{dataType}
+            </if>
+            and a.is_valid = 1
+        </trim>
+    </sql>
+
+
+    <!-- 查询条件_id -->
+    <sql id="Example_Where_Clause_id">
+        where 1=1
+        <trim  suffixOverrides="," >
+            <if test="id != null and id != '' " >
+                and a.id = #{id}
+            </if>
+            and a.is_valid =  1
+        </trim>
+    </sql>
+
+
+    <!-- 显示所有数据 -->
+    <select id="findAll" resultType="com.hz.gather.master.core.model.notice.NoticeModel">
+        select
+        <include refid="Base_Column_List" />
+        from sys_notice_info a
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <!-- 查询列表 -->
+    <select id="findByCondition" parameterType="Object" resultType="com.hz.gather.master.core.model.notice.NoticeModel">
+        select
+        <include refid="Base_Column_List" />
+        from sys_notice_info a
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <!-- 根据条件查询信息-->
+    <select id="findByObject" parameterType="Object" resultType="com.hz.gather.master.core.model.notice.NoticeModel">
+        select
+        <include refid="Base_Column_List" />
+        from sys_notice_info a
+        <include refid="Example_Where_Clause"/>
+        limit 1
+    </select>
+
+    <!-- 根据id查询信息-->
+    <select id="findById" parameterType="java.lang.Long" resultType="com.hz.gather.master.core.model.notice.NoticeModel">
+        select
+        <include refid="Base_Column_List" />
+        from sys_notice_info a
+        <include refid="Example_Where_Clause_id"/>
+    </select>
+
+
+
+    <!-- 查询总数-->
+    <select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
+        select count(1)
+        from sys_notice_info a
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <!-- 查询分页列表 -->
+    <select id="queryByList" parameterType="Object" resultType="com.hz.gather.master.core.model.notice.NoticeModel">
+        select
+        <include refid="Base_Column_List" />
+        from sys_notice_info a
+        <include refid="Example_Where_Clause"/>
+        order by a.id desc
+        <if test="pageNumber != null and pageNumber != ''" >
+            limit #{start},#{end}
+        </if>
+    </select>
+
+
+
+
+</mapper>

@@ -72,6 +72,9 @@ public class AutowireRunner implements ApplicationRunner {
     @Autowired
     private UpgradeService upgradeService;
 
+    @Autowired
+    private NoticeService noticeService;
+
     Thread runThread = null;
 
 
@@ -99,6 +102,7 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.payService = payService;
         ComponentUtil.taskService = taskService;
         ComponentUtil.upgradeService = upgradeService;
+        ComponentUtil.noticeService = noticeService;
         runThread = new RunThread();
         runThread.start();
 

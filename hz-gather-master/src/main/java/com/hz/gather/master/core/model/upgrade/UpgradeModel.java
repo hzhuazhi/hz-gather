@@ -3,7 +3,7 @@ package com.hz.gather.master.core.model.upgrade;
 import java.io.Serializable;
 
 /**
- * @Description TODO
+ * @Description 客户端升级更新的实体属性Bean
  * @Author yoko
  * @Date 2020/1/14 13:49
  * @Version 1.0

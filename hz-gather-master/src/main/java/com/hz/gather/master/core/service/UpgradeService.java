@@ -4,7 +4,7 @@ import com.hz.gather.master.core.common.service.BaseService;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 
 /**
- * @Description TODO
+ * @Description 客户端升级更新的Service层
  * @Author yoko
  * @Date 2020/1/14 13:49
  * @Version 1.0

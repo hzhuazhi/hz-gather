@@ -5,7 +5,7 @@ import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Description TODO
+ * @Description 客户端升级更新的Dao层
  * @Author yoko
  * @Date 2020/1/14 13:49
  * @Version 1.0
