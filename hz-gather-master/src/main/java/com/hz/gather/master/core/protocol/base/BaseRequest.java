@@ -17,6 +17,7 @@ public class BaseRequest extends BasePage implements Serializable {
     public Integer agtVer;
     public String androidVer;
     public Integer clientVer;
+    public Integer clientType;
     public Long ctime;
     public Long cctime;
     public String sign;
@@ -80,5 +81,13 @@ public class BaseRequest extends BasePage implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Integer getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(Integer clientType) {
+        this.clientType = clientType;
     }
 }

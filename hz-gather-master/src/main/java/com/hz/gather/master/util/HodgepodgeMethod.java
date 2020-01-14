@@ -9,11 +9,14 @@ import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
+import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.core.protocol.response.alipay.ResponseAlipay;
 import com.hz.gather.master.core.protocol.response.question.QuestionD;
 import com.hz.gather.master.core.protocol.response.question.QuestionM;
 import com.hz.gather.master.core.protocol.response.question.ResponseQuestion;
+import com.hz.gather.master.core.protocol.response.upgrade.ResponseUpgrade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,6 +339,27 @@ public class HodgepodgeMethod {
         if (rowCount != null){
             dataModel.rowCount = rowCount;
         }
+        dataModel.setStime(stime);
+        dataModel.setSign(sign);
+        return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 客户端升级的数据组装返回客户端的方法
+     * @param stime - 服务器的时间
+     * @param sign - 签名
+     * @param upgradeModel - 客户端更新要更新的数据
+     * @return java.lang.String
+     * @author yoko
+     * @date 2019/11/25 22:45
+     */
+    public static String assembleUpgradeDataResult(long stime, String sign, UpgradeModel upgradeModel){
+        ResponseUpgrade dataModel = new ResponseUpgrade();
+        if (upgradeModel != null){
+            dataModel = BeanUtils.copy(upgradeModel, ResponseUpgrade.class);
+        }
+
         dataModel.setStime(stime);
         dataModel.setSign(sign);
         return JSON.toJSONString(dataModel);
