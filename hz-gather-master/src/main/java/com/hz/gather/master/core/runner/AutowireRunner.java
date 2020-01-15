@@ -75,6 +75,8 @@ public class AutowireRunner implements ApplicationRunner {
     @Autowired
     private NoticeService noticeService;
     @Autowired
+    private UpgradeService upgradeService;
+    @Autowired
     private ItemBankService itemBankService;
 
     Thread runThread = null;
