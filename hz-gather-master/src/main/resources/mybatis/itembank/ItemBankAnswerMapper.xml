@@ -7,7 +7,7 @@
 
     <!-- 定义数据库基本列,只适用代替单表的*-->
     <sql id="Base_Column_List">
-        a.id,a.bk_name,a.question,a.seat,a.create_time,a.update_time,a.yn
+        a.id,a.member_id,a.item_bank_id,a.answer,a.create_time,a.update_time,a.yn,b.bk_name,b.question
     </sql>
 
 
@@ -18,8 +18,17 @@
             <if test="id != null and id != '' " >
                 and a.id = #{id}
             </if>
+            <if test="memberId != null and memberId != '' " >
+                and a.member_id = #{memberId}
+            </if>
+            <if test="itemBankId != null and itemBankId != '' " >
+                and a.item_bank_id = #{itemBankId}
+            </if>
+            <if test="answer != null and answer != '' " >
+                and a.answer = #{answer}
+            </if>
             <if test="bkName != null and bkName != '' " >
-                and a.bk_name = #{bkName}
+                and b.bk_name = #{bkName}
             </if>
             and a.yn = 0
         </trim>
@@ -38,43 +47,37 @@
     </sql>
 
 
-    <!-- 排序条件 -->
-    <sql id="Example_Order_By">
-        order by a.seat asc
-    </sql>
 
     <!-- 显示所有数据 -->
-    <select id="findAll" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
+    <select id="findAll" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
         select
         <include refid="Base_Column_List" />
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause"/>
-        <include refid="Example_Order_By"/>
     </select>
 
     <!-- 查询列表 -->
-    <select id="findByCondition" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
+    <select id="findByCondition" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
         select
         <include refid="Base_Column_List" />
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause"/>
-        <include refid="Example_Order_By"/>
     </select>
 
     <!-- 根据条件查询信息-->
-    <select id="findByObject" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
+    <select id="findByObject" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
         select
         <include refid="Base_Column_List" />
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause"/>
         limit 1
     </select>
 
     <!-- 根据id查询信息-->
-    <select id="findById" parameterType="java.lang.Long" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
+    <select id="findById" parameterType="java.lang.Long" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
         select
         <include refid="Base_Column_List" />
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause_id"/>
     </select>
 
@@ -83,23 +86,67 @@
     <!-- 查询总数-->
     <select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
         select count(1)
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause"/>
     </select>
 
     <!-- 查询分页列表 -->
-    <select id="queryByList" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
+    <select id="queryByList" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
         select
         <include refid="Base_Column_List" />
-        from tb_ga_item_bank a
+        from tb_ga_item_bank_answer a left join tb_ga_item_bank b on a.item_bank_id = b.id
         <include refid="Example_Where_Clause"/>
-        <include refid="Example_Order_By"/>
         <if test="pageNumber != null and pageNumber != ''" >
             limit #{start},#{end}
         </if>
     </select>
 
 
+    <!-- 添加基本信息 -->
+    <insert id="add" parameterType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel" >
+        <!--<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">-->
+        <!--SELECT LAST_INSERT_ID() as id-->
+        <!--</selectKey>-->
+        insert into tb_ga_item_bank_answer
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="memberId != null and memberId != '' " >
+                member_id,
+            </if>
+            <if test="itemBankId != null and itemBankId != '' " >
+                item_bank_id,
+            </if>
+            <if test="answer != null and answer != '' " >
+                answer,
+            </if>
+            create_time,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="memberId != null and memberId != '' " >
+                <![CDATA[  #{memberId}, ]]>
+            </if>
+            <if test="itemBankId != null and itemBankId != '' " >
+                <![CDATA[  #{itemBankId}, ]]>
+            </if>
+            <if test="answer != null and answer != '' " >
+                <![CDATA[  #{answer}, ]]>
+            </if>
+            NOW(),
+        </trim>
+    </insert>
+
+
+    <!-- 用户校验密保-->
+    <select id="checkItemBankAnswer" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankAnswerModel">
+        select
+        a.id,a.member_id,a.item_bank_id,a.answer,a.create_time,a.update_time,a.yn
+        from tb_ga_item_bank_answer a
+        where 1=1
+        and a.member_id = #{memberId}
+        and a.item_bank_id = #{itemBankId}
+        and a.answer = #{answer}
+        limit 1
+    </select>
 
 
 </mapper>

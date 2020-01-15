@@ -80,4 +80,9 @@ public interface CacheKey {
      * 密保
      */
     String ITEM_BANK = "-11";
+
+    /**
+     * 密保：已通过密保问答
+     */
+    String ITEM_BANK_ANSWER = "-12";
 }

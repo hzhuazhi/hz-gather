@@ -8,6 +8,7 @@ import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
+import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
@@ -15,6 +16,7 @@ import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
+import com.hz.gather.master.core.protocol.request.itembank.ItemBankAnswer;
 import com.hz.gather.master.core.protocol.request.itembank.RequestItemBank;
 import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.core.protocol.response.alipay.ResponseAlipay;
@@ -30,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -432,7 +435,7 @@ public class HodgepodgeMethod {
      * @author yoko
      * @date 2019/11/21 18:59
      */
-    public static long checkActiveData(RequestItemBank requestModel) throws Exception{
+    public static long checkCustomerData(RequestItemBank requestModel) throws Exception{
         long memberId;
         // 校验所有数据
         if (requestModel == null ){
@@ -468,4 +471,116 @@ public class HodgepodgeMethod {
         }
         return memberId;
     }
+
+
+    /**
+     * @Description: 查询添加用户的密保时，校验基本数据是否非法
+     * @param requestModel - 基础数据
+     * @return void
+     * @author yoko
+     * @date 2019/11/21 18:59
+     */
+    public static long checkAddAnswerData(RequestItemBank requestModel) throws Exception{
+        long memberId;
+        // 校验所有数据
+        if (requestModel == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00003.geteCode(), ErrorCode.ENUM_ERROR.I00003.geteDesc());
+        }
+
+        // 校验token值
+        if (StringUtils.isBlank(requestModel.getToken())){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00004.geteCode(), ErrorCode.ENUM_ERROR.I00004.geteDesc());
+        }
+
+        // 校验密保以及答案
+        if (requestModel.answerList == null){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00005.geteCode(), ErrorCode.ENUM_ERROR.I00005.geteDesc());
+        }
+
+        // 校验用户是否登录
+        memberId = HodgepodgeMethod.checkIsLogin(requestModel.getToken());
+        return memberId;
+    }
+
+    /**
+     * @Description: 组装用户提交的密保以及答案
+     * @param itemBankAnswerList - 用户密保以及答案
+     * @param memberId - 用户ID
+     * @return List
+     * @author yoko
+     * @date 2020/1/15 16:52
+    */
+    public static List<ItemBankAnswerModel> assembleItemBankAnswerList(List<ItemBankAnswer> itemBankAnswerList, long memberId){
+        List<ItemBankAnswerModel> resList = new ArrayList<>();
+        for (ItemBankAnswer dataModel : itemBankAnswerList){
+            if (dataModel.itemBankId != null && !StringUtils.isBlank(dataModel.answer)){
+                ItemBankAnswerModel data = new ItemBankAnswerModel();
+                data.setMemberId(memberId);
+                data.setItemBankId(dataModel.itemBankId);
+                data.setAnswer(dataModel.answer);
+                resList.add(data);
+            }
+        }
+        return resList;
+    }
+
+    /**
+     * @Description: 校验用户提交的密保以及答案数据
+     * @param itemBankAnswerList - 密保、答案
+     * @author yoko
+     * @date 2020/1/15 16:59
+    */
+    public static void checkItemBankAnswerData(List<ItemBankAnswerModel> itemBankAnswerList) throws Exception{
+        // 校验数据是否为空
+        if (itemBankAnswerList == null || itemBankAnswerList.size() == ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00003.geteCode(), ErrorCode.ENUM_ERROR.I00003.geteDesc());
+        }
+    }
+
+
+    /**
+     * @Description: 添加用户密保数据组装返回客户端的方法
+     * @param stime - 服务器的时间
+     * @param sign - 签名
+     * @return java.lang.String
+     * @author yoko
+     * @date 2019/11/25 22:45
+     */
+    public static String assembleAddItemBankResult(long stime, String sign){
+        ResponseItemBank dataModel = new ResponseItemBank();
+        dataModel.setStime(stime);
+        dataModel.setSign(sign);
+        return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 查询用户校验密保时，校验基本数据是否非法
+     * @param requestModel - 基础数据
+     * @return void
+     * @author yoko
+     * @date 2019/11/21 18:59
+     */
+    public static long checkAnswerData(RequestItemBank requestModel) throws Exception{
+        long memberId;
+        // 校验所有数据
+        if (requestModel == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00007.geteCode(), ErrorCode.ENUM_ERROR.I00007.geteDesc());
+        }
+
+        // 校验token值
+        if (StringUtils.isBlank(requestModel.getToken())){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00008.geteCode(), ErrorCode.ENUM_ERROR.I00008.geteDesc());
+        }
+
+        // 校验密保以及答案
+        if (requestModel.answerList == null){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00009.geteCode(), ErrorCode.ENUM_ERROR.I00009.geteDesc());
+        }
+
+        // 校验用户是否登录
+        memberId = HodgepodgeMethod.checkIsLogin(requestModel.getToken());
+        return memberId;
+    }
+
 }
