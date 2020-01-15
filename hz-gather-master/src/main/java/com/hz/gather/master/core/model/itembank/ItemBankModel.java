@@ -49,6 +49,11 @@ public class ItemBankModel extends BasePage implements Serializable {
      */
     private Integer yn;
 
+    /**
+     * 用户ID
+     */
+    private Long memberId;
+
     public Long getId() {
         return id;
     }
@@ -103,5 +108,13 @@ public class ItemBankModel extends BasePage implements Serializable {
 
     public void setYn(Integer yn) {
         this.yn = yn;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
     }
 }

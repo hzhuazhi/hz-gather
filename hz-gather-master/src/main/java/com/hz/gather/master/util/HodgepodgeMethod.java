@@ -1,8 +1,10 @@
 package com.hz.gather.master.util;
 
 import com.alibaba.fastjson.JSON;
+import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
+import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
@@ -13,6 +15,7 @@ import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
+import com.hz.gather.master.core.protocol.request.itembank.RequestItemBank;
 import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.core.protocol.response.alipay.ResponseAlipay;
 import com.hz.gather.master.core.protocol.response.itembank.ItemBank;
@@ -419,5 +422,50 @@ public class HodgepodgeMethod {
         dataModel.setStime(stime);
         dataModel.setSign(sign);
         return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 查询获取用户的密保时，校验基本数据是否非法
+     * @param requestModel - 基础数据
+     * @return void
+     * @author yoko
+     * @date 2019/11/21 18:59
+     */
+    public static long checkActiveData(RequestItemBank requestModel) throws Exception{
+        long memberId;
+        // 校验所有数据
+        if (requestModel == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00001.geteCode(), ErrorCode.ENUM_ERROR.I00001.geteDesc());
+        }
+
+        // 校验token值
+        if (StringUtils.isBlank(requestModel.getToken())){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.I00002.geteCode(), ErrorCode.ENUM_ERROR.I00002.geteDesc());
+        }
+
+        // 校验用户是否登录
+        memberId = HodgepodgeMethod.checkIsLogin(requestModel.getToken());
+        return memberId;
+    }
+
+    /**
+     * @Description: 校验用户是否处于登录状态
+     * @param token - 登录token
+     * @return Long
+     * @author yoko
+     * @date 2019/11/21 18:01
+     */
+    public static long checkIsLogin(String token) throws Exception{
+        Long memberId;
+//        String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.TOKEN_INFO, token);
+        String strCache = (String) ComponentUtil.redisService.get(token);
+        if (!StringUtils.isBlank(strCache)) {
+            // 登录存储在缓存中的用户id
+            memberId = Long.parseLong(strCache);
+        }else {
+            throw new ServiceException(ErrorCode.ENUM_ERROR.C00000.geteCode(), ErrorCode.ENUM_ERROR.C00000.geteDesc());
+        }
+        return memberId;
     }
 }

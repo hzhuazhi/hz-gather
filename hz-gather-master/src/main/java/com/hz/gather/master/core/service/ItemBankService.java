@@ -22,4 +22,13 @@ public interface ItemBankService<T> extends BaseService<T> {
      * @date 2020/01/15 19:26
      */
     public List<ItemBankModel> getItemBankList(ItemBankModel model, int isCache) throws Exception;
+
+    /**
+     * @Description: 根据客户ID获取客户自己定义的密保集合
+     * @param model
+     * @return List
+     * @author yoko
+     * @date 2020/1/15 15:00
+    */
+    public List<ItemBankModel> getItemBankByCustomerList(ItemBankModel model);
 }

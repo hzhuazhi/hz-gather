@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hz.gather.master.core.mapper.ItemBankMapper">
+<mapper namespace="com.hz.gather.master.core.mapper.ItemBankAnswerMapper">
 
 
 
@@ -100,15 +100,6 @@
     </select>
 
 
-    <!-- 根据客户ID获取客户自己定义的密保集合 -->
-    <select id="getItemBankByCustomerList" parameterType="Object" resultType="com.hz.gather.master.core.model.itembank.ItemBankModel">
-        select
-        <include refid="Base_Column_List" />
-        from tb_ga_item_bank a left join tb_ga_item_bank_answer b on a.id = b.item_bank_id
-        where 1=1
-        and b.member_id = #{memberId}
-        <include refid="Example_Order_By"/>
-    </select>
 
 
 </mapper>

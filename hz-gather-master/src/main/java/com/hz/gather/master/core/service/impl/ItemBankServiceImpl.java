@@ -66,4 +66,9 @@ public class ItemBankServiceImpl <T> extends BaseServiceImpl<T> implements ItemB
         }
         return dataList;
     }
+
+    @Override
+    public List<ItemBankModel> getItemBankByCustomerList(ItemBankModel model) {
+        return itemBankMapper.getItemBankByCustomerList(model);
+    }
 }
