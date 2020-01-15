@@ -157,7 +157,7 @@
     select
     <include refid="Base_Column_List" />
     from u_limited_time_log
-    where memberId = #{memberId}
+    where member_id = #{memberId}
     and   is_valid = 1
     and   is_finish = 1
     order by  create_time DESC

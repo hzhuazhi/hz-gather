@@ -161,5 +161,6 @@ public interface LoginService<T> extends BaseService<T>  {
     public  String   phoneSmsCodeSignIn(String phone,String  timeStamp,String smsCode)throws  Exception;
 
 
+    public  String   sendSmsPayPassword(String phone)throws  Exception;
 
 }

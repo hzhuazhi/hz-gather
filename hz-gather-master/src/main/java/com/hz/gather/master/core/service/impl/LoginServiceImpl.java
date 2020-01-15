@@ -293,6 +293,12 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     }
 
     @Override
+    public String sendSmsPayPassword(String phone) throws Exception {
+        String  time  = ComponentUtil.loginService.createTime(phone,3);
+        return time;
+    }
+
+    @Override
     public String passwordSignIn(String phone, String password) throws Exception {
         VcMember   vcMember = PublicMethod.toVcMember(phone,password);
         VcMember   rsVcMember=vcMemberMapper.selectByPrimaryKey(vcMember);

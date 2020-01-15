@@ -167,5 +167,13 @@ public interface PayService<T> extends BaseService<T> {
      */
     Integer  updatyPayId(long id,String zfbPayId,String zfbName);
 
+    /**
+     * 提现成功添加明细表
+     * @param memberId
+     * @param money
+     * @return
+     */
+    Integer  insertSuccess(Integer memberId,double  money);
+
 
 }

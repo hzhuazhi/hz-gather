@@ -48,6 +48,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     private ULimitedTimeLogMapper uLimitedTimeLogMapper;
     @Autowired
     private UBatchLogMapper uBatchLogMapper;
+    @Autowired
+    private UMoneyListMapper uMoneyListMapper;
     @Override
     public BaseDao<T> getDao() {
         return null;
@@ -331,5 +333,11 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     public Integer updatyPayId(long id, String zfbPayId, String zfbName) {
         VcMemberPay  vcMemberPay = PublicMethod.updateVcMemberPay(id,zfbPayId,zfbName);
         return vcMemberPayMapper.updateByPrimaryKeySelective(vcMemberPay);
+    }
+
+    @Override
+    public Integer insertSuccess(Integer memberId, double money) {
+        UMoneyList  uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE2,Constant.SYMBO_TYPE2,money);
+        return  uMoneyListMapper.insertSelective(uMoneyList);
     }
 }

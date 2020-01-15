@@ -46,6 +46,7 @@ public class LoginController {
      * 字段格式 { "smsType": 1,"phone":"13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
      * 字段格式 { "smsType": 2,"phone": "13606768872","version": "1.0.1" }
      * 字段格式 { "smsType": 3,"phone":"13606768872","version": "1.0.1" }
+     * 字段格式 { "smsType": 4,"phone":"13606768872","version": "1.0.1" }
      * return
      * {
      *     "resultCode": "0",
@@ -75,6 +76,8 @@ public class LoginController {
             }else if(sendSmsModel.getSmsType()==2){
                 time  =  ComponentUtil.loginService.sendForgetPassword(sendSmsModel.getPhone());
             }else if(sendSmsModel.getSmsType()==3){
+                time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());
+            }else if(sendSmsModel.getSmsType()==4){
                 time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());
             }
 
