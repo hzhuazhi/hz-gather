@@ -1,6 +1,7 @@
 package com.hz.gather.master.core.mapper;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
+import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,4 +12,13 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ItemBankAnswerMapper<T> extends BaseDao<T> {
+
+    /**
+     * @Description: 用户校验密保
+     * @param model - 密保以及答案
+     * @return
+     * @author yoko
+     * @date 2020/1/15 17:55
+     */
+    public ItemBankAnswerModel checkItemBankAnswer(ItemBankAnswerModel model);
 }

@@ -3,6 +3,7 @@ package com.hz.gather.master.core.protocol.request.itembank;
 import com.hz.gather.master.core.protocol.base.BaseRequest;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description TODO
@@ -13,7 +14,16 @@ import java.io.Serializable;
 public class RequestItemBank extends BaseRequest implements Serializable {
     private static final long   serialVersionUID = 1133223332140L;
 
+    public List<ItemBankAnswer> answerList;
     public RequestItemBank(){
 
+    }
+
+    public List<ItemBankAnswer> getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(List<ItemBankAnswer> answerList) {
+        this.answerList = answerList;
     }
 }

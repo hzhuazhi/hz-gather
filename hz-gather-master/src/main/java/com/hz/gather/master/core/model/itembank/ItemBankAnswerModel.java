@@ -29,6 +29,16 @@ public class ItemBankAnswerModel extends BasePage implements Serializable {
     private Long itemBankId;
 
     /**
+     * 名称
+     */
+    private String bkName;
+
+    /**
+     * 问题
+     */
+    private String question;
+
+    /**
      * 答案
      */
     private String answer;
@@ -103,5 +113,21 @@ public class ItemBankAnswerModel extends BasePage implements Serializable {
 
     public void setYn(Integer yn) {
         this.yn = yn;
+    }
+
+    public String getBkName() {
+        return bkName;
+    }
+
+    public void setBkName(String bkName) {
+        this.bkName = bkName;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
 }

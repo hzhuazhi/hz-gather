@@ -3,6 +3,7 @@ package com.hz.gather.master.core.service.impl;
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.mapper.ItemBankAnswerMapper;
+import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.service.ItemBankAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,10 @@ public class ItemBankAnswerServiceImpl<T> extends BaseServiceImpl<T> implements 
 
     public BaseDao<T> getDao() {
         return itemBankAnswerMapper;
+    }
+
+    @Override
+    public ItemBankAnswerModel checkItemBankAnswer(ItemBankAnswerModel model) {
+        return itemBankAnswerMapper.checkItemBankAnswer(model);
     }
 }
