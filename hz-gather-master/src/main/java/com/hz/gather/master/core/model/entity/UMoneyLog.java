@@ -1,9 +1,11 @@
 package com.hz.gather.master.core.model.entity;
 
+import com.hz.gather.master.core.protocol.page.BasePage;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class UMoneyLog {
+public class UMoneyLog extends BasePage {
     /**
      * 自增长
      *
@@ -44,7 +46,7 @@ public class UMoneyLog {
      *
      * @mbggenerated
      */
-    private Boolean rewardType;
+    private Integer rewardType;
 
     /**
      * 创建日期：存的日期格式20160530
@@ -58,14 +60,14 @@ public class UMoneyLog {
      *
      * @mbggenerated
      */
-    private Boolean curhour;
+    private Integer curhour;
 
     /**
      * 创建所属分钟：60分钟制
      *
      * @mbggenerated
      */
-    private Boolean curminute;
+    private Integer curminute;
 
     /**
      * 创建时间
@@ -86,7 +88,7 @@ public class UMoneyLog {
      *
      * @mbggenerated
      */
-    private Boolean isValid;
+    private Integer isValid;
 
     public Long getId() {
         return id;
@@ -128,36 +130,12 @@ public class UMoneyLog {
         this.receiveMoney = receiveMoney;
     }
 
-    public Boolean getRewardType() {
-        return rewardType;
-    }
-
-    public void setRewardType(Boolean rewardType) {
-        this.rewardType = rewardType;
-    }
-
     public Integer getCurday() {
         return curday;
     }
 
     public void setCurday(Integer curday) {
         this.curday = curday;
-    }
-
-    public Boolean getCurhour() {
-        return curhour;
-    }
-
-    public void setCurhour(Boolean curhour) {
-        this.curhour = curhour;
-    }
-
-    public Boolean getCurminute() {
-        return curminute;
-    }
-
-    public void setCurminute(Boolean curminute) {
-        this.curminute = curminute;
     }
 
     public Date getCreateTime() {
@@ -176,11 +154,35 @@ public class UMoneyLog {
         this.updateTime = updateTime;
     }
 
-    public Boolean getIsValid() {
+    public Integer getRewardType() {
+        return rewardType;
+    }
+
+    public void setRewardType(Integer rewardType) {
+        this.rewardType = rewardType;
+    }
+
+    public Integer getCurhour() {
+        return curhour;
+    }
+
+    public void setCurhour(Integer curhour) {
+        this.curhour = curhour;
+    }
+
+    public Integer getCurminute() {
+        return curminute;
+    }
+
+    public void setCurminute(Integer curminute) {
+        this.curminute = curminute;
+    }
+
+    public Integer getIsValid() {
         return isValid;
     }
 
-    public void setIsValid(Boolean isValid) {
+    public void setIsValid(Integer isValid) {
         this.isValid = isValid;
     }
 }

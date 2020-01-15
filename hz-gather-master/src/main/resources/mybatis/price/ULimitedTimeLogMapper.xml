@@ -164,4 +164,18 @@
     limit  1
   </select>
 
+
+  <update id="updateByPushNumber" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
+    update u_limited_time_log
+    <set >
+      <if test="pushNumber != null" >
+        push_number = push_number+#{pushNumber},
+      </if>
+      <if test="fissionMoney != null" >
+        fission_money = fission_money+#{fissionMoney},
+      </if>
+    </set>
+    where batch_num = #{batchNum}
+  </update>
+
 </mapper>

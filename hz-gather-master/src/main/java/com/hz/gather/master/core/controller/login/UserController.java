@@ -11,9 +11,12 @@ import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.UMoneyList;
+import com.hz.gather.master.core.model.entity.UMoneyLog;
 import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
+import com.hz.gather.master.core.protocol.request.user.RequestFundList;
 import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -225,7 +228,7 @@ public class UserController {
             editUser  = JSON.parseObject(data, RequestEditUser.class);
 
             boolean  flag  =   PublicMethod.toResponseUser(editUser);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
@@ -262,28 +265,31 @@ public class UserController {
     @PostMapping("/myFundList")
     public JsonResult<Object> myFundList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
-        RequestEditUser editUser = new RequestEditUser();
+        RequestFundList requestFundList = new RequestFundList();
         log.info("----------:myFundList 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
-            editUser  = JSON.parseObject(data, RequestEditUser.class);
+            requestFundList  = JSON.parseObject(data, RequestFundList.class);
 
-            boolean  flag  =   PublicMethod.toResponseUser(editUser);
-            if(flag){
+            boolean  flag  =   PublicMethod.cheakEequestFundList(requestFundList);
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
-            Integer   memberId = PublicMethod.tokenGetMemberId(editUser.getToken());
+            Integer   memberId = PublicMethod.tokenGetMemberId(requestFundList.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
             //根据分页查询该用户的资金明细信息
-            UMoneyList uMoneyList1 = BeanUtils.copy(editUser, UMoneyList.class);
-            uMoneyList1.setMemberId(memberId);
-            List<UMoneyList> uMoneyList = ComponentUtil.userInfoService.queryByList(uMoneyList1);
+            UMoneyList uMoneyList = BeanUtils.copy(requestFundList, UMoneyList.class);
+            uMoneyList.setMemberId(memberId);
+            List<Object> uMoneyList1 = ComponentUtil.userInfoService.getUMoneyList(uMoneyList);
 
+            VcMemberResource vcMemberResource  =  ComponentUtil.userInfoService.queryMemberResourceInfo(memberId);
+
+            ResponseFundList responseFundList=PublicMethod.toResponseFundList(vcMemberResource,uMoneyList1, uMoneyList.getRowCount());
 //            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-            data = PublicMethod.toJson(uMoneyList);
+            data = PublicMethod.toJson(responseFundList);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

@@ -1,5 +1,7 @@
 package com.hz.gather.master.core.protocol.response.user;
 
+import com.hz.gather.master.core.protocol.base.BaseResponse;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
  * @Date 2020/1/9 19:27
  * @Version 1.0
  */
-public class ResponseFundList {
+public class ResponseFundList extends BaseResponse {
     /**
      * 小金库余额
      */
@@ -21,6 +23,10 @@ public class ResponseFundList {
      *已提现总额
      */
     private  String  cash_money;
+    /**
+     *列表数量
+     */
+    private  Integer  rowCount;
     /**
      *领取信息
      */
@@ -56,5 +62,13 @@ public class ResponseFundList {
 
     public void setList(List<Object> list) {
         this.list = list;
+    }
+
+    public Integer getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(Integer rowCount) {
+        this.rowCount = rowCount;
     }
 }

@@ -18,4 +18,6 @@ public interface VcMemberPayMapper <T> extends BaseDao<T>  {
 
     List<VcMemberPay>  selectByMemberIdPayId(VcMemberPay record);
 
+    VcMemberPay  selectByoldPayId(VcMemberPay record);
+
 }

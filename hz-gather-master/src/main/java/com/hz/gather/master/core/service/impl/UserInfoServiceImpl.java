@@ -8,10 +8,7 @@ import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.FundListModel;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
-import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
-import com.hz.gather.master.core.protocol.response.user.ResponseFundList;
-import com.hz.gather.master.core.protocol.response.user.ResponseMyFriend;
-import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
+import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.core.service.UserInfoService;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -44,6 +41,11 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
     @Autowired
     private VcMemberPayMapper vcMemberPayMapper;
+
+    @Autowired
+    private UMoneyListMapper uMoneyListMapper;
+    @Autowired
+    private UMoneyLogMapper uMoneyLogMapper;
 
 
     @Override
@@ -147,6 +149,19 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         }
         responseFundList.setList(list1);
         return responseFundList;
+    }
+
+    @Override
+    public List<UMoneyLogResp> getUMoneyList(UMoneyList model) {
+        Integer rowCount = uMoneyListMapper.countUMoneyList(model);
+        model.setRowCount(rowCount);
+        List<UMoneyList> list = uMoneyListMapper.getUMoneyList(model);
+        List<UMoneyLogResp>  list1=  new ArrayList<>();
+        for(UMoneyList uMoneyList:list){
+            UMoneyLogResp uMoneyLogResp= PublicMethod.toUMoneyListResp(uMoneyList);
+            list1.add(uMoneyLogResp);
+        }
+        return list1;
     }
 
 

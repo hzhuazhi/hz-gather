@@ -14,5 +14,7 @@ public interface ULimitedTimeLogMapper<T> extends BaseDao<T> {
 
     int updateByPrimaryKeySelective(ULimitedTimeLog record);
 
+    int updateByPushNumber(ULimitedTimeLog record);
+
     ULimitedTimeLog selectByMaxBatchNum(ULimitedTimeLog record);
 }

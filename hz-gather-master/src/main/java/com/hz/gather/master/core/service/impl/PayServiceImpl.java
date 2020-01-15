@@ -46,6 +46,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     private UCashOutLogMapper uCashOutLogMapper;
     @Autowired
     private ULimitedTimeLogMapper uLimitedTimeLogMapper;
+    @Autowired
+    private UBatchLogMapper uBatchLogMapper;
     @Override
     public BaseDao<T> getDao() {
         return null;
@@ -114,7 +116,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         VcMemberResource vcMemberResource =PublicMethod.toVcMemberResource(memberId);
         VcMemberResource  vcMemberResource1=vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
         BigDecimal b1 = new BigDecimal(Double.toString(money));
-        if(vcMemberResource1.getAlreadyMoney().compareTo(b1)>=0){
+        if(vcMemberResource1.getAlreadyMoney().compareTo(b1)<0){
             throw  new ServiceException(ENUM_ERROR.P00003.geteCode(),ENUM_ERROR.P00003.geteDesc());
         }
 
@@ -204,32 +206,67 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     }
 
     @Override
-    public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag) throws Exception {
+    public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag,String outTradeNo,Integer  createMemberId) throws Exception {
         for(VcMember vcMember:list){
+            Integer type=2;
+            if(vcMember.getMemberId()==superiorId){
+                type=1;
+            }
+            if(vcMember.getGradeType()==1){
+                ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+                if(superiorFlag){//上级id 需要更新
+
+                }
+            }else if(vcMember.getGradeType()==2){
+                updateTypePermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+            }
 
         }
         return false;
     }
 
     @Override
-    public Integer updateTypePermanentVIP(Integer memberId, Integer type,Double money) {
-        if(type==1){//直推
-            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResource(memberId,money,type);
-//            vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
-        }else{
+    public Integer updateTypePermanentVIP(Integer memberId, Integer type,Double money,String outTradeNo,Integer createMemberId) {
+        //更新会员资源表  人数和金额
+        VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceVIP(memberId,money,type);
+        //直接添加数据裂变表
+        UMoneyLog  uMoneyLog = PublicMethod.insertUMoneyLog(memberId,createMemberId,outTradeNo,money,type);
+        //直接添加资金明细表
+        UMoneyList uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,money);
+//        PublicMethod
+        ComponentUtil.transactionalService.addBatchNoVIP(vcMemberResource,uMoneyLog,uMoneyList);
+//         VcMember  vcMember  =PublicMethod.updateGradeType(memberId,1);
 
-        }
-        return null;
+        //查看资源明细表是否到底了添加记录表信息
+//            vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+        return 1;
     }
 
     @Override
-    public Integer updateTypeNOPermanentVIP(Integer memberId, Integer type,Double money) {
-        if(type==1){//直推
+    public Integer updateTypeNOPermanentVIP(Integer memberId, Integer type,Double money,String outTradeNo,Integer createMemberId) {
 
-        }else{
+        if (type==1){ //直推情况
+            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceNoVIP(memberId,type,money);
+            //直接添加数据裂变表
+            UMoneyLog  uMoneyLog = PublicMethod.insertUMoneyLog(memberId,createMemberId,outTradeNo,money,type);
+            ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
+            ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
+            ULimitedTimeLog  updateTimeLog = PublicMethod.uqdateULimitedTimeLog(uLimitedTimeLogh.getBatchNum());
+            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
+            ComponentUtil.transactionalService.addBatchNoNoVIP(vcMemberResource,updateTimeLog,uMoneyLog);
+        }else{ //裂变情况
+            ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
+            ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
+            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
+            uBatchLogMapper.insertSelective(insertBatchLog);
         }
-        return null;
+
+
+        //uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog1);
+        //直接添加资金明细表
+//        UMoneyList uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,money);
+        return 1;
     }
 
     @Override
@@ -263,5 +300,36 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             }
         }
         return flag;
+    }
+
+    @Override
+    public void upgradeVIPUpdateInfo(Integer memberId) {
+        ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
+        ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
+        if(uLimited != null){
+            if(uLimited.getPushNumber()>=3){
+                UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
+                List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
+
+
+//                PublicMethod.toUqdateVcMemberResourceVIP();
+            }
+        }
+    }
+
+    @Override
+    public long isOldpayId(String oldPayId,Integer memberId) {
+        VcMemberPay  vcMemberPay = PublicMethod.queryVcMemberPay(oldPayId,memberId);
+        VcMemberPay query= vcMemberPayMapper.selectByoldPayId(vcMemberPay);
+        if(query==null){
+            return 0;
+        }
+        return query.getId();
+    }
+
+    @Override
+    public Integer updatyPayId(long id, String zfbPayId, String zfbName) {
+        VcMemberPay  vcMemberPay = PublicMethod.updateVcMemberPay(id,zfbPayId,zfbName);
+        return vcMemberPayMapper.updateByPrimaryKeySelective(vcMemberPay);
     }
 }

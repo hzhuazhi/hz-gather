@@ -13,8 +13,10 @@ import com.hz.gather.master.core.model.entity.VcMemberPay;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
 import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
+import com.hz.gather.master.core.protocol.request.pay.RequestUpdateZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
+import com.hz.gather.master.core.protocol.response.pay.ResponesePayCashOut;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -57,7 +59,7 @@ public class PayController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean  flag  =   PublicMethod.isCommonModel(commonModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
@@ -100,7 +102,7 @@ public class PayController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
             boolean  flag  =   PublicMethod.isCommonModel(commonModel);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
             Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
@@ -130,7 +132,7 @@ public class PayController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
-     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","zfbPayId":"52342162@qq.com"}
+     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","zfbPayId":"52342162@qq.com","zfbName":"留下"}
      * @date 2020/1/9 22:36
      */
     @PostMapping("/addZFBPay")
@@ -143,7 +145,7 @@ public class PayController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             requestAddZFBPay  = JSON.parseObject(data, RequestAddZFBPay.class);
             boolean  flag  =   PublicMethod.isCheckPayAdd(requestAddZFBPay);
-            if(flag){
+            if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
@@ -173,6 +175,67 @@ public class PayController {
     }
 
 
+
+    /**
+     * @Description: 修改支付密码
+     * @param request
+    * @param response
+    * @param jsonData
+     * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
+     * @author long
+     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","zfbPayId":"52342162@qq.com","zfbName":"留下"}
+     * @date 2020/1/9 22:36
+     */
+    @PostMapping("/updateZFBPay")
+    public JsonResult<Object> updateZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        //public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
+        String data = "";
+        RequestUpdateZFBPay requestUpdateZFBPay = new RequestUpdateZFBPay();
+        log.info("----------:addZFBPay 进来啦!");
+        try{
+            data        = StringUtil.decoderBase64(requestData.jsonData);
+            requestUpdateZFBPay  = JSON.parseObject(data, RequestUpdateZFBPay.class);
+            boolean  flag  =   PublicMethod.isCheckPayUpdate(requestUpdateZFBPay);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            Integer   memberId = PublicMethod.tokenGetMemberId(requestUpdateZFBPay.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            //该用户是否超出支付宝最大值
+            long  id = ComponentUtil.payService.isOldpayId(requestUpdateZFBPay.getOldZfbPayId(),memberId);
+            if(id==0){
+                throw  new ServiceException(ENUM_ERROR.P00007.geteCode(),ENUM_ERROR.P00007.geteDesc());
+            }
+            Integer  count  = ComponentUtil.payService.updatyPayId(id,requestUpdateZFBPay.getZfbPayId(),requestUpdateZFBPay.getZfbName());
+
+            ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
+            data = PublicMethod.toJson(responeseAddZFBPay);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(encryptionData);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+    /**
+     * @Description: 添加支付接口信息
+     * @param request
+    * @param response
+    * @param jsonData
+     * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
+     * @author long
+     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","zfbPayId":"52342162@qq.com","zfbName":"留下"}
+     * @date 2020/1/9 22:36
+     */
     @PostMapping("/payCashOut")
     public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
     //public JsonResult<Object> payCashOut(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
@@ -186,7 +249,7 @@ public class PayController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             requestPayCashOut  = JSON.parseObject(data, RequestPayCashOut.class);
             boolean  flag  =  PublicMethod.isCheckCashOut(requestPayCashOut);
-            if(!flag){
+             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
             flag = PublicMethod.cheakMoney(requestPayCashOut.getMoney());
@@ -200,23 +263,24 @@ public class PayController {
             }
 
             //该用户是否超出支付宝最大值
-            flag = ComponentUtil.payService.isAddPayZFB(memberId);
-            if(!flag){
-                throw  new ServiceException(ENUM_ERROR.P00001.geteCode(),ENUM_ERROR.P00001.geteDesc());
-            }
+//            flag = ComponentUtil.payService.isAddPayZFB(memberId);
+//            if(!flag){
+//                throw  new ServiceException(ENUM_ERROR.P00001.geteCode(),ENUM_ERROR.P00001.geteDesc());
+//            }
 
-            List<VcMemberPay>  list =ComponentUtil.payService.checkMemberIdToAliPayId(memberId,requestPayCashOut.getAlPayId());
+            List<VcMemberPay>  list =ComponentUtil.payService.checkMemberIdToAliPayId(memberId,requestPayCashOut.getZfbPayId());
             if(list.size()==0){
                 throw  new ServiceException(ENUM_ERROR.P00002.geteCode(),ENUM_ERROR.P00002.geteDesc());
             }
 
             ComponentUtil.payService.addUCashOutLog(memberId,list.get(0).getZfbPayid(),list.get(0).getZfbName(),sgid,requestPayCashOut.getMoney());
 
+            ResponesePayCashOut  responesePayCashOut = PublicMethod.toResponesePayCashOut(true);
 
 //            Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId());
 
 //            ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
-//            data = PublicMethod.toJson(responeseAddZFBPay);
+            data = PublicMethod.toJson(responesePayCashOut);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

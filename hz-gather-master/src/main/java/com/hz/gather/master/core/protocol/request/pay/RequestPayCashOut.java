@@ -16,20 +16,19 @@ public class RequestPayCashOut extends CommonModel {
     /**
      * 支付宝id
      */
-    private  String    alPayId ;
+    private  String    zfbPayId ;
 
     /**
      * 提现密码
      */
     private  String    payPassword ;
 
-
-    public String getAlPayId() {
-        return alPayId;
+    public String getZfbPayId() {
+        return zfbPayId;
     }
 
-    public void setAlPayId(String alPayId) {
-        this.alPayId = alPayId;
+    public void setZfbPayId(String zfbPayId) {
+        this.zfbPayId = zfbPayId;
     }
 
     public double getMoney() {

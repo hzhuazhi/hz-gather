@@ -171,8 +171,8 @@
       <if test="pushPeople != null" >
         push_people =push_people+ #{pushPeople},
       </if>
-      <if test="teamActive != null" >
-        team_active =team_active+ #{teamActive},
+      <if test="teamPeople != null" >
+        team_people =team_people+ #{teamPeople},
       </if>
       <if test="totalMoney != null" >
         total_money =total_money+ #{totalMoney},

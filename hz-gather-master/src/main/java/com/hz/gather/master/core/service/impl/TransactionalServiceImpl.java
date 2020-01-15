@@ -28,8 +28,20 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     private VcMemberResourceMapper vcMemberResourceMapper;
     @Autowired
     private UCashOutProcedLogMapper uCashOutProcedLogMapper;
+
     @Autowired
     private UCashOutLogMapper uCashOutLogMapper;
+
+    @Autowired
+    private UMoneyLogMapper uMoneyLogMapper;
+
+    @Autowired
+    private UMoneyListMapper uMoneyListMapper;
+
+    @Autowired
+    private UBatchLogMapper uBatchLogMapper;
+
+
 
     @Override
     public BaseDao<T> getDao() {
@@ -57,5 +69,20 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         vcMemberResourceMapper.updateUpPeople(vcMemberResource);
         vcMemberMapper.updateByPrimaryKeySelective(vcMember);
         uLimitedTimeLogMapper.insertSelective(uLimitedTimeLog);
+    }
+
+    @Override
+    public void addBatchNoVIP(VcMemberResource vcMemberResource, UMoneyLog uMoneyLog, UMoneyList uMoneyList) {
+        uMoneyListMapper.insertSelective(uMoneyList);
+        uMoneyLogMapper.insertSelective(uMoneyLog);
+        vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+    }
+
+    @Override
+    public void addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog, UMoneyLog uMoneyLog) {
+        vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+        uLimitedTimeLogMapper.updateByPushNumber(updateTimeLog);
+        uMoneyLogMapper.insertSelective(uMoneyLog);
+//        uBatchLogMapper.insertSelective(uBatchLog);
     }
 }

@@ -105,10 +105,13 @@ public interface PayService<T> extends BaseService<T> {
      * 修改状态信息
      * @param list    所以的list
      * @param superiorId   上级id
+     * @param superiorFlag   是否需要修改vip 状态 ture 是修改， flase 是不修改
+     * @param outTradeNo   订单id
+     * @param createMemberId   产生收益的id
      * @return
      * @throws Exception
      */
-    public  boolean    updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag)throws Exception;
+    public  boolean    updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag,String outTradeNo,Integer  createMemberId)throws Exception;
 
 
     /***
@@ -116,14 +119,14 @@ public interface PayService<T> extends BaseService<T> {
      * @param memberId
      * @return
      */
-    public  Integer    updateTypePermanentVIP(Integer  memberId,Integer type,Double money);
+    public  Integer    updateTypePermanentVIP(Integer  memberId,Integer type,Double money,String outTradeNo,Integer createMemberId);
 
     /***
      * 零时VIP
      * @param memberId
      * @return
      */
-    public  Integer    updateTypeNOPermanentVIP(Integer  memberId,Integer type,Double money);
+    public  Integer    updateTypeNOPermanentVIP(Integer  memberId,Integer type,Double money,String outTradeNo,Integer createMemberId);
 
 
     /**
@@ -140,5 +143,29 @@ public interface PayService<T> extends BaseService<T> {
      * @throws Exception
      */
     public   boolean    handleSuperiorId(Integer superiorId)throws Exception;
+
+
+    /**
+     * 升级vip 需要修改的信息
+     * @param memberId
+     */
+    void   upgradeVIPUpdateInfo(Integer  memberId);
+
+
+    /**
+     * 升级vip 需要修改的信息
+     * @param oldPayId
+     */
+    long   isOldpayId(String  oldPayId,Integer memberId);
+
+    /**
+     * 修改支付宝
+     * @param id
+     * @param zfbPayId
+     * @param zfbName
+     * @return
+     */
+    Integer  updatyPayId(long id,String zfbPayId,String zfbName);
+
 
 }

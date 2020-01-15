@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.StringUtil;
-import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.DateModel;
 import com.hz.gather.master.core.model.entity.*;
@@ -13,24 +12,22 @@ import com.hz.gather.master.core.model.user.FriendModel;
 import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
 import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
+import com.hz.gather.master.core.protocol.request.pay.RequestUpdateZFBPay;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
+import com.hz.gather.master.core.protocol.request.user.RequestFundList;
 import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
 import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
 import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
 import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
-import com.hz.gather.master.core.protocol.response.user.ResponseEditUser;
-import com.hz.gather.master.core.protocol.response.user.ResponseMyFriend;
-import com.hz.gather.master.core.protocol.response.user.ResponseUser;
-import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
+import com.hz.gather.master.core.protocol.response.pay.ResponesePayCashOut;
+import com.hz.gather.master.core.protocol.response.user.*;
 import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Description TODO
@@ -430,6 +427,14 @@ public class PublicMethod {
         return true;
     }
 
+    public  static boolean  cheakEequestFundList(RequestFundList requestFundList){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(requestFundList.getToken())){
+            return  flag ;
+        }
+        return true;
+    }
+
     /**
      * @Description: 根据 batchNum  设置 ULimitedTimeLog 条件
      * @param batchNum
@@ -469,6 +474,26 @@ public class PublicMethod {
     }
 
     /**
+     * @Description: 添加批次号直推明细表
+     * @param memberId
+    * @param batchNum
+    * @param type
+    * @param money
+     * @return com.hz.gather.master.core.model.entity.UBatchLog
+     * @author long
+     * @date 2020/1/15 10:24
+     */
+    public  static UBatchLog  insertUBatchLog(Integer memberId,String batchNum,Integer type,Double  money){
+        UBatchLog  uBatchLog =  new UBatchLog();
+        uBatchLog.setBatchNum(batchNum);
+        uBatchLog.setMemberId(memberId);
+        uBatchLog.setBatchNum(batchNum);
+        uBatchLog.setDataType(type);
+        uBatchLog.setReceiveMoney(new BigDecimal(Double.valueOf(money)));
+        return  uBatchLog;
+    }
+
+    /**
      * @Description: TODO
      * @param
      * @return com.hz.gather.master.core.protocol.response.user.ResponseUserInfo
@@ -481,6 +506,7 @@ public class PublicMethod {
         responseUserInfo.setAlready_money(vcMemberResource.getAlreadyMoney()+"");
         responseUserInfo.setTotal_money(vcMemberResource.getTotalMoney()+"");
         responseUserInfo.setSurplus_money(vcMemberResource.getSurplusMoney()+"");
+        responseUserInfo.setCash_money(vcMemberResource.getCashMoney()+"");
         if(!StringUtils.isBlank(vcMember.getPassword())){
             responseUserInfo.setIsPw(1);
         }else{
@@ -761,10 +787,10 @@ public class PublicMethod {
         if(StringUtils.isBlank(requestPayCashOut.getToken())){
             return  flag;
         }
-        if(requestPayCashOut.getMoney()>0){
+        if(requestPayCashOut.getMoney()<1){
             return  flag;
         }
-        if(StringUtils.isBlank(requestPayCashOut.getAlPayId())){
+        if(StringUtils.isBlank(requestPayCashOut.getZfbPayId())){
             return  flag;
         }
 
@@ -789,6 +815,29 @@ public class PublicMethod {
             return  flag;
         }
         if(StringUtils.isBlank(requestAddZFBPay.getZfbName())){
+            return  flag;
+        }
+        return true;
+    }
+
+
+    /**
+     * 是否有效
+     * @param requestUpdateZFBPay
+     * @return
+     */
+    public static boolean isCheckPayUpdate(RequestUpdateZFBPay requestUpdateZFBPay){
+        boolean  flag = false ;
+        if(StringUtils.isBlank(requestUpdateZFBPay.getToken())){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestUpdateZFBPay.getOldZfbPayId())){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestUpdateZFBPay.getZfbPayId())){
+            return  flag;
+        }
+        if(StringUtils.isBlank(requestUpdateZFBPay.getZfbName())){
             return  flag;
         }
         return true;
@@ -892,7 +941,7 @@ public class PublicMethod {
         vcMemberResource1.setCashMoney(cashMoney);
         vcMemberResource1.setUpdateTime(new Date());
 
-        return  vcMemberResource;
+        return  vcMemberResource1;
     }
 
     /**
@@ -974,9 +1023,10 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/13 13:56
      */
-    public static  VcMemberResource   toUqdateVcMemberResource(Integer  memberId,Double money,Integer  type ){
+    public static  VcMemberResource   toUqdateVcMemberResourceVIP(Integer  memberId,Double money,Integer  type ){
         VcMemberResource  vcMemberResource = new VcMemberResource();
         vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setTotalMoney(new BigDecimal(Double.valueOf(money)));
         vcMemberResource.setSurplusMoney(new BigDecimal(Double.valueOf(money)));
         if(type==1){
             vcMemberResource.setPushPeople(1);
@@ -1045,18 +1095,159 @@ public class PublicMethod {
         return uLimitedTimeLog;
     }
 
+    /**
+     * @Description: 添加裂变奖励明细表
+     * @param memberId
+    * @param CreateMemberId
+    * @param outTradeNo
+    * @param receiveMoney
+    * @param type
+     * @return com.hz.gather.master.core.model.entity.UMoneyLog
+     * @author long
+     * @date 2020/1/14 10:35
+     */
+    public  static UMoneyLog  insertUMoneyLog(Integer memberId,Integer CreateMemberId,String outTradeNo,Double receiveMoney,Integer type){
+        DateModel dateModel= PublicMethod.getDate();
+        UMoneyLog  uMoneyLog = new UMoneyLog();
+        BeanUtils.copy(dateModel,uMoneyLog);
+        uMoneyLog.setMemberId(memberId);
+        uMoneyLog.setRewardType(type);
+        uMoneyLog.setOutTradeNo(outTradeNo);
+        uMoneyLog.setReceiveMoney(new BigDecimal(Double.valueOf(receiveMoney)));
+        uMoneyLog.setCreateMemberId(CreateMemberId);
+        return uMoneyLog;
+    }
 
-    public static  void  main(String [] args){
-        String    rs ="";
-        Object    reStr ="";
-        ULimitedTimeLog uLimitedTime=new ULimitedTimeLog();
-        while(true){
-            if(uLimitedTime==null){
-                break;
-            }
-            rs = UUIDUtils.createUUID();
-            ULimitedTimeLog uLimitedTimeLog=PublicMethod.queryULimitedTimeLog(rs);
-            uLimitedTime = null;
+
+    /**
+     * @Description: 用户资金明细表
+     * @param memberId   会员id
+    * @param rewardType  类型 1 裂变奖励、2 提现金额
+    * @param symbolType
+    * @param money
+     * @return com.hz.gather.master.core.model.entity.UMoneyList
+     * @author long
+     * @date 2020/1/14 11:38
+     */
+    public  static UMoneyList  insertUMoneyList(Integer memberId,Integer rewardType,Integer symbolType,Double money){
+        DateModel dateModel= PublicMethod.getDate();
+        UMoneyList  uMoneyList = new UMoneyList();
+        BeanUtils.copy(dateModel,uMoneyList);
+        uMoneyList.setMemberId(memberId);
+        uMoneyList.setRewardType(rewardType);
+        uMoneyList.setSymbolType(symbolType);
+        uMoneyList.setMoney(new BigDecimal(Double.valueOf(money)));
+        return uMoneyList;
+    }
+
+
+
+    public  static ResponseFundList toResponseFundList(VcMemberResource vcMemberResource,List<Object> uMoneyList, Integer rowCount){
+        ResponseFundList  responseFundList = new ResponseFundList();
+        responseFundList.setTotal_money(vcMemberResource.getTotalMoney()+"");
+        responseFundList.setSurplus_money(vcMemberResource.getSurplusMoney()+"");
+        responseFundList.setCash_money(vcMemberResource.getCashMoney()+"");
+        if (rowCount != null){
+            responseFundList.setRowCount(rowCount);
         }
+
+        responseFundList.setList(uMoneyList);
+        return responseFundList;
+    }
+
+    /**
+     * @Description: TODO
+     * @param uMoneyList
+     * @return com.hz.gather.master.core.protocol.response.user.UMoneyLogResp
+     * @author long
+     * @date 2020/1/14 19:15
+     */
+    public  static UMoneyLogResp toUMoneyListResp(UMoneyList uMoneyList){
+        UMoneyLogResp uMoneyLogResp = new UMoneyLogResp();
+        if(uMoneyList.getRewardType()==1){
+            uMoneyLogResp.setReward_type_value("裂变收益");
+        }else{
+            uMoneyLogResp.setReward_type_value("提现成功");
+        }
+
+        if(uMoneyList.getRewardType()==1){
+            uMoneyLogResp.setSymbol_type_value("收入");
+        }else{
+            uMoneyLogResp.setSymbol_type_value("支出");
+        }
+        uMoneyLogResp.setMoney(uMoneyList.getMoney()+"");
+
+        SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        uMoneyLogResp.setCreate_time(sdfLongTimePlus.format(uMoneyList.getCreateTime()));
+        return uMoneyLogResp;
+    }
+
+
+    /**
+     * @Description: 不是vip 修改资源表信息
+     * @param memberId
+    * @param type
+     * @return com.hz.gather.master.core.model.entity.VcMemberResource
+     * @author long
+     * @date 2020/1/14 21:49
+     */
+    public static  VcMemberResource   toUqdateVcMemberResourceNoVIP(Integer  memberId,Integer  type ,double money ){
+        VcMemberResource  vcMemberResource = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        if(type==1){
+            vcMemberResource.setTotalMoney(new BigDecimal(Double.valueOf(money)));
+            vcMemberResource.setSurplusMoney(new BigDecimal(Double.valueOf(money)));
+            vcMemberResource.setPushPeople(1);
+        }
+        return vcMemberResource;
+    }
+
+
+
+    public static  ULimitedTimeLog   uqdateULimitedTimeLog(String  bacthNo){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(bacthNo);
+        uLimitedTimeLog.setFissionMoney(new BigDecimal(Double.valueOf(Constant.EVERY_PEOPLE_MONEY)));
+        return uLimitedTimeLog;
+    }
+
+    public static  ULimitedTimeLog   uqdateULimitedTimeLogAll(String  bacthNo){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(bacthNo);
+        uLimitedTimeLog.setPushNumber(1);
+        uLimitedTimeLog.setFissionMoney(new BigDecimal(Double.valueOf(Constant.EVERY_PEOPLE_MONEY)));
+        return uLimitedTimeLog;
+    }
+
+    public  static Map<String,Integer> getPh(List<UBatchLog> list){
+        Map<String,Integer>   map =  new HashMap<String,Integer>();
+        Integer  pushPeople  =0;
+        Integer  teamPeople  =0;
+//        for(){
+//
+//        }
+        return   map;
+    }
+
+    public static VcMemberPay queryVcMemberPay(String alipay,Integer memberId){
+        VcMemberPay  vcMemberPay = new VcMemberPay();
+        vcMemberPay.setZfbPayid(alipay);
+        vcMemberPay.setMemberId(memberId);
+        return vcMemberPay;
+    }
+
+    public static VcMemberPay updateVcMemberPay(long id,String alipay,String name){
+        VcMemberPay  vcMemberPay = new VcMemberPay();
+        vcMemberPay.setId(id);
+        vcMemberPay.setZfbPayid(alipay);
+        vcMemberPay.setZfbName(name);
+        return vcMemberPay;
+    }
+
+    public static ResponesePayCashOut  toResponesePayCashOut(boolean  flag){
+        ResponesePayCashOut responesePayCashOut = new ResponesePayCashOut();
+        responesePayCashOut.setFlag(flag);
+        return responesePayCashOut;
     }
 }

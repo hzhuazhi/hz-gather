@@ -6,6 +6,7 @@ import com.hz.gather.master.core.common.redis.RedisIdService;
 import com.hz.gather.master.core.common.redis.RedisService;
 import com.hz.gather.master.core.common.utils.constant.LoadConstant;
 import com.hz.gather.master.core.service.*;
+import com.hz.gather.master.core.service.impl.InitServiceImpl;
 import com.hz.gather.master.util.ComponentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +69,8 @@ public class AutowireRunner implements ApplicationRunner {
 
     @Autowired
     private TaskService taskService;
-
     @Autowired
-    private UpgradeService upgradeService;
+    private InitService initService;
 
     @Autowired
     private NoticeService noticeService;
@@ -103,6 +103,7 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.alipayService = alipayService;
         ComponentUtil.payService = payService;
         ComponentUtil.taskService = taskService;
+        ComponentUtil.initService = initService;
         ComponentUtil.upgradeService = upgradeService;
         ComponentUtil.noticeService = noticeService;
         ComponentUtil.itemBankService = itemBankService;

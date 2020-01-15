@@ -83,6 +83,7 @@ public class UMoneyList extends BasePage {
      */
     private Integer isValid;
 
+
     public Long getId() {
         return id;
     }

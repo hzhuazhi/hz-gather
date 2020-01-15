@@ -4,7 +4,7 @@
   <sql id="Base_Column_List" >
     id, member_id, zfb_payid,zfb_name, reward_type, create_time, update_time, is_valid
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberPay" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberPay"  >
     select 
     <include refid="Base_Column_List" />
     from vc_member_pay
@@ -98,12 +98,21 @@
   </update>
 
 
-  <select id="selectByMemberIdPayId" resultType="com.hz.gather.master.core.model.entity.VcMemberPay" parameterType="java.lang.Long" >
+  <select id="selectByMemberIdPayId" resultType="com.hz.gather.master.core.model.entity.VcMemberPay"  >
     select
     <include refid="Base_Column_List" />
     from vc_member_pay
     where member_id = #{memberId}
     and  zfb_payid = #{zfbPayid}
+    and  is_valid =1
+  </select>
+
+
+  <select id="selectByoldPayId" resultType="com.hz.gather.master.core.model.entity.VcMemberPay"  >
+    select
+    <include refid="Base_Column_List" />
+    from  vc_member_pay
+    where zfb_payid = #{zfbPayid}
     and  is_valid =1
   </select>
 

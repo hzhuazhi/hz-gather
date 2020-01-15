@@ -135,4 +135,44 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+
+  <!-- 排序条件 -->
+  <sql id="Example_Order_By">
+        order by a.create_time desc
+    </sql>
+
+
+  <!-- 查询条件 -->
+  <sql id="Example_Where_Clause">
+    where 1=1
+    <trim  suffixOverrides="," >
+      <if test="id != null and id != '' " >
+        and a.id = #{id}
+      </if>
+      <if test="memberId != null and memberId != '' " >
+        and a.member_id = #{memberId}
+      </if>
+      and a.is_valid = 1
+    </trim>
+  </sql>
+
+  <!-- 查询总数-->
+  <select id="countUMoneyList" resultType="java.lang.Integer"  parameterType="Object">
+    select count(1)
+    from u_money_list a
+    <include refid="Example_Where_Clause"/>
+  </select>
+
+  <!-- 查询分页列表 -->
+  <select id="getUMoneyList" parameterType="Object" resultType="com.hz.gather.master.core.model.question.QuestionMModel">
+    select
+    <include refid="Base_Column_List" />
+    from u_money_log a
+    <include refid="Example_Where_Clause"/>
+    <include refid="Example_Order_By"/>
+    <if test="pageNumber != null and pageNumber != ''" >
+      limit #{start},#{end}
+    </if>
+  </select>
+
 </mapper>

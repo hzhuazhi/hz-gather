@@ -14,13 +14,18 @@ public class ResponseUserInfo {
      */
     private String  surplus_money;
     /**
-     * 已提现金额
+     * 领取现金额
      */
     private String  already_money;
     /**
      * 已提总收益
      */
     private String  total_money;
+
+    /**
+     * 已提总收益
+     */
+    private String  cash_money;
     /**
      * vip 等级 0、普通用户 1、限时用户 2、永久vip
      */
@@ -70,6 +75,14 @@ public class ResponseUserInfo {
      * 是否设置密保  0、未设置 1、设置了
      */
     private Integer    isprotection;
+
+    public String getCash_money() {
+        return cash_money;
+    }
+
+    public void setCash_money(String cash_money) {
+        this.cash_money = cash_money;
+    }
 
     public String getSurplus_money() {
         return surplus_money;

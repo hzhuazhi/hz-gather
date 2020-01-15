@@ -21,4 +21,21 @@ public interface TransactionalService <T> extends BaseService<T> {
     void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
 
     void   memberPayment(VcMember vcMember , VcMemberResource vcMemberResource, ULimitedTimeLog uLimitedTimeLog );
+
+    /***
+     * vip 的添加
+     * @param vcMemberResource
+     * @param uMoneyLog
+     * @param uMoneyList
+     */
+    void   addBatchNoVIP(VcMemberResource vcMemberResource,UMoneyLog  uMoneyLog,UMoneyList uMoneyList);
+
+    /**
+     * 非vip  添加
+     * @param vcMemberResource
+     * @param updateTimeLog
+     * @param uMoneyLog
+     */
+    void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog);
+
 }

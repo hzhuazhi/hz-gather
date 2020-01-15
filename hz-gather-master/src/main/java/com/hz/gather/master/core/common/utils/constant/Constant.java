@@ -29,7 +29,7 @@ public class Constant {
 
 
     /*************** 每个推荐用户分红金额****************/
-    public  static  int   EVERY_PEOPLE_MONEY  =  50 ;
+    public  static  Double   EVERY_PEOPLE_MONEY  =  50D ;
 
 
     /*************** 裂变数量****************/
@@ -51,6 +51,15 @@ public class Constant {
 
     /*************** 奖励裂变层级数****************/
     public  static  Integer   REWARD_FISSION_COUNT  =  9;
+
+
+    /*************** 用户资金明细类型 ****************/
+    public  static  Integer   REWARD_TYPE1  =  1; //裂变奖励
+    public  static  Integer   REWARD_TYPE2  =  2; //提现奖励
+
+    /*************** 用户符号类型****************/
+    public  static  Integer   SYMBO_TYPE1  =  1; //加
+    public  static  Integer   SYMBO_TYPE2  =  2; //减
 
 
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.SysNoticeAskMapper" >
+
+  <sql id="Base_Column_List" >
+    id, receive_money, is_finish
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.SysNoticeAsk" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_notice_ask
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_notice_ask
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.SysNoticeAsk" >
+    insert into sys_notice_ask
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="receiveMoney != null" >
+        receive_money,
+      </if>
+      <if test="isFinish != null" >
+        is_finish,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="receiveMoney != null" >
+        #{receiveMoney},
+      </if>
+      <if test="isFinish != null" >
+        #{isFinish},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.SysNoticeAsk" >
+    update sys_notice_ask
+    <set >
+      <if test="receiveMoney != null" >
+        receive_money = #{receiveMoney},
+      </if>
+      <if test="isFinish != null" >
+        is_finish = #{isFinish},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+</mapper>

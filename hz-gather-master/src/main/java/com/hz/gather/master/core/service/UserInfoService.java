@@ -2,13 +2,11 @@ package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
 import com.hz.gather.master.core.model.entity.UMoneyList;
+import com.hz.gather.master.core.model.entity.UMoneyLog;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
-import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
-import com.hz.gather.master.core.protocol.response.user.ResponseFundList;
-import com.hz.gather.master.core.protocol.response.user.ResponseMyFriend;
-import com.hz.gather.master.core.protocol.response.user.ResponseUserInfo;
+import com.hz.gather.master.core.protocol.response.user.*;
 
 import java.util.List;
 
@@ -70,8 +68,13 @@ public interface UserInfoService<T> extends BaseService<T> {
      */
     public ResponseFundList getUMoneList(Integer  memberId,List<UMoneyList> list)throws Exception;
 
-
-
+    /**
+     * @Description: TODO
+     * @return
+     * @author long
+     * @date 2020/1/14 17:30
+    */
+    public List<UMoneyLogResp> getUMoneyList(UMoneyList model);
 
 
 

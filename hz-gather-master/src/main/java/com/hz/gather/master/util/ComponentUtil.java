@@ -23,6 +23,7 @@ public class ComponentUtil {
     public static AlipayService alipayService;
     public static PayService payService;
     public static TaskService taskService;
+    public static InitService initService;
     public static UpgradeService upgradeService;
     public static NoticeService noticeService;
     public static ItemBankService itemBankService;
