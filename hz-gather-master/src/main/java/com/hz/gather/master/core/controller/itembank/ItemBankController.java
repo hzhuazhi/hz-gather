@@ -1,4 +1,4 @@
-package com.hz.gather.master.core.controller.notice;
+package com.hz.gather.master.core.controller.itembank;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.exception.ExceptionMethod;
@@ -9,7 +9,9 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
+import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
+import com.hz.gather.master.core.protocol.request.itembank.RequestItemBank;
 import com.hz.gather.master.core.protocol.request.notice.RequestNotice;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
@@ -27,15 +29,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Description 公告的Controller层
+ * @Description 密保的Controller层
  * @Author yoko
- * @Date 2020/1/14 20:09
+ * @Date 2020/1/15 11:28
  * @Version 1.0
  */
 @RestController
-@RequestMapping("/mg/nc")
-public class NoticeDController {
-    private static Logger log = LoggerFactory.getLogger(NoticeDController.class);
+@RequestMapping("/mg/bk")
+public class ItemBankController {
+    private static Logger log = LoggerFactory.getLogger(ItemBankController.class);
 
     /**
      * 5分钟.
@@ -60,23 +62,23 @@ public class NoticeDController {
 
 
     /**
-     * @Description: 获取公告数据
+     * @Description: 获取密保数据集合
      * @param request
      * @param response
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
      * @author yoko
      * @date 2019/11/25 22:58
-     * local:http://localhost:8082/mg/nc/getDataList
+     * local:http://localhost:8082/mg/bk/getDataList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
      *
      * result={
      *     "resultCode": "0",
      *     "message": "success",
      *     "data": {
-     *         "jsonData": "eyJuY0xpc3QiOlt7ImRhdGFUeXBlIjo3LCJuaWNrbmFtZSI6IuaYteensF8xNiIsInJlY2VpdmVNb25leSI6IjE2MDAuMDAifSx7ImRhdGFUeXBlIjo2LCJuaWNrbmFtZSI6IuaYteensF8xNSIsInJlY2VpdmVNb25leSI6IjE1MDAuMDAifSx7ImRhdGFUeXBlIjo1LCJuaWNrbmFtZSI6IuaYteensF8xNCIsInJlY2VpdmVNb25leSI6IjE0MDAuMDAifV0sInJvd0NvdW50IjoxNiwic2lnbiI6ImVkNjFiZmI3ZGI5MWQ0YzY5MzRmMjBkNTZjYzI1ZjA4Iiwic3RpbWUiOjE1NzkwMDkwNDAwNjh9"
+     *         "jsonData": "eyJia0xpc3QiOlt7ImlkIjoxLCJxdWVzdGlvbiI6IuaCqOeahOeItuS6sueahOWQjeWtl+aYr++8nyIsInNlYXQiOjF9LHsiaWQiOjIsInF1ZXN0aW9uIjoi5oKo55qE5q+N5Lqy55qE5ZCN5a2X5piv77yfIiwic2VhdCI6Mn0seyJpZCI6MywicXVlc3Rpb24iOiLmgqjnmoTlsI/lrabmr43moKHmmK/vvJ8iLCJzZWF0IjozfSx7ImlkIjo0LCJxdWVzdGlvbiI6IuaCqOeahOWIneS4reavjeagoeaYr++8nyIsInNlYXQiOjR9LHsiaWQiOjUsInF1ZXN0aW9uIjoi5oKo55qE6auY5Lit5q+N5qCh5piv77yfIiwic2VhdCI6NX0seyJpZCI6NiwicXVlc3Rpb24iOiLmgqjnmoTlpKflrabmr43moKHmmK/vvJ8iLCJzZWF0Ijo2fV0sInNpZ24iOiJiNDkzNGQyNDY2MDI4ODQ5NTllMTgyNjRiYjc0OGU0OSIsInN0aW1lIjoxNTc5MDY5NjQ0MTQzfQ=="
      *     },
-     *     "sgid": "202001142137190000001",
+     *     "sgid": "202001151427220000001",
      *     "cgid": ""
      * }
      */
@@ -87,18 +89,18 @@ public class NoticeDController {
         String ip = StringUtil.getIpAddress(request);
         String data = "";
 
-        RequestNotice requestModel = new RequestNotice();
+        RequestItemBank requestModel = new RequestItemBank();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
-            requestModel  = JSON.parseObject(data, RequestNotice.class);
+            requestModel  = JSON.parseObject(data, RequestItemBank.class);
             // 公告数据
-            NoticeModel noticeQuery = BeanUtils.copy(requestModel, NoticeModel.class);
-            List<NoticeModel> noticeList = ComponentUtil.noticeService.queryByList(noticeQuery);
+            ItemBankModel itemBankQuery = BeanUtils.copy(requestModel, ItemBankModel.class);
+            List<ItemBankModel> itemBankList = ComponentUtil.itemBankService.getItemBankList(itemBankQuery, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
             String sign = SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
-            String strData = HodgepodgeMethod.assembleNoticeResult(stime, sign, noticeList, noticeQuery.getRowCount());
+            String strData = HodgepodgeMethod.assembleItemBankResult(stime, sign, itemBankList, null);
             // 数据加密
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
@@ -109,9 +111,16 @@ public class NoticeDController {
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
             // #添加异常
-            log.error(String.format("this NoticeController.getDataList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
+            log.error(String.format("this ItemBankController.getDataList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
         }
     }
+
+
+
+
+
+
+
 }

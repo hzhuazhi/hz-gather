@@ -6,6 +6,7 @@ import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
+import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
@@ -14,6 +15,8 @@ import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
 import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.core.protocol.response.alipay.ResponseAlipay;
+import com.hz.gather.master.core.protocol.response.itembank.ItemBank;
+import com.hz.gather.master.core.protocol.response.itembank.ResponseItemBank;
 import com.hz.gather.master.core.protocol.response.notice.Notice;
 import com.hz.gather.master.core.protocol.response.notice.ResponseNotice;
 import com.hz.gather.master.core.protocol.response.question.QuestionD;
@@ -384,6 +387,31 @@ public class HodgepodgeMethod {
         if (noticeList != null && noticeList.size() > ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO){
             List<Notice> dataList = BeanUtils.copyList(noticeList, Notice.class);
             dataModel.ncList = dataList;
+        }
+        if (rowCount != null){
+            dataModel.rowCount = rowCount;
+        }
+        dataModel.setStime(stime);
+        dataModel.setSign(sign);
+        return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 密保集合的数据组装返回客户端的方法
+     * @param stime - 服务器的时间
+     * @param sign - 签名
+     * @param itemBankList - 密保集合
+     * @param rowCount - 总行数
+     * @return java.lang.String
+     * @author yoko
+     * @date 2019/11/25 22:45
+     */
+    public static String assembleItemBankResult(long stime, String sign, List<ItemBankModel> itemBankList, Integer rowCount){
+        ResponseItemBank dataModel = new ResponseItemBank();
+        if (itemBankList != null && itemBankList.size() > ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO){
+            List<ItemBank> dataList = BeanUtils.copyList(itemBankList, ItemBank.class);
+            dataModel.bkList = dataList;
         }
         if (rowCount != null){
             dataModel.rowCount = rowCount;

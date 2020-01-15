@@ -25,6 +25,7 @@ public class ComponentUtil {
     public static TaskService taskService;
     public static UpgradeService upgradeService;
     public static NoticeService noticeService;
+    public static ItemBankService itemBankService;
 
 
 

@@ -14,7 +14,6 @@ import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.protocol.request.question.RequestQuestion;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
-import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

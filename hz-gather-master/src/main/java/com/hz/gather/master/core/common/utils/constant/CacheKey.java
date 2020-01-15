@@ -75,4 +75,9 @@ public interface CacheKey {
      * task跑阿里支付宝订单同步数据时：锁住这条任务
      */
     String LOCK_TASK_ALIPAY_NOTIFY = "-10";
+
+    /**
+     * 密保
+     */
+    String ITEM_BANK = "-11";
 }
