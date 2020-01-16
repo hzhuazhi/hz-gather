@@ -331,7 +331,7 @@
 
   <!-- 修改用户是否开启问答修改密码 -->
   <update id="updateMemberIsQuestions" parameterType="Object">
-    update vc_member set is_questions =1 where member_id = #{memberid}
+    update vc_member set is_questions =1 where member_id = #{memberId}
   </update>
 
 
