@@ -3034,7 +3034,23 @@ public class DateUtil {
 
 		Thread.sleep(5000);
 		Date   date2 = new Date();
-
+		DateUtil.date2TimeStamp("1578914819","yyyy-MM-dd HH:mm:ss");
 		System.out.println(date2.compareTo(date));
 	}
+
+	/**
+	 * 日期格式字符串转换成时间戳
+	 * @param format 如：yyyy-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static String date2TimeStamp(String date_str,String format){
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			return String.valueOf(sdf.parse(date_str).getTime());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 }

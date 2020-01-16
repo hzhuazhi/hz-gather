@@ -7,14 +7,14 @@ import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.CommonModel;
-import com.hz.gather.master.core.protocol.request.user.RequestCashRate;
-import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
-import com.hz.gather.master.core.protocol.request.user.RequestFundList;
+import com.hz.gather.master.core.protocol.request.login.ForgetPasswordModel;
+import com.hz.gather.master.core.protocol.request.user.*;
 import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -74,7 +74,7 @@ public class UserController {
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -128,7 +128,7 @@ public class UserController {
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -186,7 +186,7 @@ public class UserController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -241,7 +241,7 @@ public class UserController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -291,7 +291,7 @@ public class UserController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -334,7 +334,59 @@ public class UserController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+    /**
+     * 获取修改支付密码的pay
+     * @param request
+     * @param response
+     * @param requestData
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/check_payPassword")
+    public JsonResult<Object> checkPayPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        RequsetPayPassword requsetPayPassword = new RequsetPayPassword();
+        log.info("----------:checkPayPassword 进来啦!");
+        try{
+            data        =   StringUtil.decoderBase64(requestData.jsonData);
+            requsetPayPassword  = JSON.parseObject(data, RequsetPayPassword.class);
+
+            boolean  flag  =   PublicMethod.checkRequsetPayPassword(requsetPayPassword);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+
+            flag = ComponentUtil.loginService.checkVerifCode(requsetPayPassword.getTimeStamp(),requsetPayPassword.getPhone(),requsetPayPassword.getSmsCode(),4);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+            }
+
+            Integer   memberId = PublicMethod.tokenGetMemberId(requsetPayPassword.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+
+            String  token  = UUIDUtils.createUUID();
+            ComponentUtil.loginService.getPayPwToken(memberId,token);
+
+
+            ResponesePayPassword responesePayPassword=PublicMethod.toResponesePayPassword(token);
+            data = PublicMethod.toJson(responesePayPassword);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -346,36 +398,50 @@ public class UserController {
     @PostMapping("/update_payPassword")
     public JsonResult<Object> updatePayPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
-        RequestCashRate requestCashRate = new RequestCashRate();
+        RequsetUqPayPw requsetUqPayPw = new RequsetUqPayPw();
         log.info("----------:updatePayPassword 进来啦!");
         try{
-            data        = StringUtil.decoderBase64(requestData.jsonData);
-            requestCashRate  = JSON.parseObject(data, RequestCashRate.class);
+            data        =   StringUtil.decoderBase64(requestData.jsonData);
+            requsetUqPayPw  = JSON.parseObject(data, RequsetUqPayPw.class);
 
-            boolean  flag  =   PublicMethod.cheakRequestCashRate(requestCashRate);
+            boolean  flag  =   PublicMethod.checkRequsetUqPayPw(requsetUqPayPw);
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestCashRate.getToken());
+
+            if(!requsetUqPayPw.getPayPw().equals(requsetUqPayPw.getPayPw2())){
+                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+            }
+//            flag = ComponentUtil.loginService.checkVerifCode(requsetPayPassword.getTimeStamp(),requsetPayPassword.getPhone(),requsetPayPassword.getSmsCode(),4);
+//            if(!flag){
+//                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+//            }
+//
+            Integer   memberId = PublicMethod.tokenGetMemberId(requsetUqPayPw.getToken());
             if(memberId==0){
-                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+                throw  new ServiceException(ENUM_ERROR.A00006.geteCode(),ENUM_ERROR.A00006.geteDesc());
             }
 
-            //根据分页查询该用户的资金明细信息
-            UCashOutLog uCashOutLog = BeanUtils.copy(requestCashRate, UCashOutLog.class);
-            uCashOutLog.setMemberId(memberId);
 
-            List<CashRate> cashRateList = ComponentUtil.payService.queryCashLog(uCashOutLog);
+            Integer   memberId2 = PublicMethod.tokenGetMemberId(requsetUqPayPw.getPayPw());
+            if(memberId2==0){
+                throw  new ServiceException(ENUM_ERROR.P00008.geteCode(),ENUM_ERROR.P00008.geteDesc());
+            }
 
+            if(memberId!=memberId2){
+                throw  new ServiceException(ENUM_ERROR.P00009.geteCode(),ENUM_ERROR.P00009.geteDesc());
+            }
 
+            Integer  count =ComponentUtil.userInfoService.updatePayPassword(memberId,requsetUqPayPw.getPayPw());
 
-            ResponeseCashRate responeseCashRate=PublicMethod.toResponeseCashRate(cashRateList);
-//            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-            data = PublicMethod.toJson(responeseCashRate);
+//            ComponentUtil.loginService.getPayPwToken(memberId,token);
+
+            ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
+            data = PublicMethod.toJson(responseUpdatePayPw);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);

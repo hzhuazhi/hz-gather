@@ -163,4 +163,6 @@ public interface LoginService<T> extends BaseService<T>  {
 
     public  String   sendSmsPayPassword(String phone)throws  Exception;
 
+    public  void   getPayPwToken(Integer memberId,String token)throws  Exception;
+
 }

@@ -131,7 +131,18 @@ public class LoginController {
 
             //参数是否正确
             if(!flag){
-                throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+            //用户手机号码是否被注册
+            flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
+            if(flag){
+                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
+            }
+
+            //用户邀请码是否正确
+            flag  =  ComponentUtil.loginService.checkInviteCode(loginModel.getInviteCode());
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
             }
 
             //验证码是否正确
@@ -139,17 +150,9 @@ public class LoginController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
-            //用户邀请码是否正确
-            flag  =  ComponentUtil.loginService.checkInviteCode(loginModel.getInviteCode());
-            if(!flag){
-                throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
-            }
 
-            //用户手机号码是否被注册
-            flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
-            if(flag){
-                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
-            }
+
+
             String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
             data  = PublicMethod.toLoginModelDto(token);
 
@@ -180,25 +183,28 @@ public class LoginController {
 
             //参数是否正确
             if(!flag){
-                throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+            //用户手机号码是否被注册
+            flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
+            if(flag){
+                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
             }
 
-//            //验证码是否正确
-//            flag = ComponentUtil.loginService.checkVerifCode(loginModel.getTimeStamp(),loginModel.getPhone(),loginModel.getSmsCode(),1);
-//            if(!flag){
-//                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
-//            }
             //用户邀请码是否正确
             flag  =  ComponentUtil.loginService.checkInviteCode(loginModel.getInviteCode());
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
             }
 
-            //用户手机号码是否被注册
-            flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
-            if(flag){
-                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
+            //验证码是否正确
+            flag = ComponentUtil.loginService.checkVerifCode(loginModel.getTimeStamp(),loginModel.getPhone(),loginModel.getSmsCode(),1);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
+
+
+
 
             ResponseRegisterVerify verify = PublicMethod.toResponseRegisterVerify(true);
 
@@ -321,7 +327,7 @@ public class LoginController {
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
@@ -377,7 +383,7 @@ public class LoginController {
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(encryptionData);
+            return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);

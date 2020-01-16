@@ -8,7 +8,12 @@ import java.util.List;
  * @Date 2020/1/7 20:07
  * @Version 1.0
  */
-public class ResponseUserInfo {
+public class ResponseUserInfo extends ResponseUser{
+
+    /**
+     * 手机号
+     */
+    private String  phone;
     /**
      * 可提现金额
      */
@@ -194,5 +199,13 @@ public class ResponseUserInfo {
 
     public void setIsprotection(Integer isprotection) {
         this.isprotection = isprotection;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

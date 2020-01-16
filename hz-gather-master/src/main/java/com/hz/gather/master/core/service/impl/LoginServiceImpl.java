@@ -90,6 +90,8 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
             ComponentUtil.redisService.set(CacheKey.FORGET_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
         }else if(type==3){
             ComponentUtil.redisService.set(CacheKey.SIGN_IN_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
+        }else if(type==4){
+            ComponentUtil.redisService.set(CacheKey.UPDATE_PAYPW_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
         }
 
         return time;
@@ -105,11 +107,16 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
             verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.FORGET_SMS+(phone+time));
         }else if(type==3){
             verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.SIGN_IN_SMS+(phone+time));
+        }else if(type==4){
+            verifCodeRedis = (String)ComponentUtil.redisService.get(CacheKey.UPDATE_PAYPW_SMS+(phone+time));
         }
         if (StringUtils.isBlank(verifCode)){
             throw  new ServiceException(ENUM_ERROR.A00008.geteCode(),ENUM_ERROR.A00008.geteDesc());
         }
 
+        if(StringUtils.isBlank(verifCodeRedis)||StringUtils.isBlank(verifCode)){
+             throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+        }
         //验证码是否一致
         if (!verifCodeRedis.equals(verifCode)){
             throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
@@ -294,7 +301,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     @Override
     public String sendSmsPayPassword(String phone) throws Exception {
-        String  time  = ComponentUtil.loginService.createTime(phone,3);
+        String  time  = ComponentUtil.loginService.createTime(phone,4);
         return time;
     }
 
@@ -337,9 +344,8 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     }
 
 
-
-
-
-
-
+    @Override
+    public void getPayPwToken(Integer memberId, String token) throws Exception {
+        ComponentUtil.redisService.set(token,memberId+"",PW_TOKEN_INVALID_TIME);
+    }
 }

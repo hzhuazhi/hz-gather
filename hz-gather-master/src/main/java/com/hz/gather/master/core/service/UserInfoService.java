@@ -86,4 +86,8 @@ public interface UserInfoService<T> extends BaseService<T> {
     */
     public int updateMemberIsQuestions(VcMember model);
 
+    public Integer updatePayPassword(Integer memberId,String payPassword);
+
+
+
 }

@@ -170,4 +170,9 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
     }
 
 
+    @Override
+    public Integer updatePayPassword(Integer memberId, String payPassword) {
+        VcMember  vcMember =PublicMethod.toVcMemberPw(memberId,payPassword);
+        return vcMemberMapper.updateByPrimaryKeySelective(vcMember);
+    }
 }

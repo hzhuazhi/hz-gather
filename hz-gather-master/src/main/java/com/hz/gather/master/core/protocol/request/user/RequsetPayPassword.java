@@ -20,6 +20,11 @@ public class RequsetPayPassword {
      */
     private  String  timeStamp;
 
+    /**
+     * 时间戳
+     */
+    private  String  phone;
+
     public String getToken() {
         return token;
     }
@@ -42,5 +47,13 @@ public class RequsetPayPassword {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

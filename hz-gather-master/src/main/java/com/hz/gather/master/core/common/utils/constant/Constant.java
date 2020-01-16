@@ -51,7 +51,7 @@ public class Constant {
     public  static  String   PAY_REMARKS  =  "《500理财》提现到账通知";
 
     /*************** 奖励裂变层级数****************/
-    public  static  Integer   REWARD_FISSION_COUNT  =  8;
+    public  static  Integer   REWARD_FISSION_COUNT  =  9;
 
 
     /*************** 用户资金明细类型 ****************/
@@ -62,5 +62,5 @@ public class Constant {
     public  static  Integer   SYMBO_TYPE1  =  1; //加
     public  static  Integer   SYMBO_TYPE2  =  2; //减
 
-
+    public   static  String   MEMBERADD="http://500.lzshu.cn/1579159584166.jpg";
 }

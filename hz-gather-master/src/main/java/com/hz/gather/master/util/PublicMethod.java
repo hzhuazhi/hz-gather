@@ -13,9 +13,7 @@ import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
 import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
 import com.hz.gather.master.core.protocol.request.pay.RequestUpdateZFBPay;
-import com.hz.gather.master.core.protocol.request.user.RequestCashRate;
-import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
-import com.hz.gather.master.core.protocol.request.user.RequestFundList;
+import com.hz.gather.master.core.protocol.request.user.*;
 import com.hz.gather.master.core.protocol.response.login.*;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
@@ -145,6 +143,9 @@ public class PublicMethod {
         Integer  loginTime  =  createTime;
         memberModel.setMemberId(memberId);
         memberModel.setPhone(phone);
+        String phoneNumber = phone.replaceAll("(\\d{3})\\d{4}(\\d{4})","$1****$2");
+        memberModel.setNickname(phoneNumber);
+        memberModel.setMemberAdd(Constant.MEMBERADD);
         memberModel.setMemberCode("C"+loginModel.getPhone());
         memberModel.setInviteCode(SecureUUID[0]);
         memberModel.setTradingAddress(SecureUUID[1]);
@@ -263,6 +264,10 @@ public class PublicMethod {
      */
     public  static  boolean  checkSignIn(SignInModel signInModel){
         boolean  flag =  false ;
+        if(StringUtils.isBlank(signInModel.getType()+"")){
+            return flag;
+        }
+
         if(signInModel.getType()==1){
             if(StringUtils.isBlank(signInModel.getPhone())){
                 return flag;
@@ -549,6 +554,16 @@ public class PublicMethod {
      */
     public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog, List<UBatchLog> list)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
+        responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
+        responseUserInfo.setNickname(vcMember.getNickname());
+        responseUserInfo.setSex(vcMember.getSex()+"");
+        responseUserInfo.setBirthday(vcMember.getBirthday());
+        responseUserInfo.setPhone(vcMember.getPhone());
+
+        Integer  time1=vcMember.getCreateTime();
+        String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time1 * 1000));
+        SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        responseUserInfo.setCreateTime(createTime);
         responseUserInfo.setVip_type(vcMember.getGradeType());
         responseUserInfo.setAlready_money(vcMemberResource.getAlreadyMoney()+"");
         responseUserInfo.setTotal_money(vcMemberResource.getTotalMoney()+"");
@@ -567,12 +582,12 @@ public class PublicMethod {
         }
         responseUserInfo.setIsprotection(vcMember.getIsQuestions());
 
-
+        List<String>  addList  =   new ArrayList<>();
         if (vcMember.getGradeType()==0){//普通用户信息
-
+            responseUserInfo.setAddList(addList);
         }else if(vcMember.getGradeType()==1){//限时用户信息
             String recommendMoney = "";
-            List<String>  addList  =   new ArrayList<>();
+
             int pushCount =0;
             int fissionCount =0;
             for(UBatchLog uBatchLog:list){
@@ -587,13 +602,14 @@ public class PublicMethod {
             }
             responseUserInfo.setPush_count(pushCount+"");
             responseUserInfo.setAddList(addList);
-            SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          //  SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);
             responseUserInfo.setExpire_time(expireTime);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
             responseUserInfo.setRequire_fission_count(fissionCount+"");
         }else if(vcMember.getGradeType()==2){
+            responseUserInfo.setAddList(addList);
             responseUserInfo.setRecommend_money(vcMemberResource.getPushMoney()+"");
             responseUserInfo.setFission_money(vcMemberResource.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
@@ -626,6 +642,19 @@ public class PublicMethod {
     public  static  VcMember  toVcMemberSuperiorId(Integer superiorId){
         VcMember  vcMember =  new  VcMember();
         vcMember.setSuperiorId(superiorId);
+        return vcMember;
+    }
+
+    /**
+     *
+     * @param memberId
+     * @param payPassword
+     * @return
+     */
+    public  static  VcMember  toVcMemberPw(Integer memberId,String payPassword){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setMemberId(memberId);
+        vcMember.setPayPassword(payPassword);
         return vcMember;
     }
 
@@ -1209,6 +1238,29 @@ public class PublicMethod {
     }
 
     /**
+     *
+     * @param token
+     * @return
+     */
+    public  static ResponesePayPassword toResponesePayPassword(String token){
+        ResponesePayPassword  responesePayPassword = new ResponesePayPassword();
+        responesePayPassword.setPwKey(token);
+        return responesePayPassword;
+    }
+
+
+    public  static ResponseUpdatePayPw toResponesePayPassword(Integer count){
+        ResponseUpdatePayPw  responseUpdatePayPw = new ResponseUpdatePayPw();
+        if(count==0){
+            responseUpdatePayPw.setFlag(false);
+        }else{
+            responseUpdatePayPw.setFlag(true);
+        }
+        return responseUpdatePayPw;
+    }
+
+
+    /**
      * @Description: TODO
      * @param uMoneyList
      * @return com.hz.gather.master.core.protocol.response.user.UMoneyLogResp
@@ -1358,6 +1410,40 @@ public class PublicMethod {
         return vcMember;
     }
 
+
+    public static boolean checkRequsetPayPassword(RequsetPayPassword forget){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(forget.getToken())){
+            return false;
+        }
+        if(StringUtils.isBlank(forget.getSmsCode())){
+            return false;
+        }
+        if(StringUtils.isBlank(forget.getTimeStamp())){
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean checkRequsetUqPayPw(RequsetUqPayPw requsetUqPayPw){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(requsetUqPayPw.getToken())){
+            return false;
+        }
+        if(StringUtils.isBlank(requsetUqPayPw.getPwKey())){
+            return false;
+        }
+
+        if(StringUtils.isBlank(requsetUqPayPw.getPayPw())){
+            return false;
+        }
+
+        if(StringUtils.isBlank(requsetUqPayPw.getPayPw2())){
+            return false;
+        }
+        return true;
+    }
 
 
 }
