@@ -77,5 +77,13 @@ public interface UserInfoService<T> extends BaseService<T> {
     public List<UMoneyLogResp> getUMoneyList(UMoneyList model);
 
 
+    /**
+     * @Description: 修改用户是否开启问答修改密码  0、未开启 1、开启
+     * @param model - memberId、is_questions
+     * @return int
+     * @author yoko
+     * @date 2020/1/16 14:07
+    */
+    public int updateMemberIsQuestions(VcMember model);
 
 }

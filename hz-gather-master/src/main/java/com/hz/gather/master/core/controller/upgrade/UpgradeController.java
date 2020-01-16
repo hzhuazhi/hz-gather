@@ -68,6 +68,8 @@ public class UpgradeController {
      * local:http://localhost:8082/mg/up/getData
      * 请求的属性类:RequestAppeal
      * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 客户端加密字段:ctime+cctime+秘钥=sign
+     * 服务端加密字段:stime+clientType+clientVer+md5Value+resUrl+upType秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -95,7 +97,8 @@ public class UpgradeController {
             UpgradeModel upgradeModel = ComponentUtil.upgradeService.getMaxUpgradeData(upgradeQuery);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
-            String sign = SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
+            String sign = SignUtil.getSgin(stime, upgradeModel.getClientType(), upgradeModel.getClientVer(), upgradeModel.getMd5Value(),
+                    upgradeModel.getResUrl(), upgradeModel.getUpType(), secretKeySign); // stime+clientType+clientVer+md5Value+resUrl+upType秘钥=sign
             String strData = HodgepodgeMethod.assembleUpgradeDataResult(stime, sign, upgradeModel);
             // 数据加密
             String encryptionData = StringUtil.mergeCodeBase64(strData);

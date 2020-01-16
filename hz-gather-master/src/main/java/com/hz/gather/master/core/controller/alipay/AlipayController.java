@@ -65,7 +65,7 @@ public class AlipayController {
 
 
     /**
-     * @Description: 阿里支付：生成订单码
+     * @Description: 阿里支付宝：生成订单码
      * <p>
      *     把调用阿里支付宝的类生成的订单码返回给客户端
      * </p>
@@ -74,11 +74,20 @@ public class AlipayController {
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
      * @author yoko
      * @date 2019/11/25 22:58
-     * local:http://localhost:8082/play/ali/sendAli
+     * local:http://localhost:8082/mg/ali/sendAli
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
-     * 客户端加密字段:ctime+cctime+token+秘钥=sign
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
+     * result={
+     *     "resultCode": "0",
+     *     "message": "success",
+     *     "data": {
+     *         "jsonData": "eyJhbGlPcmRlciI6ImFsaXBheV9zZGs9YWxpcGF5LXNkay1qYXZhLTQuOC43My5BTEwmYXBwX2lkPTIwMTgwMzE1MDIzNzY5MDMmYml6X2NvbnRlbnQ9JTdCJTIyYm9keSUyMiUzQSUyMiVFOCVCNCVCOSVFNyU5NCVBOCVFNyVCQyVCNCVFNyVCQSVCMyUyMiUyQyUyMm91dF90cmFkZV9ubyUyMiUzQSUyMjIwMjAwMTE2MTEyMjQzMDAwMDAwMSUyMiUyQyUyMnByb2R1Y3RfY29kZSUyMiUzQSUyMjUwMF9IWSUyMiUyQyUyMnN1YmplY3QlMjIlM0ElMjI1MDAlRTglQjQlQjklRTclOTQlQTglMjIlMkMlMjJ0aW1lb3V0X2V4cHJlc3MlMjIlM0ElMjIzMG0lMjIlMkMlMjJ0b3RhbF9hbW91bnQlMjIlM0ElMjI1LjAlMjIlN0QmY2hhcnNldD1VVEYtOCZmb3JtYXQ9anNvbiZtZXRob2Q9YWxpcGF5LnRyYWRlLmFwcC5wYXkmbm90aWZ5X3VybD1odHRwJTNBJTJGJTJGMTE0LjU1LjY3LjE2NyUzQTgwODIlMkZwbGF5JTJGYWxpJTJGbm90aWZ5JnNpZ249TWZPR2pYNkN5Y0ltJTJCWWZDJTJCZDJaaWhxMXVDcGZqdmI1empYJTJGS0hrU1M3QjFDRXVyUVlLaHQ3c1hlJTJCZDY2ZDIwZnhjY3daTWQzT0dDTnhGd3ZmbFgydHNaTk5Bc2ZpJTJCSzFCclhscFElMkZmM1hOSUIzT2lEQ2JTU012U1RjVEg4N25GR2NFaFpUMkRadSUyRjZkYlFtOCUyQnlzSmlSbSUyRkYlMkZYWHJWWmVTTWtPb1lLQyUyQjhTanlHUVhtTUtUYnhIRiUyQnJKNExpUiUyQm5TUEI5MEo5cXhBNUtOSzhoZTJ3aWdteWtGMlYlMkYwM3JrSm5ySlFhMUtvbko0dGJCelpHNjU1a1liYVdDbFhmb3l6UzRSQ091MGtFNDYyNjZmUG9TNGwwbFNLREpaOUdJRXRMcEJuYlhpMGExekdBNWpSVHE1Z05BV2U1eGFYZ214alZFbWVTVXZGS2l4WSUyQllDMk93JTNEJTNEJnNpZ25fdHlwZT1SU0EyJnRpbWVzdGFtcD0yMDIwLTAxLTE2KzExJTNBMjIlM0E1NSZ2ZXJzaW9uPTEuMCIsInN0aW1lIjoxNTc5MTQ0OTgyNTMwLCJ0b2tlbiI6ImM4M2I0YjZhNmVhOGM5Y2VkODgyZjYxOGQ2MDY4Nzc1In0="
+     *     },
+     *     "sgid": "202001161122430000001",
+     *     "cgid": ""
+     * }
      */
     @RequestMapping(value = "/sendAli", method = {RequestMethod.POST})
     public JsonResult<Object> sendAli(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
@@ -94,9 +103,16 @@ public class AlipayController {
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestAlipay  = JSON.parseObject(data, RequestAlipay.class);
-            // check校验数据、校验用户是否登录、获得用户ID
-//            memberId = PublicMethod.checkAlipayData(requestAlipay);
-            token = requestAlipay.getToken();
+            if (requestAlipay.memberId != null){
+                memberId = requestAlipay.memberId;
+            }else{
+                 // check校验数据、校验用户是否登录、获得用户ID
+                memberId = HodgepodgeMethod.checkAlipayData(requestAlipay);
+                requestAlipay.memberId = memberId;
+                token = requestAlipay.getToken();
+            }
+
+
             // 校验ctime
             // 校验sign
             String totalAmount = "";
@@ -115,8 +131,8 @@ public class AlipayController {
 
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
-            String sign = SignUtil.getSgin(aliOrder, stime, token, secretKeySign); // aliOrder+stime+token+秘钥=sign
-            String strData = HodgepodgeMethod.assembleAlipayResult(stime, token, sign, aliOrder);
+            String sign = SignUtil.getSgin(aliOrder, stime, secretKeySign); // aliOrder+stime+秘钥=sign
+            String strData = HodgepodgeMethod.assembleAlipayResult(stime, sign, aliOrder);
             // 数据加密
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
@@ -142,7 +158,7 @@ public class AlipayController {
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
      * @author yoko
      * @date 2019/11/25 22:58
-     * local:http://localhost:8082/play/ali/notify
+     * local:http://localhost:8082/mg/ali/notify
      */
     @RequestMapping(value = "/notify", method = {RequestMethod.POST})
 //    public JsonResult<Object> notify(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{

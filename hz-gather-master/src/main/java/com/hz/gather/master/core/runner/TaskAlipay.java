@@ -67,6 +67,8 @@ public class TaskAlipay {
                         AlipayFundTransUniTransferResponse alipayFundTransUniTransferResponse = Alipay.transferAlipay(strData);
                         if (alipayFundTransUniTransferResponse != null){
                             if (alipayFundTransUniTransferResponse.isSuccess()){
+                                // 添加提现成功数据
+                                ComponentUtil.payService.insertSuccess(data.getMemberId(), data.getMoney().doubleValue());
                                 // 更新此次task的状态：更新成成功
                                 StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_THREE);
                                 ComponentUtil.taskService.updateTransStatus(statusModel);
@@ -98,7 +100,7 @@ public class TaskAlipay {
     }
 
     /**
-     * @Description: 阿里云支付：单笔转账到账户
+     * @Description: 阿里云支付：用户支付（用户充值）
      * @author yoko
      * @date 2019/12/27 21:30
      */
@@ -116,19 +118,17 @@ public class TaskAlipay {
                 boolean flagLock = ComponentUtil.redisIdService.lock(lockKey);
                 if (flagLock){
                     try {
-//                        // 组装要更新用户是否支付实名认证的数据
-//                        Map<String, Object> map = TaskHodgepodgeMethod.assembleUpdateTaskAlipayNotifyStatus(dataModel);
-//                        if (map != null){
-//                            // 更新用户是否支付实名制费用
-//                            ComponentUtil.taskHodgepodgeService.updateConsumerIsPay(map);
-//                            // 组装更改运行状态的数据
-//                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
-//                            ComponentUtil.taskService.updateTaskAlipayNotifyStatus(statusModel);
-//                        }else {
-//                            // 更新此次task的状态：更新成失败
-//                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-//                            ComponentUtil.taskService.updateTaskAlipayNotifyStatus(statusModel);
-//                        }
+                        // 更新用户以及用户想关联的层级数据、以及直推的数据
+                        boolean flag = ComponentUtil.payService.paymentSuccess(dataModel.getMemberId().intValue(), dataModel.getOutTradeNo());
+                        if (flag){
+                            // 组装更改运行状态的数据：更新成成功
+                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
+                            ComponentUtil.taskService.updateTaskAlipayNotifyStatus(statusModel);
+                        }else {
+                            // 更新此次task的状态：更新成失败
+                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+                            ComponentUtil.taskService.updateTaskAlipayNotifyStatus(statusModel);
+                        }
                     }catch (Exception e){
                         log.error(String.format("this TaskAlipay.taskAlipay() is error , the dataId=%s !", dataModel.getId()));
                         e.printStackTrace();

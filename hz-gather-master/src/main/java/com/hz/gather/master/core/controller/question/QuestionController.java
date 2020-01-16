@@ -58,7 +58,7 @@ public class QuestionController {
 
 
     /**
-     * @Description: 获取百问百答类别数据
+     * @Description: 获取百问百答-类别数据
      * @param request
      * @param response
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
@@ -66,8 +66,9 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataMList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
-     *
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 客户端加密字段:ctime+cctime+秘钥=sign
+     * 服务端加密字段:stime+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -123,7 +124,9 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataDList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"questionMId":,"searchKey":"YY简述_1_1","agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 必填字段:{"questionMId":1,"searchKey":"YY简述_1_1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 客户端加密字段:ctime+cctime+秘钥=sign
+     * 服务端加密字段:stime+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -179,7 +182,9 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataD
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"id":1,"agtVer":1,"clientVer":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 必填字段:{"id":1,"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 客户端加密字段:ctime+cctime+秘钥=sign
+     * 服务端加密字段:stime+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",

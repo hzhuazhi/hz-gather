@@ -20,4 +20,13 @@ public interface VcMemberMapper<T> extends BaseDao<T> {
     List<VcMember> selectBySuperiorId(VcMember record);
 
     List<VcMember> selectByList(VcMember record);
+
+    /**
+     * @Description: 修改用户是否开启问答修改密码  0、未开启 1、开启
+     * @param model - memberId、is_questions
+     * @return int
+     * @author yoko
+     * @date 2020/1/16 14:07
+     */
+    public int updateMemberIsQuestions(VcMember model);
 }

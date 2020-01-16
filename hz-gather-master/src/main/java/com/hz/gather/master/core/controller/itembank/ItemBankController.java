@@ -13,6 +13,7 @@ import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
+import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
@@ -77,6 +78,8 @@ public class ItemBankController {
      * local:http://localhost:8082/mg/bk/getDataList
      * 请求的属性类:RequestAppeal
      * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 客户端加密字段:ctime+cctime+秘钥=sign
+     * 服务端加密字段:stime+秘钥=sign
      *
      * result={
      *     "resultCode": "0",
@@ -135,7 +138,8 @@ public class ItemBankController {
      * local:http://localhost:8082/mg/bk/getCustomerDataList
      * 请求的属性类:RequestAppeal
      * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
-     *
+     * 客户端加密字段:ctime+cctime+token+秘钥=sign
+     * 服务端加密字段:stime+token+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -157,8 +161,8 @@ public class ItemBankController {
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-            String tempToken = "111111";
-            ComponentUtil.redisService.set(tempToken, "1");
+//            String tempToken = "111111";
+//            ComponentUtil.redisService.set(tempToken, "1");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
@@ -201,7 +205,8 @@ public class ItemBankController {
      * local:http://localhost:8082/mg/bk/add
      * 请求的属性类:RequestAppeal
      * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
-     *
+     * 客户端加密字段:ctime+cctime+token+秘钥=sign
+     * 服务端加密字段:stime+token+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -223,8 +228,8 @@ public class ItemBankController {
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-            String tempToken = "111111";
-            ComponentUtil.redisService.set(tempToken, "1");
+//            String tempToken = "111111";
+//            ComponentUtil.redisService.set(tempToken, "1");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
@@ -238,6 +243,9 @@ public class ItemBankController {
             for (ItemBankAnswerModel addData : itemBankAnswerList){
                 ComponentUtil.itemBankAnswerService.add(addData);
             }
+            // 更新用户属性状态
+            VcMember vcMemberModel = HodgepodgeMethod.assembleVcMember(memberId);
+            ComponentUtil.userInfoService.updateMemberIsQuestions(vcMemberModel);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
             String sign = SignUtil.getSgin(stime, token, secretKeySign); // stime+token+秘钥=sign
@@ -269,7 +277,8 @@ public class ItemBankController {
      * local:http://localhost:8082/mg/bk/check
      * 请求的属性类:RequestAppeal
      * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
-     *
+     * 客户端加密字段:ctime+cctime+token+秘钥=sign
+     * 服务端加密字段:stime+token+秘钥=sign
      * result={
      *     "resultCode": "0",
      *     "message": "success",
@@ -291,8 +300,8 @@ public class ItemBankController {
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-            String tempToken = "111111";
-            ComponentUtil.redisService.set(tempToken, "4");
+//            String tempToken = "111111";
+//            ComponentUtil.redisService.set(tempToken, "4");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);

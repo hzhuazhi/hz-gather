@@ -164,5 +164,10 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         return list1;
     }
 
+    @Override
+    public int updateMemberIsQuestions(VcMember model) {
+        return vcMemberMapper.updateMemberIsQuestions(model);
+    }
+
 
 }

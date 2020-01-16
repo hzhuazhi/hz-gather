@@ -8,6 +8,7 @@ import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
+import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
@@ -60,6 +61,30 @@ public class HodgepodgeMethod {
     }
 
     /**
+     * @Description: 发送组装阿里支付宝支付订单时，校验基本数据是否非法
+     * @param requestAlipay - 基础数据
+     * @return void
+     * @author yoko
+     * @date 2019/11/21 18:59
+     */
+    public static long checkAlipayData(RequestAlipay requestAlipay) throws Exception{
+        long memberId;
+        // 校验所有数据
+        if (requestAlipay == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.A00001.geteCode(), ErrorCode.ENUM_ERROR.A00001.geteDesc());
+        }
+
+        // 校验token值
+        if (StringUtils.isBlank(requestAlipay.getToken())){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.A00002.geteCode(), ErrorCode.ENUM_ERROR.A00002.geteDesc());
+        }
+
+        // 校验用户是否登录
+        memberId = HodgepodgeMethod.checkIsLogin(requestAlipay.getToken());
+        return memberId;
+    }
+
+    /**
      * @Description: 组装阿里支付的订单访问数据
      * @param requestAlipay - 阿里支付订单的基本信息
      * @param outTradeNo - 交易订单号
@@ -70,6 +95,7 @@ public class HodgepodgeMethod {
      */
     public static AlipayModel assembleAlipayData(RequestAlipay requestAlipay, String outTradeNo, String totalAmount){
         AlipayModel resBean = new AlipayModel();
+        resBean.memberId = requestAlipay.memberId;
         if (requestAlipay != null){
             if (!StringUtils.isBlank(requestAlipay.body)){
                 resBean.body = requestAlipay.body;
@@ -129,17 +155,17 @@ public class HodgepodgeMethod {
      * @Description: 阿里支付宝订单生成的数据组装返回客户端的方法
      * @param stime - 服务器的时间
      * @param token - 登录token
-     * @param sign - 签名
+//     * @param sign - 签名
      * @param aliOrder - 调用阿里支付返回的订单码
      * @return java.lang.String
      * @author yoko
      * @date 2019/11/25 22:45
      */
-    public static String assembleAlipayResult(long stime, String token, String sign, String aliOrder){
+    public static String assembleAlipayResult(long stime, String sign, String aliOrder){
         ResponseAlipay dataModel = new ResponseAlipay();
         dataModel.aliOrder = aliOrder;
         dataModel.setStime(stime);
-        dataModel.setToken(token);
+//        dataModel.setToken(token);
         dataModel.setSign(sign);
         return JSON.toJSONString(dataModel);
     }
@@ -581,6 +607,20 @@ public class HodgepodgeMethod {
         // 校验用户是否登录
         memberId = HodgepodgeMethod.checkIsLogin(requestModel.getToken());
         return memberId;
+    }
+
+    /**
+     * @Description: 组装更新用户是否开启密保的数据
+     * @param memberId - 用户ID
+     * @return
+     * @author yoko
+     * @date 2020/1/16 14:21
+    */
+    public static VcMember assembleVcMember(Long memberId){
+        VcMember resBean = new VcMember();
+        resBean.setMemberId(memberId.intValue());
+        resBean.setIsQuestions(ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE);
+        return resBean;
     }
 
 }
