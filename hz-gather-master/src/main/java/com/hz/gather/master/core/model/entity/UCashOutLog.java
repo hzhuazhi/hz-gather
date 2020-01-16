@@ -1,9 +1,11 @@
 package com.hz.gather.master.core.model.entity;
 
+import com.hz.gather.master.core.protocol.page.BasePage;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class UCashOutLog {
+public class UCashOutLog extends BasePage {
     /**
      * 自增长
      *

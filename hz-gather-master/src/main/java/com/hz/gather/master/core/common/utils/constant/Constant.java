@@ -29,7 +29,8 @@ public class Constant {
 
 
     /*************** 每个推荐用户分红金额****************/
-    public  static  Double   EVERY_PEOPLE_MONEY  =  50D ;
+    public  static  Double   EVERY_PEOPLE_MONEY  =  35D ;
+    public  static  Double   PUSH_PEOPLE_MONEY  =  180D ;
 
 
     /*************** 裂变数量****************/
@@ -50,7 +51,7 @@ public class Constant {
     public  static  String   PAY_REMARKS  =  "《500理财》提现到账通知";
 
     /*************** 奖励裂变层级数****************/
-    public  static  Integer   REWARD_FISSION_COUNT  =  9;
+    public  static  Integer   REWARD_FISSION_COUNT  =  8;
 
 
     /*************** 用户资金明细类型 ****************/

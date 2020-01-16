@@ -10,11 +10,9 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
-import com.hz.gather.master.core.model.entity.UMoneyList;
-import com.hz.gather.master.core.model.entity.UMoneyLog;
-import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.CommonModel;
+import com.hz.gather.master.core.protocol.request.user.RequestCashRate;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.request.user.RequestFundList;
 import com.hz.gather.master.core.protocol.response.user.*;
@@ -300,4 +298,89 @@ public class UserController {
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
+
+
+
+
+    @PostMapping("/myCashRate")
+    public JsonResult<Object> myCashRate(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        RequestCashRate requestCashRate = new RequestCashRate();
+        log.info("----------:myCashRate 进来啦!");
+        try{
+            data        = StringUtil.decoderBase64(requestData.jsonData);
+            requestCashRate  = JSON.parseObject(data, RequestCashRate.class);
+
+            boolean  flag  =   PublicMethod.cheakRequestCashRate(requestCashRate);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+            Integer   memberId = PublicMethod.tokenGetMemberId(requestCashRate.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            //根据分页查询该用户的资金明细信息
+            UCashOutLog uCashOutLog = BeanUtils.copy(requestCashRate, UCashOutLog.class);
+            uCashOutLog.setMemberId(memberId);
+
+            List<CashRate> cashRateList = ComponentUtil.payService.queryCashLog(uCashOutLog);
+
+
+
+            ResponeseCashRate responeseCashRate=PublicMethod.toResponeseCashRate(cashRateList);
+//            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
+            data = PublicMethod.toJson(responeseCashRate);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(encryptionData);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+    @PostMapping("/update_payPassword")
+    public JsonResult<Object> updatePayPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        RequestCashRate requestCashRate = new RequestCashRate();
+        log.info("----------:updatePayPassword 进来啦!");
+        try{
+            data        = StringUtil.decoderBase64(requestData.jsonData);
+            requestCashRate  = JSON.parseObject(data, RequestCashRate.class);
+
+            boolean  flag  =   PublicMethod.cheakRequestCashRate(requestCashRate);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+            Integer   memberId = PublicMethod.tokenGetMemberId(requestCashRate.getToken());
+            if(memberId==0){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            //根据分页查询该用户的资金明细信息
+            UCashOutLog uCashOutLog = BeanUtils.copy(requestCashRate, UCashOutLog.class);
+            uCashOutLog.setMemberId(memberId);
+
+            List<CashRate> cashRateList = ComponentUtil.payService.queryCashLog(uCashOutLog);
+
+
+
+            ResponeseCashRate responeseCashRate=PublicMethod.toResponeseCashRate(cashRateList);
+//            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
+            data = PublicMethod.toJson(responeseCashRate);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(encryptionData);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
 }

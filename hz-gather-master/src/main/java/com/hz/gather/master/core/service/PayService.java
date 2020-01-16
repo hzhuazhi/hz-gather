@@ -1,9 +1,11 @@
 package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
+import com.hz.gather.master.core.model.entity.UCashOutLog;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.protocol.response.user.CashRate;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 
 import java.util.List;
@@ -174,6 +176,9 @@ public interface PayService<T> extends BaseService<T> {
      * @return
      */
     Integer  insertSuccess(Integer memberId,double  money);
+
+
+    List<CashRate>     queryCashLog(UCashOutLog uCashOutLog);
 
 
 }

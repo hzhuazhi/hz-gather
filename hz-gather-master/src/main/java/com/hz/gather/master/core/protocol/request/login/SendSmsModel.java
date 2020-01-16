@@ -6,7 +6,7 @@ package com.hz.gather.master.core.protocol.request.login;
  * @Date 2020/1/2 22:04
  * @Version 1.0
  */
-public class SendSmsModel {
+public class SendSmsModel{
     /**
      * 类型  1、是注册 2、忘记密码 3、用户登录
      */
@@ -27,11 +27,18 @@ public class SendSmsModel {
      */
     private String  areaCode;
 
-
     /**
      * 协议版本
      */
     private String  version;
+
+    /**
+     * token
+     */
+    private String  token;
+
+
+
 
     public String getPhone() {
         return phone;
@@ -71,5 +78,13 @@ public class SendSmsModel {
 
     public void setSmsType(Integer smsType) {
         this.smsType = smsType;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

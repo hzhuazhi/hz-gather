@@ -23,6 +23,10 @@ public class UMoneyLogResp {
      * 金额
      */
     private  String  money;
+    /**
+     * token
+     */
+    private  String  token;
 
     public String getReward_type_value() {
         return reward_type_value;
@@ -54,5 +58,13 @@ public class UMoneyLogResp {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

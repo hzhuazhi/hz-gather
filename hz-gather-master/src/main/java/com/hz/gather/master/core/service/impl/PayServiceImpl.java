@@ -11,7 +11,9 @@ import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.common.utils.constant.PfCacheKey;
 import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.protocol.response.user.CashRate;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
+import com.hz.gather.master.core.protocol.response.user.UMoneyLogResp;
 import com.hz.gather.master.core.service.PayService;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -220,7 +223,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
                 }
             }else if(vcMember.getGradeType()==2){
-                updateTypePermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+                ComponentUtil.payService.updateTypePermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
             }
 
         }
@@ -246,11 +249,10 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
     @Override
     public Integer updateTypeNOPermanentVIP(Integer memberId, Integer type,Double money,String outTradeNo,Integer createMemberId) {
-
         if (type==1){ //直推情况
-            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceNoVIP(memberId,type,money);
+            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceNoVIP(memberId,type,Constant.PUSH_PEOPLE_MONEY);
             //直接添加数据裂变表
-            UMoneyLog  uMoneyLog = PublicMethod.insertUMoneyLog(memberId,createMemberId,outTradeNo,money,type);
+            UMoneyLog  uMoneyLog = PublicMethod.insertUMoneyLog(memberId,createMemberId,outTradeNo,Constant.PUSH_PEOPLE_MONEY,type);
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
@@ -260,8 +262,10 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         }else{ //裂变情况
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
+
+            ULimitedTimeLog updateTimeLog =PublicMethod.updateFissionMoney(uLimitedTimeLogh.getBatchNum(),Constant.EVERY_PEOPLE_MONEY);
             UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
-            uBatchLogMapper.insertSelective(insertBatchLog);
+            ComponentUtil.transactionalService.addfissionInfo(updateTimeLog,insertBatchLog);
         }
 
 
@@ -310,9 +314,14 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
         if(uLimited != null){
             if(uLimited.getPushNumber()>=3){
-                UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
-                List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
 
+                VcMemberResource    vcMemberResource =  PublicMethod.toVcMemberResource(uLimited);
+                ULimitedTimeLog updatelog = PublicMethod.updateTimeLogFinish(uLimited.getBatchNum());
+                VcMember vcMember= PublicMethod.updateVcMemberGradeType(memberId);
+                UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
+                //缺少一个公告 添加
+
+                List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
 
 //                PublicMethod.toUqdateVcMemberResourceVIP();
             }
@@ -339,5 +348,28 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     public Integer insertSuccess(Integer memberId, double money) {
         UMoneyList  uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE2,Constant.SYMBO_TYPE2,money);
         return  uMoneyListMapper.insertSelective(uMoneyList);
+    }
+
+    @Override
+    public List<CashRate> queryCashLog(UCashOutLog uCashOutLog) {
+        Integer rowCount = uCashOutLogMapper.countUCashOutLog(uCashOutLog);
+        uCashOutLog.setRowCount(rowCount);
+        List<UCashOutLog> list = uCashOutLogMapper.getUCashOutLog(uCashOutLog);
+        List<CashRate>  list1=  new ArrayList<>();
+        SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(UCashOutLog uCashOutLog1:list){
+            CashRate  cashRate = new CashRate();
+            if (uCashOutLog1.getPaymentType()==1){
+                cashRate.setValue("提现进行中");
+            }else if(uCashOutLog1.getPaymentType()==2){
+                cashRate.setValue("提现失败");
+            }else{
+                cashRate.setValue("提现成功");
+            }
+            cashRate.setCreate_time(sdfLongTimePlus.format(uCashOutLog1.getCreateTime()));
+            cashRate.setMonoy(uCashOutLog1.getMoney()+"");
+            list1.add(cashRate);
+        }
+        return list1;
     }
 }

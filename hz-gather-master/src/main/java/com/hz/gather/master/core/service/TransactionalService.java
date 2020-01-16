@@ -38,4 +38,12 @@ public interface TransactionalService <T> extends BaseService<T> {
      */
     void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog);
 
+    /**
+     * 添加裂变的信息
+     * @param uLimitedTimeLog
+     * @param uBatchLog
+     */
+
+    void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog);
+
 }

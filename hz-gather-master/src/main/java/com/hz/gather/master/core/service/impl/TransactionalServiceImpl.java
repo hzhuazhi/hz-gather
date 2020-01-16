@@ -85,4 +85,10 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         uMoneyLogMapper.insertSelective(uMoneyLog);
 //        uBatchLogMapper.insertSelective(uBatchLog);
     }
+
+    @Override
+    public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog) {
+        uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog);
+        uBatchLogMapper.insertSelective(uBatchLog);
+    }
 }

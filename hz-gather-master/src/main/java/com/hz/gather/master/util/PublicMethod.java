@@ -13,12 +13,10 @@ import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
 import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
 import com.hz.gather.master.core.protocol.request.pay.RequestUpdateZFBPay;
+import com.hz.gather.master.core.protocol.request.user.RequestCashRate;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.request.user.RequestFundList;
-import com.hz.gather.master.core.protocol.response.login.ForgetPhoneDto;
-import com.hz.gather.master.core.protocol.response.login.LoginModelDto;
-import com.hz.gather.master.core.protocol.response.login.SendSmsDto;
-import com.hz.gather.master.core.protocol.response.login.SignInModelDto;
+import com.hz.gather.master.core.protocol.response.login.*;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseAddZFBPay;
 import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
 import com.hz.gather.master.core.protocol.response.pay.ResponesePayCashOut;
@@ -86,6 +84,34 @@ public class PublicMethod {
             return  flag;
         }
         return   true;
+    }
+
+    /**
+     * @Description: 检查注册参数是否有效
+     * @param loginModel
+     * @return boolean
+     * @author long
+     * @date 2020/1/2 23:44
+     */
+    public  static boolean isCheakRegisterVerify(LoginModel loginModel){
+        boolean  flag =  false;
+        if(StringUtils.isBlank(loginModel.getInviteCode())){
+            return  flag;
+        }else if(StringUtils.isBlank(loginModel.getPhone())){
+            return  flag;
+        }else if(StringUtils.isBlank(loginModel.getSmsCode())){
+            return  flag;
+        }else if(StringUtils.isBlank(loginModel.getTimeStamp())){
+            return  flag;
+        }
+        return   true;
+    }
+
+
+    public  static  ResponseRegisterVerify  toResponseRegisterVerify(boolean flag){
+        ResponseRegisterVerify  responseRegisterVerify = new ResponseRegisterVerify();
+        responseRegisterVerify.setFlag(flag);
+        return responseRegisterVerify;
     }
 
     /**
@@ -196,11 +222,19 @@ public class PublicMethod {
             }else if(StringUtils.isBlank(sendSmsModel.getAreaCode())){
                 return flag;
             }
+        }else if(sendSmsModel.getSmsType()==4){
+            if (StringUtils.isBlank(sendSmsModel.getToken())){
+                return flag;
+            }
+            if (StringUtils.isBlank(sendSmsModel.getPhone())){
+                return flag;
+            }
         }else{
             if (StringUtils.isBlank(sendSmsModel.getPhone())){
                 return flag;
             }
         }
+
         return true;
     }
 
@@ -430,6 +464,19 @@ public class PublicMethod {
     public  static boolean  cheakEequestFundList(RequestFundList requestFundList){
         boolean  flag  = false ;
         if(StringUtils.isBlank(requestFundList.getToken())){
+            return  flag ;
+        }
+        return true;
+    }
+
+    /**
+     * token 是否有效
+     * @param requestCashRate
+     * @return
+     */
+    public  static boolean  cheakRequestCashRate(RequestCashRate requestCashRate){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(requestCashRate.getToken())){
             return  flag ;
         }
         return true;
@@ -1155,6 +1202,12 @@ public class PublicMethod {
         return responseFundList;
     }
 
+    public  static ResponeseCashRate toResponeseCashRate(List<CashRate> list){
+        ResponeseCashRate  responeseCashRate = new ResponeseCashRate();
+        responeseCashRate.setList(list);
+        return responeseCashRate;
+    }
+
     /**
      * @Description: TODO
      * @param uMoneyList
@@ -1230,6 +1283,12 @@ public class PublicMethod {
         return   map;
     }
 
+    /**
+     * 添加查询条件
+     * @param alipay
+     * @param memberId
+     * @return
+     */
     public static VcMemberPay queryVcMemberPay(String alipay,Integer memberId){
         VcMemberPay  vcMemberPay = new VcMemberPay();
         vcMemberPay.setZfbPayid(alipay);
@@ -1237,6 +1296,13 @@ public class PublicMethod {
         return vcMemberPay;
     }
 
+    /**
+     * 添加查询条件
+     * @param id
+     * @param alipay
+     * @param name
+     * @return
+     */
     public static VcMemberPay updateVcMemberPay(long id,String alipay,String name){
         VcMemberPay  vcMemberPay = new VcMemberPay();
         vcMemberPay.setId(id);
@@ -1245,9 +1311,53 @@ public class PublicMethod {
         return vcMemberPay;
     }
 
+    /**
+     * 组装出去
+     * @param flag
+     * @return
+     */
     public static ResponesePayCashOut  toResponesePayCashOut(boolean  flag){
         ResponesePayCashOut responesePayCashOut = new ResponesePayCashOut();
         responesePayCashOut.setFlag(flag);
         return responesePayCashOut;
     }
+
+
+    /**
+     *
+     * @param uLimited
+     * @return
+     */
+    public static VcMemberResource     toVcMemberResource(ULimitedTimeLog  uLimited){
+        VcMemberResource  vcMemberResource  = new VcMemberResource();
+        vcMemberResource.setMemberId(uLimited.getMemberId());
+        vcMemberResource.setTotalMoney(uLimited.getFissionMoney());
+        vcMemberResource.setSurplusMoney(uLimited.getFissionMoney());
+        return vcMemberResource;
+    }
+
+    public static ULimitedTimeLog  updateFissionMoney(String batchNum,Double money){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(batchNum);
+        uLimitedTimeLog.setFissionMoney(new BigDecimal(Double.valueOf(money)));
+        return uLimitedTimeLog;
+    }
+
+    public static ULimitedTimeLog  updateTimeLogFinish(String batchNum){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(batchNum);
+        uLimitedTimeLog.setIsFinish(2);
+        return uLimitedTimeLog;
+    }
+
+
+    public static VcMember  updateVcMemberGradeType(Integer  memberId){
+        VcMember  vcMember = new VcMember();
+        vcMember.setMemberId(memberId);
+        vcMember.setGradeType(2);
+        return vcMember;
+    }
+
+
+
 }

@@ -11,7 +11,9 @@ import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.protocol.request.login.*;
+import com.hz.gather.master.core.protocol.response.login.ResponseRegisterVerify;
 import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ public class LoginController {
      * 字段格式 { "smsType": 1,"phone":"13606768872","country":"中国","areaCode": "086","version": "1.0.1" }
      * 字段格式 { "smsType": 2,"phone": "13606768872","version": "1.0.1" }
      * 字段格式 { "smsType": 3,"phone":"13606768872","version": "1.0.1" }
-     * 字段格式 { "smsType": 4,"phone":"13606768872","version": "1.0.1" }
+     * 字段格式 { "token":"ajsdjasdhashdsad","smsType": 4,"phone":"13606768872","version": "1.0.1" }
      * return
      * {
      *     "resultCode": "0",
@@ -78,7 +80,8 @@ public class LoginController {
             }else if(sendSmsModel.getSmsType()==3){
                 time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());
             }else if(sendSmsModel.getSmsType()==4){
-                time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());
+                HodgepodgeMethod.checkIsLogin(sendSmsModel.getToken());
+                time  =  ComponentUtil.loginService.sendSmsPayPassword(sendSmsModel.getPhone());
             }
 
             //还缺一个发送
@@ -150,6 +153,57 @@ public class LoginController {
             String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
             data  = PublicMethod.toLoginModelDto(token);
 
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+
+            return JsonResult.successResult(resultDataModel);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+
+
+    @PostMapping("/register_verify")
+    public JsonResult<Object> getRegisterVerify(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        LoginModel loginModel = new LoginModel();
+        try{
+            log.info("----------:register_info 进来啦!");
+            data        = StringUtil.decoderBase64(requestData.jsonData);
+            loginModel  = JSON.parseObject(data, LoginModel.class);
+            boolean   flag  = PublicMethod.isCheakRegisterVerify(loginModel);
+
+            //参数是否正确
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
+            }
+
+//            //验证码是否正确
+//            flag = ComponentUtil.loginService.checkVerifCode(loginModel.getTimeStamp(),loginModel.getPhone(),loginModel.getSmsCode(),1);
+//            if(!flag){
+//                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+//            }
+            //用户邀请码是否正确
+            flag  =  ComponentUtil.loginService.checkInviteCode(loginModel.getInviteCode());
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00002.geteCode(),ENUM_ERROR.A00002.geteDesc());
+            }
+
+            //用户手机号码是否被注册
+            flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
+            if(flag){
+                throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());
+            }
+
+            ResponseRegisterVerify verify = PublicMethod.toResponseRegisterVerify(true);
+
+//            String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
+            data  = PublicMethod.toJson(verify);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

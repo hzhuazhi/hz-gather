@@ -5,7 +5,7 @@
     id, member_id, receiva_pay_id, money, curday, curhour, curminute, create_time,
     update_time, payment_type, is_valid,zfb_name,remarks,run_status,run_num
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutLog" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutLog"  >
     select 
     <include refid="Base_Column_List" />
     from u_cash_out_log
@@ -143,4 +143,70 @@
     </set>
     where id = #{id}
   </update>
+
+
+  <!-- 查询条件 -->
+  <sql id="Example_Where_Clause">
+    where 1=1
+    <trim  suffixOverrides="," >
+      <if test="id != null and id != '' " >
+        and a.id = #{id}
+      </if>
+      <if test="memberId != null and memberId != '' " >
+        and a.member_id = #{memberId}
+      </if>
+      and a.is_valid = 1
+    </trim>
+  </sql>
+
+
+  <!-- 排序条件 -->
+  <sql id="Example_Order_By">
+        order by a.create_time desc
+    </sql>
+
+  <!-- 查询总数-->
+  <select id="queryByCount" resultType="java.lang.Integer"  parameterType="Object">
+    select count(1)
+    from u_cash_out_log a
+    <include refid="Example_Where_Clause"/>
+  </select>
+
+  <!-- 查询分页列表 -->
+  <select id="queryByList" parameterType="Object" resultType="com.hz.gather.master.core.model.entity.UCashOutLog">
+    select
+    <include refid="Base_Column_List" />
+    from u_cash_out_log a
+    <include refid="Example_Where_Clause"/>
+    <include refid="Example_Order_By"/>
+    <if test="pageNumber != null and pageNumber != ''" >
+      limit #{start},#{end}
+    </if>
+  </select>
+
+
+
+
+
+
+  <!-- 查询总数-->
+  <select id="countUCashOutLog" resultType="java.lang.Integer"  parameterType="Object">
+    select count(1)
+    from u_cash_out_log a
+    <include refid="Example_Where_Clause"/>
+  </select>
+
+  <!-- 查询分页列表 -->
+  <select id="getUCashOutLog" parameterType="Object" resultType="com.hz.gather.master.core.model.entity.UCashOutLog">
+    select
+    <include refid="Base_Column_List" />
+    from u_cash_out_log a
+    <include refid="Example_Where_Clause"/>
+    <include refid="Example_Order_By"/>
+    <if test="pageNumber != null and pageNumber != ''" >
+      limit #{start},#{end}
+    </if>
+  </select>
+
+
 </mapper>
