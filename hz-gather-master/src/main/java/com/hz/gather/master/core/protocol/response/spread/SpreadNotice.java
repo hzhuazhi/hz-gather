@@ -17,6 +17,7 @@ public class SpreadNotice implements Serializable {
     public String content;
     public String iconAds;
     public String pageAds;
+    public String createTime;
 
     public SpreadNotice(){
 
@@ -68,5 +69,13 @@ public class SpreadNotice implements Serializable {
 
     public void setPageAds(String pageAds) {
         this.pageAds = pageAds;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }
