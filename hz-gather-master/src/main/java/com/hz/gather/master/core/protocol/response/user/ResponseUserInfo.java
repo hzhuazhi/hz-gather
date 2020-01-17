@@ -80,6 +80,10 @@ public class ResponseUserInfo extends ResponseUser{
      * 是否设置密保  0、未设置 1、设置了
      */
     private Integer    isprotection;
+    /**
+     * 邀请码
+     */
+    private String     inviteCode;
 
     public String getCash_money() {
         return cash_money;
@@ -207,5 +211,13 @@ public class ResponseUserInfo extends ResponseUser{
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 }

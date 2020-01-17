@@ -560,6 +560,7 @@ public class PublicMethod {
         responseUserInfo.setSex(vcMember.getSex()+"");
         responseUserInfo.setBirthday(vcMember.getBirthday());
         responseUserInfo.setPhone(vcMember.getPhone());
+        responseUserInfo.setInviteCode(vcMember.getInviteCode());
 
         Long  time1=vcMember.getCreateTime()*1000L;
         String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time1);

@@ -153,7 +153,7 @@
   </update>
 
 
-  <select id="selectByMaxBatchNum" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" parameterType="java.lang.Long" >
+  <select id="selectByMaxBatchNum" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
     select
     <include refid="Base_Column_List" />
     from u_limited_time_log

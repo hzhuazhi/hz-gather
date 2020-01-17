@@ -287,7 +287,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         //修改2个状态，一个是裂变人数
         VcMemberResource  vcMemberResource = PublicMethod.updateFissionPeople(vcMember.getMemberId());
         //会员表信息状态
-        VcMember   updatevcMember = PublicMethod.updateGradeType(vcMember.getMemberId(),vcMember.getMemberId());
+        VcMember   updatevcMember = PublicMethod.updateGradeType(vcMember.getMemberId(),1);
         //插入一条用户限时表信息数据
         String  batchNum = ComponentUtil.generateService.getBatchNum();
         ULimitedTimeLog  uLimitedTimeLog = PublicMethod.insertULimitedTimeLog(vcMember.getMemberId(),batchNum);
@@ -304,6 +304,9 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         if(superIdVcMember.getGradeType()==1){
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(superiorId);
             ULimitedTimeLog  rsLimitedTimeLog=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
+            if(rsLimitedTimeLog==null){
+                return flag;
+            }
             if(rsLimitedTimeLog.getPushNumber()==2){
                 flag=true;
             }
