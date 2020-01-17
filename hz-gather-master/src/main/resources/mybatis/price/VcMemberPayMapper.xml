@@ -80,6 +80,9 @@
       <if test="zfbPayid != null" >
         zfb_payid = #{zfbPayid},
       </if>
+      <if test="zfbName != null" >
+        zfb_name = #{zfbName},
+      </if>
       <if test="rewardType != null" >
         reward_type = #{rewardType},
       </if>

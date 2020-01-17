@@ -2,6 +2,9 @@ package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.model.notice.NoticeModel;
+
+import java.util.List;
 
 /**
  * @Description TODO
@@ -43,7 +46,11 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param uLimitedTimeLog
      * @param uBatchLog
      */
-
     void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog);
+
+
+
+    void  upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list);
+
 
 }

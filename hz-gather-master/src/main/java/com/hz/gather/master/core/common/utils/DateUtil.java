@@ -3034,8 +3034,9 @@ public class DateUtil {
 
 		Thread.sleep(5000);
 		Date   date2 = new Date();
-		DateUtil.date2TimeStamp("1578914819","yyyy-MM-dd HH:mm:ss");
-		System.out.println(date2.compareTo(date));
+		Long   time1=1579168356000L;
+		String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time1));
+		System.out.println(createTime);
 	}
 
 	/**

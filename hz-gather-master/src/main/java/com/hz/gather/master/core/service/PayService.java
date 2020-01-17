@@ -151,7 +151,7 @@ public interface PayService<T> extends BaseService<T> {
      * 升级vip 需要修改的信息
      * @param memberId
      */
-    void   upgradeVIPUpdateInfo(Integer  memberId);
+    void   upgradeVIPUpdateInfo(Integer  memberId,String  nickName);
 
 
     /**

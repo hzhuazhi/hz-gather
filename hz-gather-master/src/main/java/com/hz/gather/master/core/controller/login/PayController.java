@@ -252,14 +252,23 @@ public class PayController {
              if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
+
             flag = PublicMethod.cheakMoney(requestPayCashOut.getMoney());
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.P00005.geteCode(),ENUM_ERROR.P00005.geteDesc());
             }
 
+
+
+
             Integer   memberId = PublicMethod.tokenGetMemberId(requestPayCashOut.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+            flag = ComponentUtil.userInfoService.queryPayPassword(memberId,requestPayCashOut.getPayPassword());
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.P00010.geteCode(),ENUM_ERROR.P00010.geteDesc());
             }
 
             //该用户是否超出支付宝最大值

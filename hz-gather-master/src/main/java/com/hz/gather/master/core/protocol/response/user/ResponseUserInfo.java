@@ -39,7 +39,7 @@ public class ResponseUserInfo extends ResponseUser{
     /**
      * 到期时间
      */
-    private String expire_time;
+    private Long expire_time;
 
     /****
      * 头像地址集合
@@ -121,11 +121,11 @@ public class ResponseUserInfo extends ResponseUser{
         this.vip_type = vip_type;
     }
 
-    public String getExpire_time() {
+    public Long getExpire_time() {
         return expire_time;
     }
 
-    public void setExpire_time(String expire_time) {
+    public void setExpire_time(Long expire_time) {
         this.expire_time = expire_time;
     }
 

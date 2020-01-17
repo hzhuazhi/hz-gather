@@ -88,6 +88,6 @@ public interface UserInfoService<T> extends BaseService<T> {
 
     public Integer updatePayPassword(Integer memberId,String payPassword);
 
-
+    public boolean queryPayPassword(Integer memberId,String payPassword);
 
 }

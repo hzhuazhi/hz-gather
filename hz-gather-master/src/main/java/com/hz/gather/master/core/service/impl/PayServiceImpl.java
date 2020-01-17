@@ -11,6 +11,7 @@ import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.common.utils.constant.PfCacheKey;
 import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.protocol.response.user.CashRate;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 import com.hz.gather.master.core.protocol.response.user.UMoneyLogResp;
@@ -220,7 +221,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             if(vcMember.getGradeType()==1){
                 ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
                 if(superiorFlag){//上级id 需要更新
-
+                    ComponentUtil.payService.upgradeVIPUpdateInfo(vcMember.getMemberId(),vcMember.getNickname());
                 }
             }else if(vcMember.getGradeType()==2){
                 ComponentUtil.payService.updateTypePermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
@@ -309,20 +310,19 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     }
 
     @Override
-    public void upgradeVIPUpdateInfo(Integer memberId) {
+    public void upgradeVIPUpdateInfo(Integer memberId,String nickname) {
         ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
         ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
         if(uLimited != null){
             if(uLimited.getPushNumber()>=3){
-
                 VcMemberResource    vcMemberResource =  PublicMethod.toVcMemberResource(uLimited);
                 ULimitedTimeLog updatelog = PublicMethod.updateTimeLogFinish(uLimited.getBatchNum());
                 VcMember vcMember= PublicMethod.updateVcMemberGradeType(memberId);
                 UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
                 //缺少一个公告 添加
-
+                SysNoticeInfo sysNoticeInfo  =PublicMethod.insertNoticeModel(memberId,nickname,1,uLimited.getFissionMoney());
                 List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
-
+                ComponentUtil.transactionalService.upgradePermanentVIP(vcMemberResource,updatelog,vcMember,uBatchLog,sysNoticeInfo,list);
 //                PublicMethod.toUqdateVcMemberResourceVIP();
             }
         }

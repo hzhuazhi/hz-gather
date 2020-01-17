@@ -2,8 +2,73 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hz.gather.master.core.mapper.NoticeMapper">
 
-
-
+    <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.SysNoticeInfo" >
+        insert into sys_notice_info
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="memberId != null" >
+                member_id,
+            </if>
+            <if test="nickname != null" >
+                nickname,
+            </if>
+            <if test="dataType != null" >
+                data_type,
+            </if>
+            <if test="receiveMoney != null" >
+                receive_money,
+            </if>
+            <if test="curday != null" >
+                curday,
+            </if>
+            <if test="curhour != null" >
+                curhour,
+            </if>
+            <if test="curminute != null" >
+                curminute,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="isValid != null" >
+                is_valid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="memberId != null" >
+                #{memberId,jdbcType=INTEGER},
+            </if>
+            <if test="nickname != null" >
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null" >
+                #{dataType,jdbcType=BIT},
+            </if>
+            <if test="receiveMoney != null" >
+                #{receiveMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="curday != null" >
+                #{curday,jdbcType=INTEGER},
+            </if>
+            <if test="curhour != null" >
+                #{curhour,jdbcType=BIT},
+            </if>
+            <if test="curminute != null" >
+                #{curminute,jdbcType=BIT},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isValid != null" >
+                #{isValid,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
 
     <!-- 定义数据库基本列,只适用代替单表的*-->
     <sql id="Base_Column_List">

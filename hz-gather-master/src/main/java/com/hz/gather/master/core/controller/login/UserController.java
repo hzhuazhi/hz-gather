@@ -17,6 +17,7 @@ import com.hz.gather.master.core.protocol.request.login.ForgetPasswordModel;
 import com.hz.gather.master.core.protocol.request.user.*;
 import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -410,7 +411,7 @@ public class UserController {
             }
 
             if(!requsetUqPayPw.getPayPw().equals(requsetUqPayPw.getPayPw2())){
-                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
+                throw  new ServiceException(ENUM_ERROR.A00005.geteCode(),ENUM_ERROR.A00005.geteDesc());
             }
 //            flag = ComponentUtil.loginService.checkVerifCode(requsetPayPassword.getTimeStamp(),requsetPayPassword.getPhone(),requsetPayPassword.getSmsCode(),4);
 //            if(!flag){
@@ -423,7 +424,7 @@ public class UserController {
             }
 
 
-            Integer   memberId2 = PublicMethod.tokenGetMemberId(requsetUqPayPw.getPayPw());
+            Integer   memberId2 = PublicMethod.tokenGetMemberId(requsetUqPayPw.getToken());
             if(memberId2==0){
                 throw  new ServiceException(ENUM_ERROR.P00008.geteCode(),ENUM_ERROR.P00008.geteDesc());
             }
@@ -435,6 +436,50 @@ public class UserController {
             Integer  count =ComponentUtil.userInfoService.updatePayPassword(memberId,requsetUqPayPw.getPayPw());
 
 //            ComponentUtil.loginService.getPayPwToken(memberId,token);
+
+            ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
+            data = PublicMethod.toJson(responseUpdatePayPw);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(resultDataModel);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+
+    @PostMapping("/first_uqdatePayPw")
+    public JsonResult<Object> firstUqdatePayPw(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        ResponseFirstUqdatePayPw requsetUqPayPw = new ResponseFirstUqdatePayPw();
+        log.info("----------:firstUqdatePayPw 进来啦!");
+        try{
+            data        =   StringUtil.decoderBase64(requestData.jsonData);
+            requsetUqPayPw  = JSON.parseObject(data, ResponseFirstUqdatePayPw.class);
+
+            boolean  flag  =   PublicMethod.checkResponseFirstUqdatePayPw(requsetUqPayPw);
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
+            }
+
+
+            if(!requsetUqPayPw.getPayPw().equals(requsetUqPayPw.getPayPw2())){
+                throw  new ServiceException(ENUM_ERROR.A00005.geteCode(),ENUM_ERROR.A00005.geteDesc());
+            }
+            long   memberId = HodgepodgeMethod.checkIsLogin(requsetUqPayPw.getToken());
+
+            Integer memberId1 = Integer.parseInt(String.valueOf(memberId));
+
+            if(memberId1==0){
+                throw  new ServiceException(ENUM_ERROR.A00006.geteCode(),ENUM_ERROR.A00006.geteDesc());
+            }
+
+
+
+            Integer  count =ComponentUtil.userInfoService.updatePayPassword(memberId1,requsetUqPayPw.getPayPw());
 
             ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
             data = PublicMethod.toJson(responseUpdatePayPw);

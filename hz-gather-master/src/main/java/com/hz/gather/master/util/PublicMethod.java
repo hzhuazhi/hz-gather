@@ -7,6 +7,7 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.DateModel;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.model.user.FriendModel;
 import com.hz.gather.master.core.protocol.request.login.*;
@@ -560,8 +561,8 @@ public class PublicMethod {
         responseUserInfo.setBirthday(vcMember.getBirthday());
         responseUserInfo.setPhone(vcMember.getPhone());
 
-        Integer  time1=vcMember.getCreateTime();
-        String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time1 * 1000));
+        Long  time1=vcMember.getCreateTime()*1000L;
+        String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time1);
         SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         responseUserInfo.setCreateTime(createTime);
         responseUserInfo.setVip_type(vcMember.getGradeType());
@@ -603,11 +604,15 @@ public class PublicMethod {
             responseUserInfo.setPush_count(pushCount+"");
             responseUserInfo.setAddList(addList);
           //  SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);
-            responseUserInfo.setExpire_time(expireTime);
+            String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expireTime);
+            Long expireTimelong = parse.getTime();
+
+            responseUserInfo.setExpire_time(expireTimelong);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
             responseUserInfo.setRequire_fission_count(fissionCount+"");
+
+
         }else if(vcMember.getGradeType()==2){
             responseUserInfo.setAddList(addList);
             responseUserInfo.setRecommend_money(vcMemberResource.getPushMoney()+"");
@@ -1216,6 +1221,17 @@ public class PublicMethod {
         return uMoneyList;
     }
 
+    public  static UMoneyList  insertUMoneyList(Integer memberId,Integer rewardType,Integer symbolType,BigDecimal money){
+        DateModel dateModel= PublicMethod.getDate();
+        UMoneyList  uMoneyList = new UMoneyList();
+        BeanUtils.copy(dateModel,uMoneyList);
+        uMoneyList.setMemberId(memberId);
+        uMoneyList.setRewardType(rewardType);
+        uMoneyList.setSymbolType(symbolType);
+        uMoneyList.setMoney(money);
+        return uMoneyList;
+    }
+
 
 
     public  static ResponseFundList toResponseFundList(VcMemberResource vcMemberResource,List<Object> uMoneyList, Integer rowCount){
@@ -1445,5 +1461,23 @@ public class PublicMethod {
         return true;
     }
 
+    public static boolean checkResponseFirstUqdatePayPw(ResponseFirstUqdatePayPw firstUqdatePayPw){
+        boolean  flag  = false ;
+        if(StringUtils.isBlank(firstUqdatePayPw.getToken())){
+            return flag;
+        }
+        return true;
+    }
+
+    public  static SysNoticeInfo insertNoticeModel(Integer memberId,String nickname,Integer type,BigDecimal money){
+        SysNoticeInfo  noticeModel =  new SysNoticeInfo();
+        DateModel dateModel= PublicMethod.getDate();
+        BeanUtils.copy(dateModel,noticeModel);
+        noticeModel.setMemberId(memberId);
+        noticeModel.setDataType(type);
+        noticeModel.setNickname(nickname);
+        noticeModel.setReceiveMoney(money);
+        return  noticeModel;
+    }
 
 }

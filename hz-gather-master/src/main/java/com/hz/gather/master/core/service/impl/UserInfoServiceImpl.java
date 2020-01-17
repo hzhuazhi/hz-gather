@@ -175,4 +175,14 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         VcMember  vcMember =PublicMethod.toVcMemberPw(memberId,payPassword);
         return vcMemberMapper.updateByPrimaryKeySelective(vcMember);
     }
+
+    @Override
+    public boolean queryPayPassword(Integer memberId, String payPassword) {
+        VcMember  vcMember =PublicMethod.toVcMemberPw(memberId,payPassword);
+        VcMember  vcMember1 =vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(vcMember1!=null){
+            return true;
+        }
+        return false;
+    }
 }

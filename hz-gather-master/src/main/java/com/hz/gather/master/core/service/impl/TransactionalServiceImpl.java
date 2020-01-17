@@ -2,13 +2,17 @@ package com.hz.gather.master.core.service.impl;
 
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
+import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.service.TransactionalService;
+import com.hz.gather.master.util.PublicMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * @Description TODO
@@ -40,6 +44,9 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
 
     @Autowired
     private UBatchLogMapper uBatchLogMapper;
+
+    @Autowired
+    private NoticeMapper sysNoticeInfoMapper;
 
 
 
@@ -90,5 +97,18 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog) {
         uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog);
         uBatchLogMapper.insertSelective(uBatchLog);
+    }
+
+    @Override
+    public void upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list) {
+        for(UBatchLog uBatchLog1:list){
+            UMoneyList  uMoneyList  = PublicMethod.insertUMoneyList(uBatchLog1.getMemberId(), Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,uBatchLog1.getReceiveMoney());
+            uMoneyListMapper.insertSelective(uMoneyList);
+        }
+        uBatchLogMapper.insertSelective(uBatchLog);
+        uLimitedTimeLogMapper.updateByPushNumber(updatelog);
+        vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+        vcMemberMapper.updateByPrimaryKeySelective(vcMember);
+        sysNoticeInfoMapper.insertSelective(noticeModel);
     }
 }
