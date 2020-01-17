@@ -30,4 +30,10 @@ public class LoadConstant {
      */
     @Value("${alipay.root.cert.path}")
     public String rootCertPath;
+
+    /**
+     * 支付宝的支付默认金额
+     */
+    @Value("${alipay.total.amount}")
+    public String totalAmount;
 }

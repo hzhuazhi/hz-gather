@@ -2,10 +2,7 @@ package com.hz.gather.master.core.controller.spread;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.exception.ExceptionMethod;
-import com.hz.gather.master.core.common.utils.BeanUtils;
-import com.hz.gather.master.core.common.utils.JsonResult;
-import com.hz.gather.master.core.common.utils.SignUtil;
-import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.*;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
@@ -99,6 +96,7 @@ public class SpreadNoticeController {
             requestModel  = JSON.parseObject(data, RequestSpreadNotice.class);
             // 推广通知数据
             SpreadNoticeModel spreadNoticeQuery = BeanUtils.copy(requestModel, SpreadNoticeModel.class);
+            spreadNoticeQuery.setNowTime(DateUtil.getNowPlusTime());
             List<SpreadNoticeModel> spreadNoticeList = ComponentUtil.spreadNoticeService.getSpreadNoticeList(spreadNoticeQuery, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();

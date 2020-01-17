@@ -112,15 +112,13 @@ public class AlipayController {
                 token = requestAlipay.getToken();
             }
 
+            // check用户是否支付过于频繁
+            HodgepodgeMethod.checkAliPayMember(memberId);
 
             // 校验ctime
             // 校验sign
-            String totalAmount = "";
-            if (StringUtils.isBlank(requestAlipay.totalAmount)){
-                // 默认实名认证的支付金额
-                totalAmount = "5.0";
-            }
-
+            String totalAmount = ComponentUtil.loadConstant.totalAmount;
+            requestAlipay.totalAmount = totalAmount;
             // 调用阿里云支付宝生成订单
             AlipayModel alipayModel = HodgepodgeMethod.assembleAlipayData(requestAlipay, sgid, totalAmount);
             String aliOrder = Alipay.createAlipaySend(alipayModel, alipayNotifyUrl);
@@ -138,6 +136,8 @@ public class AlipayController {
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
             // #添加流水
+            // 纪录用户操作存储到redis：用于check用户是否频繁操作
+            HodgepodgeMethod.setAliPayMember(memberId);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){

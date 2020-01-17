@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
-import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.constant.CacheKey;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.mapper.SpreadNoticeMapper;
-import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.spread.SpreadNoticeModel;
 import com.hz.gather.master.core.service.SpreadNoticeService;
 import com.hz.gather.master.util.ComponentUtil;
@@ -57,7 +55,7 @@ public class SpreadNoticeServiceImpl <T> extends BaseServiceImpl<T> implements S
                 dataList = spreadNoticeMapper.findByCondition(model);
                 if (dataList != null && dataList.size() != ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO) {
                     // 把数据存入缓存 - 这里缓存的时间是距离凌晨0点相差的时间
-                    ComponentUtil.redisService.set(strKeyCache, JSON.toJSONString(dataList, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty), FIVE_MIN, TimeUnit.MINUTES);
+                    ComponentUtil.redisService.set(strKeyCache, JSON.toJSONString(dataList, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty), FIVE_MIN);
                 }
             }
         }else {

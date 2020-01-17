@@ -100,4 +100,9 @@ public interface CacheKey {
      * 系统通知，系统公告，传播、扩散的通知-详情
      */
     String SPREAD_NOTICE_INFO = "-14";
+
+    /**
+     * 阿里支付：用户频繁调起支付宝转账
+     */
+    String ALIPAY_MEMBER = "-15";
 }

@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
+import com.hz.gather.master.core.common.utils.constant.CacheKey;
+import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
@@ -41,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description 公共方法类
@@ -158,8 +161,8 @@ public class HodgepodgeMethod {
     /**
      * @Description: 阿里支付宝订单生成的数据组装返回客户端的方法
      * @param stime - 服务器的时间
-     * @param token - 登录token
-//     * @param sign - 签名
+//     * @param token - 登录token
+     * @param sign - 签名
      * @param aliOrder - 调用阿里支付返回的订单码
      * @return java.lang.String
      * @author yoko
@@ -692,6 +695,37 @@ public class HodgepodgeMethod {
         dataModel.setStime(stime);
         dataModel.setSign(sign);
         return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 校验用户是否频繁进行支付操作
+     * @param memberId - 用户ID
+     * @return Long
+     * @author yoko
+     * @date 2019/11/21 18:01
+     */
+    public static void checkAliPayMember(long memberId) throws Exception{
+        String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.ALIPAY_MEMBER, memberId);
+        String strCache = (String) ComponentUtil.redisService.get(strKeyCache);
+        if (!StringUtils.isBlank(strCache)) {
+            // 用户属于频繁调起
+            throw new ServiceException(ErrorCode.ENUM_ERROR.A00003.geteCode(), ErrorCode.ENUM_ERROR.A00003.geteDesc());
+        }
+    }
+
+
+    /**
+     * @Description: 存储用户操作阿里支付到缓存中：存10秒
+     * <p>以便check用户是否频繁操作</p>
+     * @param memberId - 用户ID
+     * @return Long
+     * @author yoko
+     * @date 2019/11/21 18:01
+     */
+    public static void setAliPayMember(long memberId) throws Exception{
+        String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.ALIPAY_MEMBER, memberId);
+        ComponentUtil.redisService.set(strKeyCache, String.valueOf(memberId), 10, TimeUnit.SECONDS);
     }
 
 }

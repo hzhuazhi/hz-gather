@@ -330,7 +330,7 @@ public class ItemBankController {
                 // #添加流水
                 // 返回数据给客户端
                 String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.ITEM_BANK_ANSWER, memberId);
-                ComponentUtil.redisService.set(strKeyCache, String.valueOf(memberId), FIVE_MIN, TimeUnit.SECONDS);
+                ComponentUtil.redisService.set(strKeyCache, String.valueOf(memberId), FIVE_MIN);
                 return JsonResult.successResult(resultDataModel, cgid, sgid);
             }else{
                 throw new ServiceException(ErrorCode.ENUM_ERROR.I00010.geteCode(), ErrorCode.ENUM_ERROR.I00010.geteDesc());
