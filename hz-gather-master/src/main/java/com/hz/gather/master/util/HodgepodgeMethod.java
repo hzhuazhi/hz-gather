@@ -15,10 +15,12 @@ import com.hz.gather.master.core.model.notice.NoticeModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.spread.SpreadNoticeModel;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
 import com.hz.gather.master.core.protocol.request.itembank.ItemBankAnswer;
 import com.hz.gather.master.core.protocol.request.itembank.RequestItemBank;
+import com.hz.gather.master.core.protocol.request.spread.RequestSpreadNotice;
 import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.core.protocol.response.alipay.ResponseAlipay;
 import com.hz.gather.master.core.protocol.response.itembank.ItemBank;
@@ -28,6 +30,8 @@ import com.hz.gather.master.core.protocol.response.notice.ResponseNotice;
 import com.hz.gather.master.core.protocol.response.question.QuestionD;
 import com.hz.gather.master.core.protocol.response.question.QuestionM;
 import com.hz.gather.master.core.protocol.response.question.ResponseQuestion;
+import com.hz.gather.master.core.protocol.response.spread.ResponseSpreadNotice;
+import com.hz.gather.master.core.protocol.response.spread.SpreadNotice;
 import com.hz.gather.master.core.protocol.response.upgrade.ResponseUpgrade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -621,6 +625,73 @@ public class HodgepodgeMethod {
         resBean.setMemberId(memberId.intValue());
         resBean.setIsQuestions(ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE);
         return resBean;
+    }
+
+
+    /**
+     * @Description: 系统通知，系统公告，传播、扩散的通知集合的数据组装返回客户端的方法
+     * @param stime - 服务器的时间
+     * @param sign - 签名
+     * @param spreadNoticeList - 密保集合
+     * @param rowCount - 总行数
+     * @return java.lang.String
+     * @author yoko
+     * @date 2019/11/25 22:45
+     */
+    public static String assembleSpreadNoticeResult(long stime, String sign, List<SpreadNoticeModel> spreadNoticeList, Integer rowCount){
+        ResponseSpreadNotice dataModel = new ResponseSpreadNotice();
+        if (spreadNoticeList != null && spreadNoticeList.size() > ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO){
+            List<SpreadNotice> dataList = BeanUtils.copyList(spreadNoticeList, SpreadNotice.class);
+            dataModel.sdList = dataList;
+        }
+        if (rowCount != null){
+            dataModel.rowCount = rowCount;
+        }
+        dataModel.setStime(stime);
+        dataModel.setSign(sign);
+        return JSON.toJSONString(dataModel);
+    }
+
+
+    /**
+     * @Description: 获取推广通知详情时，校验基本数据是否非法
+     * @param requestModel - 基础数据
+     * @return void
+     * @author yoko
+     * @date 2020/01/16 23:20
+     */
+    public static void checkSpreadNoticeData(RequestSpreadNotice requestModel) throws Exception{
+        // 校验所有数据
+        if (requestModel == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.H00001.geteCode(), ErrorCode.ENUM_ERROR.H00001.geteDesc());
+        }
+
+        // 校验ID值
+        if (requestModel.id == null ){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.H00002.geteCode(), ErrorCode.ENUM_ERROR.H00002.geteDesc());
+        }
+
+    }
+
+
+    /**
+     * @Description: 系统通知，系统公告，传播、扩散的通知-详情的数据组装返回客户端的方法
+     * @param stime - 服务器的时间
+     * @param sign - 签名
+     * @param spreadNoticeModel - 系统通知，系统公告，传播、扩散的通知的详情
+     * @return java.lang.String
+     * @author yoko
+     * @date 2019/11/25 22:45
+     */
+    public static String assembleSpreadNoticeDataResult(long stime, String sign, SpreadNoticeModel spreadNoticeModel){
+        ResponseSpreadNotice dataModel = new ResponseSpreadNotice();
+        if (spreadNoticeModel != null){
+            SpreadNotice data = BeanUtils.copy(spreadNoticeModel, SpreadNotice.class);
+            dataModel.sd = data;
+        }
+        dataModel.setStime(stime);
+        dataModel.setSign(sign);
+        return JSON.toJSONString(dataModel);
     }
 
 }

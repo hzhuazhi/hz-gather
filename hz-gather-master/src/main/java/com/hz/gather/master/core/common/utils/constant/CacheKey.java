@@ -90,4 +90,14 @@ public interface CacheKey {
      * 密保：已通过密保问答
      */
     String ITEM_BANK_ANSWER = "-12";
+
+    /**
+     * 系统通知，系统公告，传播、扩散的通知
+     */
+    String SPREAD_NOTICE = "-13";
+
+    /**
+     * 系统通知，系统公告，传播、扩散的通知-详情
+     */
+    String SPREAD_NOTICE_INFO = "-14";
 }

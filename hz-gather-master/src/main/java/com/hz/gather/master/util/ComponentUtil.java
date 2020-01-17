@@ -28,6 +28,7 @@ public class ComponentUtil {
     public static NoticeService noticeService;
     public static ItemBankService itemBankService;
     public static ItemBankAnswerService itemBankAnswerService;
+    public static SpreadNoticeService spreadNoticeService;
 
 
 }
