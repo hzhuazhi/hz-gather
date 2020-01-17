@@ -263,6 +263,12 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
+            if(StringUtils.isBlank(vcMember.getPassword())){
+                if(vcMember.getPassword().equals(forgetPasswordModel.getPassWord())){
+                    throw  new ServiceException(ENUM_ERROR.A00017.geteCode(),ENUM_ERROR.A00017.geteDesc());
+                }
+            }
+
             if(!StringUtils.isBlank(vcMember.getToken())){
                 dtoken=vcMember.getToken();
             }
