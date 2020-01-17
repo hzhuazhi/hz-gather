@@ -19,7 +19,7 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param vcMemberResource  自己的资源信息
      * @param uqVcMemberResource   上级需要修改的
      */
-    void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource);
+    void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal);
 
     void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
 

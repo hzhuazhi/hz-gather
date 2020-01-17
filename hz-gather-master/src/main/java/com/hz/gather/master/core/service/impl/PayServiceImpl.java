@@ -186,6 +186,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         //查询所有的上级状态信息
         List<VcMember>  list = ComponentUtil.payService.queryMemberInfo(rsVc.getBenefitMemberId());
 
+
+        ComponentUtil.payService.updateMemberInfo(list,rsVc.getSuperiorId(),isUpdate,outTradeNo,memberId);
         // 查询该用户下收益人有那些
 
         //添加明细表信息
@@ -203,7 +205,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         List<VcMember>  list = null;
         String []  memberId  =benefitMemberId.split(",");
         VcMember  vcMember  = PublicMethod.toList(memberId);
-        if(vcMember.getIdList().size()>9){
+        if(vcMember.getIdList().size()>Constant.REWARD_FISSION_COUNT){
             return list;
         }
         List<VcMember>    listVcMember  =   vcMemberMapper.selectByList(vcMember);
@@ -228,7 +230,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             }
 
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -319,7 +321,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 ULimitedTimeLog updatelog = PublicMethod.updateTimeLogFinish(uLimited.getBatchNum());
                 VcMember vcMember= PublicMethod.updateVcMemberGradeType(memberId);
                 UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
-                //缺少一个公告 添加
+                //添加公告
                 SysNoticeInfo sysNoticeInfo  =PublicMethod.insertNoticeModel(memberId,nickname,1,uLimited.getFissionMoney());
                 List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
                 ComponentUtil.transactionalService.upgradePermanentVIP(vcMemberResource,updatelog,vcMember,uBatchLog,sysNoticeInfo,list);
@@ -371,5 +373,17 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             list1.add(cashRate);
         }
         return list1;
+    }
+
+    @Override
+    public void isInsertSysNoticeInfo(Integer memberId, Double money) {
+        VcMemberResource  vcMemberResource =PublicMethod.toVcMemberResource(memberId);
+        VcMemberResource   vcMemberResource1=vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
+        if(vcMemberResource1==null){
+            return;
+        }
+
+
+
     }
 }

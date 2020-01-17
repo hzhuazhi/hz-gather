@@ -16,6 +16,7 @@ import com.hz.gather.master.core.mapper.VirtualCoinPriceMapper;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.entity.VcMemberGenerateModel;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.entity.VcMemberRewardTotal;
 import com.hz.gather.master.core.model.price.VirtualCoinPriceModel;
 import com.hz.gather.master.core.protocol.request.login.LoginModel;
 import com.hz.gather.master.core.service.LoginService;
@@ -216,7 +217,8 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getSuperiorId(),vcMember.getExtensionMemberId(),phone);
         VcMemberResource vcMemberResourceModel  =  PublicMethod.insertVcMemberResource(memberId);
         VcMemberResource updateResourcePeople  =PublicMethod.updateResourcePeople(memberId);
-        ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople);
+        VcMemberRewardTotal vcMemberRewardTotal  =PublicMethod.insertVcMemberRewardTotal(memberId);
+        ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople,vcMemberRewardTotal);
     }
 
 

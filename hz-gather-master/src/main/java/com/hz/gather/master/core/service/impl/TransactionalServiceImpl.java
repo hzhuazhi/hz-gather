@@ -48,6 +48,9 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     @Autowired
     private NoticeMapper sysNoticeInfoMapper;
 
+    @Autowired
+    private VcMemberRewardTotalMapper vcMemberRewardTotalMapper;
+
 
 
     @Override
@@ -56,10 +59,11 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource) {
+    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal) {
         vcMemberMapper.insertSelective(vcMember);
         vcMemberResourceMapper.insertSelective(vcMemberResource);
         vcMemberResourceMapper.updateUpPeople(uqVcMemberResource);
+        vcMemberRewardTotalMapper.insertSelective(vcMemberRewardTotal);
     }
 
     @Override
@@ -105,7 +109,7 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
             UMoneyList  uMoneyList  = PublicMethod.insertUMoneyList(uBatchLog1.getMemberId(), Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,uBatchLog1.getReceiveMoney());
             uMoneyListMapper.insertSelective(uMoneyList);
         }
-        uBatchLogMapper.insertSelective(uBatchLog);
+//        uBatchLogMapper.insertSelective(uBatchLog);
         uLimitedTimeLogMapper.updateByPushNumber(updatelog);
         vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
         vcMemberMapper.updateByPrimaryKeySelective(vcMember);

@@ -1480,4 +1480,18 @@ public class PublicMethod {
         return  noticeModel;
     }
 
+
+    /**
+     * 生产用户领取奖励总额表信息
+     * @param memberId
+     * @return
+     */
+    public  static VcMemberRewardTotal  insertVcMemberRewardTotal(Integer memberId){
+        DateModel dateModel= PublicMethod.getDate();
+        VcMemberRewardTotal  vcMemberRewardTotal = new VcMemberRewardTotal();
+        BeanUtils.copy(dateModel,vcMemberRewardTotal);
+        vcMemberRewardTotal.setMemberId(memberId);
+        return vcMemberRewardTotal;
+    }
+
 }

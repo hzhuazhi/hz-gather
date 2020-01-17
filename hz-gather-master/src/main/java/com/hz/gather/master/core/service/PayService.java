@@ -178,7 +178,18 @@ public interface PayService<T> extends BaseService<T> {
     Integer  insertSuccess(Integer memberId,double  money);
 
 
+    /***
+     * 查询提现信息
+     * @param uCashOutLog
+     * @return
+     */
     List<CashRate>     queryCashLog(UCashOutLog uCashOutLog);
 
+    /**
+     * 根据memberId + 金额  是否需要添加发公告表信息
+     * @param memberId
+     * @param money
+     */
+    void     isInsertSysNoticeInfo(Integer  memberId,Double money);
 
 }
