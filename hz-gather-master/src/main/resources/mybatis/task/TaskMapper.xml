@@ -250,7 +250,7 @@
     <select id="getTaskAlipayNotify" parameterType="Object" resultType="com.hz.gather.master.core.model.task.TaskAlipayNotifyModel">
         select
         <include refid="Base_Column_List_Notify" />
-        from tb_ga_alipay_notify a left join tb_pf_alipay b on a.out_trade_no = b.out_trade_no
+        from tb_ga_alipay_notify a left join tb_ga_alipay b on a.out_trade_no = b.out_trade_no
         <include refid="Example_Where_Clause_Notify"/>
         limit #{limitNum}
     </select>
