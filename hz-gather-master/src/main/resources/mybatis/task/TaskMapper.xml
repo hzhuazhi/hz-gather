@@ -101,7 +101,7 @@
         UPDATE u_cash_out_log a
         <trim prefix="set" suffixOverrides=",">
             <if test="runNum != null and runNum != '' " >
-                a.run_num = #{runNum},
+                a.run_num = a.run_num + #{runNum},
             </if>
             <if test="runStatus != null and runStatus != '' " >
                 a.run_status = #{runStatus},
@@ -262,7 +262,7 @@
         UPDATE tb_ga_alipay_notify a
         <trim prefix="set" suffixOverrides=",">
             <if test="runNum != null and runNum != '' " >
-                a.run_num = #{runNum},
+                a.run_num = a.run_num + #{runNum},
             </if>
             <if test="runStatus != null and runStatus != '' " >
                 a.run_status = #{runStatus},
