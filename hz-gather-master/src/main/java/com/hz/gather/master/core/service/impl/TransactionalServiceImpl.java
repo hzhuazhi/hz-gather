@@ -76,8 +76,7 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void memberPayment(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog uLimitedTimeLog) {
-        //vcMemberResourceMapper.updateUpPeople(vcMemberResource);
+    public void memberPayment(VcMember vcMember, ULimitedTimeLog uLimitedTimeLog) {
         vcMemberMapper.updateByPrimaryKeySelective(vcMember);
         uLimitedTimeLogMapper.insertSelective(uLimitedTimeLog);
     }

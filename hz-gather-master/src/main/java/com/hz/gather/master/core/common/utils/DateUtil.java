@@ -3030,13 +3030,8 @@ public class DateUtil {
 //		boolean flag = isBeLongSfm(start, end);
 //		System.out.println("flag:" + flag);
 
-		Date   date = new Date();
-
-		Thread.sleep(5000);
-		Date   date2 = new Date();
-		Long   time1=1579168356000L;
-		String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time1));
-		System.out.println(createTime);
+		DateUtil.dateAddDays(new Date(),2);
+		System.out.println(DateUtil.dateAddDays(new Date(),2));
 	}
 
 	/**

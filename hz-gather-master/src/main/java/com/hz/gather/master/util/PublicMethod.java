@@ -555,6 +555,7 @@ public class PublicMethod {
      */
     public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog, List<UBatchLog> list)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
+        responseUserInfo.setRq_code("http://baidu.com#inviteCode="+vcMember.getInviteCode());
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
         responseUserInfo.setNickname(vcMember.getNickname());
         responseUserInfo.setSex(vcMember.getSex()+"");
@@ -588,26 +589,31 @@ public class PublicMethod {
         if (vcMember.getGradeType()==0){//普通用户信息
             responseUserInfo.setAddList(addList);
         }else if(vcMember.getGradeType()==1){//限时用户信息
-            String recommendMoney = "";
+            String recommendMoney = "0";
 
             int pushCount =0;
             int fissionCount =0;
-            for(UBatchLog uBatchLog:list){
-                if(uBatchLog.getDataType()==1){
-                    recommendMoney = StringUtil.getBigDecimalAdd(recommendMoney,uBatchLog.getReceiveMoney()+"");
+
+            if(list!=null){
+                for(UBatchLog uBatchLog:list){
+                    if(uBatchLog.getDataType()==1){
+                        recommendMoney = StringUtil.getBigDecimalAdd(recommendMoney,uBatchLog.getReceiveMoney()+"");
 //                    recommendMoney=recommendMoney+uBatchLog.getReceiveMoney();
-                    addList.add(uBatchLog.getMemberAdd());
-                    pushCount++;
-                }else{
-                    fissionCount++;
+                        addList.add(uBatchLog.getMemberAdd());
+                        pushCount++;
+                    }else{
+                        fissionCount++;
+                    }
                 }
             }
+
             responseUserInfo.setPush_count(pushCount+"");
             responseUserInfo.setAddList(addList);
           //  SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expireTime);
             Long expireTimelong = parse.getTime();
 
+            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.EVERY_PEOPLE_MONEY+"");
             responseUserInfo.setExpire_time(expireTimelong);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
@@ -616,8 +622,8 @@ public class PublicMethod {
 
         }else if(vcMember.getGradeType()==2){
             responseUserInfo.setAddList(addList);
-            responseUserInfo.setRecommend_money(vcMemberResource.getPushMoney()+"");
-            responseUserInfo.setFission_money(vcMemberResource.getFissionMoney()+"");
+            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.EVERY_PEOPLE_MONEY+"");
+            responseUserInfo.setFission_money(vcMemberResource.getTeamPeople()*Constant.EVERY_PEOPLE_MONEY+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
             responseUserInfo.setRequire_fission_count(vcMemberResource.getTeamPeople()+"");
         }
@@ -1159,6 +1165,8 @@ public class PublicMethod {
         DateModel dateModel= PublicMethod.getDate();
         ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
         BeanUtils.copy(dateModel,uLimitedTimeLog);
+
+        uLimitedTimeLog.setInvalidTime(DateUtil.dateAddDays(dateModel.getCreateTime(),2));
         uLimitedTimeLog.setMemberId(memberId);
         uLimitedTimeLog.setBatchNum(batchNum);
         return uLimitedTimeLog;

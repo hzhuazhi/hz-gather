@@ -85,6 +85,19 @@ public class ResponseUserInfo extends ResponseUser{
      */
     private String     inviteCode;
 
+    /**
+     * 二维码信息
+     */
+    private String     rq_code;
+
+    public String getRq_code() {
+        return rq_code;
+    }
+
+    public void setRq_code(String rq_code) {
+        this.rq_code = rq_code;
+    }
+
     public String getCash_money() {
         return cash_money;
     }

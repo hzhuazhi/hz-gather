@@ -196,7 +196,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         //关闭所有用户锁信息
 
         //需要给当前用户的邀请码 丢到redis 里面
-        return false;
+        return true;
     }
 
 
@@ -285,13 +285,13 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             return flag;
         }
         //修改2个状态，一个是裂变人数
-        VcMemberResource  vcMemberResource = PublicMethod.updateFissionPeople(vcMember.getMemberId());
+//        VcMemberResource  vcMemberResource = PublicMethod.updateFissionPeople(vcMember.getMemberId());
         //会员表信息状态
         VcMember   updatevcMember = PublicMethod.updateGradeType(vcMember.getMemberId(),1);
         //插入一条用户限时表信息数据
         String  batchNum = ComponentUtil.generateService.getBatchNum();
         ULimitedTimeLog  uLimitedTimeLog = PublicMethod.insertULimitedTimeLog(vcMember.getMemberId(),batchNum);
-        ComponentUtil.transactionalService.memberPayment(updatevcMember,vcMemberResource,uLimitedTimeLog);
+        ComponentUtil.transactionalService.memberPayment(updatevcMember,uLimitedTimeLog);
         return true;
     }
 

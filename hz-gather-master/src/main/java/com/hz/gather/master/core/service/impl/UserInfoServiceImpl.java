@@ -80,12 +80,14 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         //状态显示vip的时候
         if(vcMember.getGradeType()==1){
             ULimitedTimeLog  limitedTimeLog = new ULimitedTimeLog();
+            limitedTimeLog.setMemberId(memberId);
             timeLog  = uLimitedTimeLogMapper.selectByMaxBatchNum(limitedTimeLog);
-            if(timeLog==null){
-                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
+            if(timeLog!=null){
+                UBatchLog    uBatchLog   =   PublicMethod.toUBatchLog(timeLog.getBatchNum());
+                list =   uBatchLogMapper.selectByBatchNum(uBatchLog);
+//                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
             }
-            UBatchLog    uBatchLog   =   PublicMethod.toUBatchLog(timeLog.getBatchNum());
-            list =   uBatchLogMapper.selectByBatchNum(uBatchLog);
+
 
 //            ULimitedTimeLog
         }

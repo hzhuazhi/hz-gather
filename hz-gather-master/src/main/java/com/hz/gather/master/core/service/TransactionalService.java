@@ -23,7 +23,7 @@ public interface TransactionalService <T> extends BaseService<T> {
 
     void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
 
-    void   memberPayment(VcMember vcMember , VcMemberResource vcMemberResource, ULimitedTimeLog uLimitedTimeLog );
+    void   memberPayment(VcMember vcMember , ULimitedTimeLog uLimitedTimeLog );
 
     /***
      * vip 的添加

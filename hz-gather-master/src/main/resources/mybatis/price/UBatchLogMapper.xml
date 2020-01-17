@@ -3,13 +3,13 @@
 <mapper namespace="com.hz.gather.master.core.mapper.UBatchLogMapper" >
 
   <sql id="Base_Column_List" >
-    id, batch_num, member_id, curday, curhour, curminute, create_time, is_finish,data_type,receive_money
+    id, batch_num,member_id, curday, curhour, curminute, create_time, is_finish,data_type,receive_money
   </sql>
 
   <sql id="Base_Column_List_Member" >
-       b.member_add,b.phone,b.nickname,a.batch_num
+       b.member_add,b.phone,b.nickname,a.batch_num,a.data_type,a.receive_money
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UBatchLog" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UBatchLog"  >
     select 
     <include refid="Base_Column_List" />
     from u_batch_log
@@ -122,7 +122,7 @@
 
 
 
-  <select id="selectByBatchNum" resultType="com.hz.gather.master.core.model.entity.UBatchLog" parameterType="java.lang.Long" >
+  <select id="selectByBatchNum" resultType="com.hz.gather.master.core.model.entity.UBatchLog"  >
     select
     <include refid="Base_Column_List_Member" />
     from u_batch_log  a  LEFT JOIN
