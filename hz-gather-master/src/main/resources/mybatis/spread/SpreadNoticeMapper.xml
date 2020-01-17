@@ -23,7 +23,7 @@
                 and a.notice_name = #{noticeName}
             </if>
             <if test="nowTime != null and nowTime != '' " >
-                and a.start_time >= #{nowTime} and a.end_time &lt;= #{endTime}
+                and a.start_time &lt;= #{nowTime} and a.end_time >= #{nowTime}
             </if>
             and a.yn = 0
         </trim>
