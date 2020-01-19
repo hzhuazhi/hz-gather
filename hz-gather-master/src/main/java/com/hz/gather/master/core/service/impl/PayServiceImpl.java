@@ -222,12 +222,21 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 type=1;
             }
             if(vcMember.getGradeType()==1){
-                ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+                if(type==1){
+                    ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.PUSH_PEOPLE_MONEY,outTradeNo,createMemberId);
+                }else{
+                    ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+                }
+
                 if(superiorFlag){//上级id 需要更新
                     ComponentUtil.payService.upgradeVIPUpdateInfo(vcMember.getMemberId(),vcMember.getNickname());
                 }
             }else if(vcMember.getGradeType()==2){
-                ComponentUtil.payService.updateTypePermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
+                if(type==1) {
+                    ComponentUtil.payService.updateTypePermanentVIP(vcMember.getMemberId(), type, Constant.PUSH_PEOPLE_MONEY, outTradeNo, createMemberId);
+                }else{
+                    ComponentUtil.payService.updateTypePermanentVIP(vcMember.getMemberId(), type, Constant.EVERY_PEOPLE_MONEY, outTradeNo, createMemberId);
+                }
             }
 
         }
