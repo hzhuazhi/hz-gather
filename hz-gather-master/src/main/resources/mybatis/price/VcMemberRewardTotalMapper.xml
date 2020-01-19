@@ -137,7 +137,7 @@
     where member_id = #{memberId}
   </update>
 
-  <select id="selectByIsCount" >
+  <select id="selectByIsCount" resultType="com.hz.gather.master.core.model.entity.VcMemberRewardTotal" >
     select
     <include refid="Base_Column_List" />
     from vc_member_reward_total
