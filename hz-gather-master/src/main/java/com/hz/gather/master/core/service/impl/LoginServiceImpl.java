@@ -261,7 +261,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     public Integer updatePassWord(Integer memberId, String passWord,String  token) throws Exception {
         VcMember  vcMember = new VcMember();
         vcMember.setMemberId(memberId);
-        vcMember.setPassword(passWord);
+        vcMember.setPassword(MD5Util.getMD5String(passWord));
         vcMember.setToken(token);
         Integer  count  = vcMemberMapper.updateByPrimaryKeySelective(vcMember);
         return count;

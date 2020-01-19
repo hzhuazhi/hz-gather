@@ -1,5 +1,7 @@
 package com.hz.gather.master.core.common.utils.constant;
 
+import com.hz.gather.master.core.singleton.SysNoticeAskSingleton;
+
 /**
  * @Description TODO
  * @Author long
@@ -29,8 +31,8 @@ public class Constant {
 
 
     /*************** 每个推荐用户分红金额****************/
-    public  static  Double   EVERY_PEOPLE_MONEY  =  35D ;
-    public  static  Double   PUSH_PEOPLE_MONEY  =  180D ;
+    public  static  Double   EVERY_PEOPLE_MONEY  =  SysNoticeAskSingleton.getInstance().getEveryPeopleMoney() ;
+    public  static  Double   PUSH_PEOPLE_MONEY  =  SysNoticeAskSingleton.getInstance().getPushPeopleMoney() ;
 
 
     /*************** 裂变数量****************/
@@ -51,7 +53,7 @@ public class Constant {
     public  static  String   PAY_REMARKS  =  "《500理财》提现到账通知";
 
     /*************** 奖励裂变层级数****************/
-    public  static  Integer   REWARD_FISSION_COUNT  =  9;
+    public  static  Integer   REWARD_FISSION_COUNT  =  SysNoticeAskSingleton.getInstance().getRewardFissionCount();
 
 
     /*************** 用户资金明细类型 ****************/
@@ -61,6 +63,9 @@ public class Constant {
     /*************** 用户符号类型****************/
     public  static  Integer   SYMBO_TYPE1  =  1; //加
     public  static  Integer   SYMBO_TYPE2  =  2; //减
+    /*************** 默认头像地址 ****************/
+    public   static  String   MEMBERADD=SysNoticeAskSingleton.getInstance().getMemberAdd();
 
-    public   static  String   MEMBERADD="http://500.lzshu.cn/1579159584166.jpg";
+    /*************** 默认注册地址 ****************/
+    public   static  String   REGISTERADD=SysNoticeAskSingleton.getInstance().getRegisterAdd();
 }

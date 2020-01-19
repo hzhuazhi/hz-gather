@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface InitService <T> extends BaseService<T> {
     void querySysNoticeAsk();
+
+    void initBasics();
 }

@@ -5,6 +5,7 @@ import com.hz.gather.master.core.common.redis.RedisIdService;
 import com.hz.gather.master.core.common.redis.RedisService;
 import com.hz.gather.master.core.common.utils.constant.LoadConstant;
 import com.hz.gather.master.core.service.*;
+import com.hz.gather.master.core.service.impl.InitServiceImpl;
 
 /**
  * 工具类
@@ -29,6 +30,7 @@ public class ComponentUtil {
     public static ItemBankService itemBankService;
     public static ItemBankAnswerService itemBankAnswerService;
     public static SpreadNoticeService spreadNoticeService;
+    public static InitServiceImpl initServiceImpl;
 
 
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.SysTypeDictionaryMapper" >
+  <sql id="Base_Column_List" >
+    id, type_value, type_name, value, name, create_date, update_date, is_valid
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.SysTypeDictionary">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_type_dictionary
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_type_dictionary
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.SysTypeDictionary" >
+    insert into sys_type_dictionary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="typeValue != null" >
+        type_value,
+      </if>
+      <if test="typeName != null" >
+        type_name,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="typeValue != null" >
+        #{typeValue},
+      </if>
+      <if test="typeName != null" >
+        #{typeName},
+      </if>
+      <if test="value != null" >
+        #{value},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="createDate != null" >
+        #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate},
+      </if>
+      <if test="isValid != null" >
+        #{isValid},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.SysTypeDictionary" >
+    update sys_type_dictionary
+    <set >
+      <if test="typeValue != null" >
+        type_value = #{typeValue},
+      </if>
+      <if test="typeName != null" >
+        type_name = #{typeName},
+      </if>
+      <if test="value != null" >
+        value = #{value},
+      </if>
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

@@ -477,12 +477,34 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.A00006.geteCode(),ENUM_ERROR.A00006.geteDesc());
             }
 
-
-
             Integer  count =ComponentUtil.userInfoService.updatePayPassword(memberId1,requsetUqPayPw.getPayPw());
 
             ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
             data = PublicMethod.toJson(responseUpdatePayPw);
+            String encryptionData = StringUtil.mergeCodeBase64(data);
+            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(resultDataModel);
+        }catch (Exception e){
+            e.printStackTrace();
+            Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            return JsonResult.failedResult(map.get("message"),map.get("code"));
+        }
+    }
+
+    @PostMapping("/updateBaseInfo")
+    public JsonResult<Object> updateBaseInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+        String data = "";
+        ResponseFirstUqdatePayPw requsetUqPayPw = new ResponseFirstUqdatePayPw();
+        log.info("----------:updateBaseInfo 进来啦!");
+        try{
+            data        =   StringUtil.decoderBase64(requestData.jsonData);
+//            requsetUqPayPw  = JSON.parseObject(data, ResponseFirstUqdatePayPw.class);
+
+            ComponentUtil.initServiceImpl.initBasics();
+
+//            ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
+//            data = PublicMethod.toJson(responseUpdatePayPw);
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;

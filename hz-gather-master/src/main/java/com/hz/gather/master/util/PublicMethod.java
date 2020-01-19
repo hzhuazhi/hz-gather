@@ -3,6 +3,7 @@ package com.hz.gather.master.util;
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.DateUtil;
+import com.hz.gather.master.core.common.utils.MD5Util;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.DateModel;
@@ -153,7 +154,7 @@ public class PublicMethod {
         memberModel.setCreateTime(createTime);
         memberModel.setLoginTime(loginTime);
         memberModel.setSuperiorId(superiorId);
-        memberModel.setPassword(loginModel.getPassWrod());
+        memberModel.setPassword(MD5Util.getMD5String(loginModel.getPassWrod()));
         String    benefitMemberId   =  PublicMethod.getBenefitMemberId(extensionMemberId,Constant.REWARD_FISSION_COUNT);
         memberModel.setBenefitMemberId(benefitMemberId);
         memberModel.setExtensionMemberId(extensionMemberId+","+memberId);
@@ -390,7 +391,7 @@ public class PublicMethod {
     public  static  VcMember  toVcMember(String phone,String password){
         VcMember  vcMember =  new  VcMember();
         vcMember.setPhone(phone);
-        vcMember.setPassword(password);
+        vcMember.setPassword(MD5Util.getMD5String(password));
         return vcMember;
     }
 
@@ -555,7 +556,7 @@ public class PublicMethod {
      */
     public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog, List<UBatchLog> list)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
-        responseUserInfo.setRq_code("http://baidu.com#inviteCode="+vcMember.getInviteCode());
+        responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
         responseUserInfo.setNickname(vcMember.getNickname());
         responseUserInfo.setSex(vcMember.getSex()+"");
@@ -666,7 +667,7 @@ public class PublicMethod {
     public  static  VcMember  toVcMemberPw(Integer memberId,String payPassword){
         VcMember  vcMember =  new  VcMember();
         vcMember.setMemberId(memberId);
-        vcMember.setPayPassword(payPassword);
+        vcMember.setPayPassword(MD5Util.getMD5String(payPassword));
         return vcMember;
     }
 

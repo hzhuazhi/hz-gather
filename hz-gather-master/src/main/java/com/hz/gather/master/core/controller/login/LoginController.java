@@ -10,11 +10,13 @@ import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
+import com.hz.gather.master.core.model.region.RegionModel;
 import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.response.login.ResponseRegisterVerify;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
+import com.hz.gather.master.util.TaskMethod;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -398,5 +400,7 @@ public class LoginController {
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
+
+
 
 }
