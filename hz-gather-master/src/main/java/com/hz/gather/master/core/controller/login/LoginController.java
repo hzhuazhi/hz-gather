@@ -78,8 +78,6 @@ public class LoginController {
             if(sendSmsModel.getSmsType()==1){
                 time  =  ComponentUtil.loginService.sendRegister(sendSmsModel.getPhone(),sendSmsModel.getCountry());
             }else if(sendSmsModel.getSmsType()==2){
-
-
                 time  =  ComponentUtil.loginService.sendForgetPassword(sendSmsModel.getPhone());
             }else if(sendSmsModel.getSmsType()==3){
                 time  =  ComponentUtil.loginService.sendSmsSignIn(sendSmsModel.getPhone());

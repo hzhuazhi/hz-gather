@@ -301,6 +301,10 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     @Override
     public String sendSmsSignIn(String phone) throws Exception {
+        boolean flag = ComponentUtil.loginService.isPhoneExist(phone);
+        if(!flag){
+            throw  new ServiceException(ENUM_ERROR.A00009.geteCode(),ENUM_ERROR.A00009.geteDesc());
+        }
         String  time  = ComponentUtil.loginService.createTime(phone,3);
         return time;
     }
