@@ -379,6 +379,12 @@ public class PublicMethod {
         return vcMember;
     }
 
+    public  static  VcMember  toVcMembersuperiorId(Integer superiorId){
+        VcMember  vcMember =  new  VcMember();
+        vcMember.setSuperiorId(superiorId);
+        return vcMember;
+    }
+
 
     /**
      * @Description: TODO
@@ -554,7 +560,7 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/8 17:51
      */
-    public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog, List<UBatchLog> list)throws  Exception{
+    public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog,List<UBatchLog> list ,List<VcMember> listVcMember)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
         responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
@@ -596,11 +602,15 @@ public class PublicMethod {
             int fissionCount =0;
 
             if(list!=null){
+                for(VcMember vcMember1:listVcMember){
+                    addList.add(vcMember1.getMemberAdd());
+                }
+
                 for(UBatchLog uBatchLog:list){
                     if(uBatchLog.getDataType()==1){
                         recommendMoney = StringUtil.getBigDecimalAdd(recommendMoney,uBatchLog.getReceiveMoney()+"");
 //                    recommendMoney=recommendMoney+uBatchLog.getReceiveMoney();
-                        addList.add(uBatchLog.getMemberAdd());
+//                        addList.add(uBatchLog.getMemberAdd());
                         pushCount++;
                     }else{
                         fissionCount++;
@@ -1256,6 +1266,17 @@ public class PublicMethod {
     }
 
 
+    /**
+     * 清除裂变人数
+     * @param memberList
+     * @return
+     */
+    public  static VcMember toMember(List<Integer>  memberList){
+        VcMember  vcMember = new VcMember();
+        vcMember.setIdList(memberList);
+        return vcMember;
+    }
+
 
     public  static ResponseFundList toResponseFundList(VcMemberResource vcMemberResource,List<Object> uMoneyList, Integer rowCount){
         ResponseFundList  responseFundList = new ResponseFundList();
@@ -1349,6 +1370,36 @@ public class PublicMethod {
     }
 
 
+    /**
+     * 直推修改的限时表
+     * @param bacthNo
+     * @param pushId
+     * @param oldpushId
+     * @return
+     */
+    public static  ULimitedTimeLog   uqdatePushTimeLog(String  bacthNo,String pushId,String oldpushId){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setBatchNum(bacthNo);
+        if(StringUtils.isBlank(oldpushId)){
+            uLimitedTimeLog.setPushId(pushId);
+        }else{
+            uLimitedTimeLog.setPushId(oldpushId+","+pushId);
+        }
+        return uLimitedTimeLog;
+    }
+
+    public static  List<Integer>   toMemberList(String pushId){
+        List<Integer>   list = new ArrayList<>();
+        if (StringUtils.isBlank(pushId)){
+            return list;
+        }
+
+        String  [] pushIdList =  pushId.split(",");
+        for (String pushid:pushIdList){
+            list.add(Integer.parseInt(pushid));
+        }
+        return list;
+    }
 
     public static  ULimitedTimeLog   uqdateULimitedTimeLog(String  bacthNo){
         ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();

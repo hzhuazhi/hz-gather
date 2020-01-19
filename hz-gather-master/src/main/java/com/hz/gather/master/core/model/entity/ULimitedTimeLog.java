@@ -95,6 +95,12 @@ public class ULimitedTimeLog {
      */
     private BigDecimal fissionMoney;
 
+
+    /**
+     * 直推id
+     */
+    private String  pushId;
+
     public Long getId() {
         return id;
     }
@@ -197,5 +203,13 @@ public class ULimitedTimeLog {
 
     public void setCurhour(Integer curhour) {
         this.curhour = curhour;
+    }
+
+    public String getPushId() {
+        return pushId;
+    }
+
+    public void setPushId(String pushId) {
+        this.pushId = pushId;
     }
 }

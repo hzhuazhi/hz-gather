@@ -4,7 +4,7 @@
 
   <sql id="Base_Column_List" >
     id, batch_num, push_number,fission_money, member_id, curday, curhour, curminute, create_time, update_time,
-    invalid_time, is_finish, is_valid
+    invalid_time, is_finish, is_valid,push_id
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" parameterType="java.lang.Long" >
     select 
@@ -66,6 +66,9 @@
       <if test="fissionMoney != null" >
         fission_money,
       </if>
+      <if test="pushId != null" >
+        push_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -107,49 +110,55 @@
       <if test="fissionMoney != null" >
         #{fissionMoney},
       </if>
+      <if test="pushId != null" >
+        #{pushId},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
     update u_limited_time_log
     <set >
       <if test="batchNum != null" >
-        batch_num = #{batchNum,jdbcType=VARCHAR},
+        batch_num = #{batchNum},
       </if>
       <if test="pushNumber != null" >
-        push_number = #{pushNumber,jdbcType=INTEGER},
+        push_number = #{pushNumber},
       </if>
       <if test="memberId != null" >
-        member_id = #{memberId,jdbcType=INTEGER},
+        member_id = #{memberId},
       </if>
       <if test="curday != null" >
-        curday = #{curday,jdbcType=INTEGER},
+        curday = #{curday},
       </if>
       <if test="curhour != null" >
-        curhour = #{curhour,jdbcType=BIT},
+        curhour = #{curhour},
       </if>
       <if test="curminute != null" >
-        curminute = #{curminute,jdbcType=BIT},
+        curminute = #{curminute},
       </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime},
       </if>
       <if test="invalidTime != null" >
-        invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+        invalid_time = #{invalidTime},
       </if>
       <if test="isFinish != null" >
-        is_finish = #{isFinish,jdbcType=BIT},
+        is_finish = #{isFinish},
       </if>
       <if test="isValid != null" >
-        is_valid = #{isValid,jdbcType=BIT},
+        is_valid = #{isValid},
       </if>
       <if test="fissionMoney != null" >
-        fission_money = #{fissionMoney,jdbcType=BIT},
+        fission_money = #{fissionMoney},
+      </if>
+      <if test="pushId != null" >
+        push_id = #{pushId},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
 
 
@@ -188,6 +197,11 @@
       <if test="isFinish != null" >
         is_finish = #{isFinish},
       </if>
+
+      <if test="pushId != null" >
+        push_id = #{pushId},
+      </if>
+
     </set>
     where batch_num = #{batchNum}
   </update>

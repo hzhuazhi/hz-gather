@@ -271,7 +271,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
-            ULimitedTimeLog  updateTimeLog = PublicMethod.uqdateULimitedTimeLog(uLimitedTimeLogh.getBatchNum());
+
+            ULimitedTimeLog  updateTimeLog = PublicMethod.uqdatePushTimeLog(uLimitedTimeLogh.getBatchNum(),memberId+"",uLimitedTimeLogh.getPushId());
             UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
             ComponentUtil.transactionalService.addBatchNoNoVIP(vcMemberResource,updateTimeLog,uMoneyLog,vcMemberRewardTotal);
         }else{ //裂变情况

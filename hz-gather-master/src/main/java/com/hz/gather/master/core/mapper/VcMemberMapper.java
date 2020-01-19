@@ -29,4 +29,6 @@ public interface VcMemberMapper<T> extends BaseDao<T> {
      * @date 2020/1/16 14:07
      */
     public int updateMemberIsQuestions(VcMember model);
+
+    List<VcMember> selectBySuperiorIdMember(VcMember model);
 }

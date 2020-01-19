@@ -81,14 +81,20 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         if(vcMember==null||vcMemberResource==null){
             throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
         }
+        List<VcMember> list2 =null;
         List<UBatchLog>     list = null;
         ULimitedTimeLog  timeLog = null;
         //状态显示vip的时候
         if(vcMember.getGradeType()==1){
+//            VcMember  vcMember1 = PublicMethod.toVcMembersuperiorId(memberId);
+//            List<VcMember> list1 =vcMemberMapper.selectBySuperiorIdMember(vcMember1);
             ULimitedTimeLog  limitedTimeLog = new ULimitedTimeLog();
             limitedTimeLog.setMemberId(memberId);
             timeLog  = uLimitedTimeLogMapper.selectByMaxBatchNum(limitedTimeLog);
             if(timeLog!=null){
+                List<Integer>  list1=PublicMethod.toMemberList(timeLog.getPushId());
+                VcMember vcMember1 =PublicMethod.toMember(list1);
+                list2 =vcMemberMapper.selectBySuperiorIdMember(vcMember1);
                 UBatchLog    uBatchLog   =   PublicMethod.toUBatchLog(timeLog.getBatchNum());
                 list =   uBatchLogMapper.selectByBatchNum(uBatchLog);
 //                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
@@ -98,7 +104,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 //            ULimitedTimeLog
         }
 
-        responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list);
+        responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list,list2);
 
 
         return responseUserInfo;

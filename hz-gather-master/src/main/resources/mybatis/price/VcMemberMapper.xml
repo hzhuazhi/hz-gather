@@ -335,4 +335,19 @@
   </update>
 
 
+
+  <select id="selectBySuperiorIdMember" resultType="com.hz.gather.master.core.model.entity.VcMember" >
+    select
+    <include refid="Base_Column_List" />
+    from vc_member
+    where 1=1
+    and  grade_type!=0
+    <if test="idList != null and idList.size()>0">
+      and member_id  in
+      <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
 </mapper>
