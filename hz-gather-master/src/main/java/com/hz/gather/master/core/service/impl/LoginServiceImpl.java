@@ -214,7 +214,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     @Override
     public void addUserInfo(LoginModel loginModel,Integer memberId,String[]  inviteAdd,VcMember vcMember,String phone) throws Exception {
-        VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getSuperiorId(),vcMember.getExtensionMemberId(),phone);
+        VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getMemberId(),vcMember.getExtensionMemberId(),phone);
         VcMemberResource vcMemberResourceModel  =  PublicMethod.insertVcMemberResource(memberId);
         VcMemberResource updateResourcePeople  = PublicMethod.updateResourcePeople(vcMember.getMemberId());
         VcMemberRewardTotal vcMemberRewardTotal  =PublicMethod.insertVcMemberRewardTotal(memberId);
