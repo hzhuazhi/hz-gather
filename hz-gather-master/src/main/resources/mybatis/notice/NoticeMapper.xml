@@ -72,7 +72,7 @@
 
     <!-- 定义数据库基本列,只适用代替单表的*-->
     <sql id="Base_Column_List">
-        a.id,a.member_id,a.nickname,a.data_type,a.receive_money,a.curday,a.curhour,a.curminute,a.is_valid
+        a.id,a.member_id,a.nickname,a.data_type,a.receive_money,a.curday,a.curhour,a.curminute,a.create_time,a.is_valid
     </sql>
 
 
