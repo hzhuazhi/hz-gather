@@ -206,7 +206,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
                 }
             }else{
                 for(VcMemberRewardTotal vcMemberRewardTotal: list){
-
+                    ComponentUtil.userInfoService.compareRewardTotal(vcMemberRewardTotal);
                 }
             }
         }
