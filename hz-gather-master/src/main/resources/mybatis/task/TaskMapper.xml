@@ -108,7 +108,7 @@
             </if>
             a.update_time = NOW(),
         </trim>
-        <include refid="Example_Where_Clause_UCashOutLog"/>
+        <include refid="Example_Where_Clause_id"/>
     </update>
 
 
