@@ -8,7 +8,7 @@
     <!-- 定义数据库基本列,只适用代替单表的*-->
     <sql id="Base_Column_List">
         a.id,a.up_name,a.client_ver,a.client_type,a.limit_type,a.limit_num,a.is_limit_num,a.is_limit_ok,
-        a.md5_value,a.res_url,a.up_type,a.create_time,a.update_time,a.yn
+        a.md5_value,a.res_url,a.up_type,a.show_ver,a.content,a.create_time,a.update_time,a.yn
     </sql>
 
 
@@ -130,6 +130,12 @@
             <if test="upType != null and upType != '' " >
                 up_type,
             </if>
+            <if test="content != null and content != '' " >
+                content,
+            </if>
+            <if test="showVer != null and showVer != '' " >
+                show_ver,
+            </if>
             create_time,
         </trim>
         values
@@ -163,6 +169,12 @@
             </if>
             <if test="upType != null and upType != '' " >
                 <![CDATA[  #{upType}, ]]>
+            </if>
+            <if test="content != null and content != '' " >
+                <![CDATA[  #{content}, ]]>
+            </if>
+            <if test="showVer != null and showVer != '' " >
+                <![CDATA[  #{showVer}, ]]>
             </if>
             NOW(),
         </trim>

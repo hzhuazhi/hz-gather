@@ -17,6 +17,8 @@ public class ResponseUpgrade extends BaseResponse implements Serializable {
     public String md5Value;
     public String resUrl;
     public Integer upType;
+    public String content;
+    public String showVer;
 
     public ResponseUpgrade(){
 
@@ -60,5 +62,21 @@ public class ResponseUpgrade extends BaseResponse implements Serializable {
 
     public void setUpType(Integer upType) {
         this.upType = upType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getShowVer() {
+        return showVer;
+    }
+
+    public void setShowVer(String showVer) {
+        this.showVer = showVer;
     }
 }

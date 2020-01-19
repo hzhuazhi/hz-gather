@@ -67,6 +67,16 @@ public class UpgradeModel implements Serializable {
     private Integer upType;
 
     /**
+     * 更新内容简介
+     */
+    private String content;
+
+    /**
+     * 展现版本号：展现给客户端看的
+     */
+    private String showVer;
+
+    /**
      * 创建时间
      */
     private String createTime;
@@ -191,5 +201,21 @@ public class UpgradeModel implements Serializable {
 
     public void setYn(Integer yn) {
         this.yn = yn;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getShowVer() {
+        return showVer;
+    }
+
+    public void setShowVer(String showVer) {
+        this.showVer = showVer;
     }
 }
