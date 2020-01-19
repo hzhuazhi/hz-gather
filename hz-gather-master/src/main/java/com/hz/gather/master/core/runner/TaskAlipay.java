@@ -105,7 +105,7 @@ public class TaskAlipay {
      * @date 2019/12/27 21:30
      */
 //    @Scheduled(cron = "1 * * * * ?")
-    @Scheduled(fixedDelay = 5000) // 每5秒执行
+//    @Scheduled(fixedDelay = 5000) // 每5秒执行
     public void taskAlipay(){
         log.info("TaskAlipay.taskAlipay()------------------进来了!");
         // 查询要跑的数据

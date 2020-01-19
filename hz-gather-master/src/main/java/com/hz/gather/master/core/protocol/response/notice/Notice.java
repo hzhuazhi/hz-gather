@@ -14,6 +14,7 @@ public class Notice implements Serializable {
     public String nickname;
     public Integer dataType;
     public String receiveMoney;
+    public String createTime;
 
     public Notice(){
 
@@ -41,5 +42,13 @@ public class Notice implements Serializable {
 
     public void setReceiveMoney(String receiveMoney) {
         this.receiveMoney = receiveMoney;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }
