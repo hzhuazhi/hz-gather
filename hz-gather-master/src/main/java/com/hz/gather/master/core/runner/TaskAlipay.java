@@ -13,6 +13,7 @@ import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.alipay.AlipayData;
 import com.hz.gather.master.core.model.alipay.AlipayTransferModel;
 import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.task.TaskAlipayNotifyModel;
 import com.hz.gather.master.core.model.task.base.StatusModel;
 import com.hz.gather.master.util.ComponentUtil;
@@ -50,7 +51,7 @@ public class TaskAlipay {
      * @date 2019/12/27 21:30
      */
 //    @Scheduled(cron = "1 * * * * ?")
-//    @Scheduled(fixedDelay = 1000) // 每秒执行
+    @Scheduled(fixedDelay = 1000) // 每秒执行
     public void taskTransferAlipay() throws Exception{
         log.info("TaskAlipay.taskTransferAlipay()------------------进来了!");
         StatusModel statusQuery = TaskMethod.assembleTaskByAliapyTransferStatusQuery(limitNum);
@@ -124,6 +125,9 @@ public class TaskAlipay {
                             // 组装更改运行状态的数据：更新成成功
                             StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
                             ComponentUtil.taskService.updateTaskAlipayNotifyStatus(statusModel);
+                            // 添加已经支付成功的用户纪录
+                            PayCustModel payCustModel = TaskMethod.assemblePayCust(dataModel.getMemberId());
+                            ComponentUtil.taskService.addPayCust(payCustModel);
                         }else {
                             // 更新此次task的状态：更新成失败
                             StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(dataModel.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);

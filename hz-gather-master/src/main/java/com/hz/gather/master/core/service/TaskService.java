@@ -60,4 +60,13 @@ public interface TaskService<T> extends BaseService<T> {
      */
     public int updateTaskAlipayNotifyStatus(Object obj);
 
+    /**
+     * @Description: 添加已支付完成的用户纪录
+     * @param obj - 用户信息
+     * @return int
+     * @author yoko
+     * @date 2020/1/19 21:25
+    */
+    public int addPayCust(Object obj);
+
 }

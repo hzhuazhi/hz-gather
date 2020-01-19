@@ -31,6 +31,7 @@ public class ComponentUtil {
     public static ItemBankAnswerService itemBankAnswerService;
     public static SpreadNoticeService spreadNoticeService;
     public static InitServiceImpl initServiceImpl;
+    public static PayCustService payCustService;
 
 
 }

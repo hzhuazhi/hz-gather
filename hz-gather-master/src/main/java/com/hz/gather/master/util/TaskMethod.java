@@ -3,16 +3,20 @@ package com.hz.gather.master.util;
 import com.alipay.api.response.AlipayFundTransUniTransferResponse;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.BeanUtils;
+import com.hz.gather.master.core.common.utils.DateUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.common.utils.constant.TkErrorCode;
 import com.hz.gather.master.core.model.alipay.AlipayData;
 import com.hz.gather.master.core.model.alipay.AlipayTransferModel;
 import com.hz.gather.master.core.model.alipay.PayeeInfo;
 import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.task.base.StatusModel;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 /**
  * @Description 定时任务的公共类
@@ -148,6 +152,23 @@ public class TaskMethod {
         resBean.setRunStatus(ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
         resBean.setRunNum(ServerConstant.PUBLIC_CONSTANT.RUN_NUM_FIVE);
         resBean.setLimitNum(limitNum);
+        return resBean;
+    }
+
+
+    /**
+     * @Description: 组装添加已经支付成功的用户纪录的数据
+     * @param memberId - 用户ID
+     * @return PayCustModel
+     * @author yoko
+     * @date 2020/1/19 21:30
+    */
+    public static PayCustModel assemblePayCust(long memberId){
+        PayCustModel resBean = new PayCustModel();
+        resBean.setMemberId(memberId);
+        resBean.setCurday(DateUtil.getDayNumber(new Date()));
+        resBean.setCurhour(DateUtil.getHour(new Date()));
+        resBean.setCurminute(DateUtil.getCurminute(new Date()));
         return resBean;
     }
 }

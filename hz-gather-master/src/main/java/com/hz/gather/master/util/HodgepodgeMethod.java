@@ -15,6 +15,7 @@ import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.model.itembank.ItemBankModel;
 import com.hz.gather.master.core.model.notice.NoticeModel;
+import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
@@ -90,6 +91,32 @@ public class HodgepodgeMethod {
         // 校验用户是否登录
         memberId = HodgepodgeMethod.checkIsLogin(requestAlipay.getToken());
         return memberId;
+    }
+    
+    
+    /**
+     * @Description: 已经支付成功的用户纪录的查询数据
+     * @param memberId - 用户ID
+     * @return 
+     * @author yoko
+     * @date 2020/1/19 21:08 
+    */
+    public static PayCustModel assemblePayCustQuery(long memberId){
+        PayCustModel resBean = new PayCustModel();
+        resBean.setMemberId(memberId);
+        return resBean;
+    }
+
+    /**
+     * @Description: check用户是否重复支付
+     * @param payCustModel
+     * @author yoko
+     * @date 2020/1/19 21:22
+    */
+    public static void checkIsPayCust(PayCustModel payCustModel) throws Exception{
+        if (payCustModel != null){
+            throw new ServiceException(ErrorCode.ENUM_ERROR.A00004.geteCode(), ErrorCode.ENUM_ERROR.A00004.geteDesc());
+        }
     }
 
     /**

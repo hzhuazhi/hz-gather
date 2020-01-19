@@ -58,4 +58,9 @@ public class TaskServiceImpl<T> extends BaseServiceImpl<T> implements TaskServic
     public int updateTaskAlipayNotifyStatus(Object obj) {
         return taskMapper.updateTaskAlipayNotifyStatus(obj);
     }
+
+    @Override
+    public int addPayCust(Object obj) {
+        return taskMapper.addPayCust(obj);
+    }
 }

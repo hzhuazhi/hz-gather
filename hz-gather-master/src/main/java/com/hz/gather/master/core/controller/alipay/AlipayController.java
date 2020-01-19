@@ -13,6 +13,7 @@ import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.alipay.AlipayH5Model;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
+import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.region.RegionModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
 import com.hz.gather.master.util.ComponentUtil;
@@ -116,6 +117,10 @@ public class AlipayController {
             // check用户是否支付过于频繁
             HodgepodgeMethod.checkAliPayMember(memberId);
 
+            // check用户是否已经支付过
+            PayCustModel payCustQuery = HodgepodgeMethod.assemblePayCustQuery(memberId);
+            PayCustModel payCustModel = (PayCustModel) ComponentUtil.payCustService.findByObject(payCustQuery);
+            HodgepodgeMethod.checkIsPayCust(payCustModel);
             // 校验ctime
             // 校验sign
             String totalAmount = ComponentUtil.loadConstant.totalAmount;
@@ -203,6 +208,10 @@ public class AlipayController {
 
             // check用户是否支付过于频繁
             HodgepodgeMethod.checkAliPayMember(memberId);
+            // check用户是否已经支付过
+            PayCustModel payCustQuery = HodgepodgeMethod.assemblePayCustQuery(memberId);
+            PayCustModel payCustModel = (PayCustModel) ComponentUtil.payCustService.findByObject(payCustQuery);
+            HodgepodgeMethod.checkIsPayCust(payCustModel);
 
             // 校验ctime
             // 校验sign
