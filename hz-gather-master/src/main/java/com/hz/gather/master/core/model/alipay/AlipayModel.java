@@ -50,6 +50,11 @@ public class AlipayModel {
     public Integer outTradeStatus;
 
     /**
+     * 数据类型：1APP支付，2H5支付
+     */
+    public Integer dataType;
+
+    /**
      * 创建日期：存的日期格式20160530
      */
     public Integer curday;
@@ -229,5 +234,13 @@ public class AlipayModel {
 
     public void setCurdayEnd(Integer curdayEnd) {
         this.curdayEnd = curdayEnd;
+    }
+
+    public Integer getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
     }
 }

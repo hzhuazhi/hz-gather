@@ -10,6 +10,7 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
+import com.hz.gather.master.core.model.alipay.AlipayH5Model;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
 import com.hz.gather.master.core.model.region.RegionModel;
@@ -76,7 +77,7 @@ public class AlipayController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/ali/sendAli
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"memberId":1,"returnUrl":"http://www.baidu.com","body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
      * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
      * result={
@@ -164,7 +165,7 @@ public class AlipayController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/ali/sendAliH5
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"memberId":1,"returnUrl":"http://www.baidu.com","body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
      * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
      * result={
@@ -207,11 +208,12 @@ public class AlipayController {
             // 校验sign
             String totalAmount = ComponentUtil.loadConstant.totalAmount;
             requestAlipay.totalAmount = totalAmount;
-            // 调用阿里云支付宝生成订单
-            AlipayModel alipayModel = HodgepodgeMethod.assembleAlipayData(requestAlipay, sgid, totalAmount);
-            String aliOrder = Alipay.createAlipaySend(alipayModel, alipayNotifyUrl);
-            // 添加请求阿里支付的纪录
-            AlipayModel addAlipayModel = HodgepodgeMethod.assembleAlipayModel(alipayModel, aliOrder);
+            // 调用阿里云支付宝生成订单-h5
+            AlipayH5Model alipayModel = HodgepodgeMethod.assembleH5AlipayData(requestAlipay, sgid, totalAmount);
+            String alipayData = JSON.toJSONString(alipayModel);
+            String aliOrder = Alipay.createH5AlipaySend(alipayData, requestAlipay.returnUrl, alipayNotifyUrl);
+            // 添加请求阿里支付的纪录-H5
+            AlipayModel addAlipayModel = HodgepodgeMethod.assembleH5AlipayModel(alipayModel, requestAlipay, aliOrder);
             ComponentUtil.alipayService.add(addAlipayModel);
 
 

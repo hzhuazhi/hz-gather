@@ -8,6 +8,7 @@ import com.hz.gather.master.core.common.utils.constant.CacheKey;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.ErrorCode;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
+import com.hz.gather.master.core.model.alipay.AlipayH5Model;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
 import com.hz.gather.master.core.model.entity.VcMember;
@@ -139,6 +140,52 @@ public class HodgepodgeMethod {
     }
 
     /**
+     * @Description: 组装阿里支付的订单访问数据-H5
+     * @param requestAlipay - 阿里支付订单的基本信息
+     * @param outTradeNo - 交易订单号
+     * @param totalAmount - 订单总金额
+     * @return AlipayModel
+     * @author yoko
+     * @date 2019/12/19 20:36
+     */
+    public static AlipayH5Model assembleH5AlipayData(RequestAlipay requestAlipay, String outTradeNo, String totalAmount){
+        AlipayH5Model resBean = new AlipayH5Model();
+        if (requestAlipay != null){
+            if (!StringUtils.isBlank(requestAlipay.body)){
+                resBean.body = requestAlipay.body;
+            }else {
+                resBean.body = "费用缴纳";
+            }
+            if (!StringUtils.isBlank(requestAlipay.subject)){
+                resBean.subject = requestAlipay.subject;
+            }else {
+                resBean.subject = "500费用";
+            }
+            if (!StringUtils.isBlank(requestAlipay.outTradeNo)){
+                resBean.out_trade_no = requestAlipay.outTradeNo;
+            }else {
+                resBean.out_trade_no = outTradeNo;
+            }
+            if (!StringUtils.isBlank(requestAlipay.timeoutExpress)){
+                resBean.timeout_express = requestAlipay.timeoutExpress;
+            }else {
+                resBean.timeout_express = "30m";
+            }
+            if (!StringUtils.isBlank(requestAlipay.totalAmount)){
+                resBean.total_amount = requestAlipay.totalAmount;
+            }else {
+                resBean.total_amount = totalAmount;
+            }
+            if (!StringUtils.isBlank(requestAlipay.productCode)){
+                resBean.product_code = requestAlipay.productCode;
+            }else {
+                resBean.product_code = "500_HY";
+            }
+        }
+        return resBean;
+    }
+
+    /**
      * @Description: 组装阿里支付请求的纪录数据
      * @param alipayModel - 阿里支付的数据
      * @param aliOrder - 阿里支付宝请求之后返回的订单串
@@ -149,6 +196,34 @@ public class HodgepodgeMethod {
     public static AlipayModel assembleAlipayModel(AlipayModel alipayModel, String aliOrder){
         AlipayModel resBean = new AlipayModel();
         resBean = alipayModel;
+        if (!StringUtils.isBlank(aliOrder)){
+            resBean.setAliOrder(aliOrder);
+        }
+        resBean.dataType = ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE;
+        resBean.setCurday(DateUtil.getDayNumber(new Date()));
+        resBean.setCurhour(DateUtil.getHour(new Date()));
+        resBean.setCurminute(DateUtil.getCurminute(new Date()));
+        return resBean;
+    }
+
+    /**
+     * @Description: 组装阿里支付请求的纪录数据-H5
+     * @param alipayH5Model - 阿里支付的数据-H5
+     * @param aliOrder - 阿里支付宝请求之后返回的订单串
+     * @return
+     * @author yoko
+     * @date 2019/12/26 14:42
+     */
+    public static AlipayModel assembleH5AlipayModel(AlipayH5Model alipayH5Model, RequestAlipay requestAlipay, String aliOrder){
+        AlipayModel resBean = new AlipayModel();
+        resBean.memberId = requestAlipay.memberId;
+        resBean.body = alipayH5Model.body;
+        resBean.subject = alipayH5Model.subject;
+        resBean.outTradeNo = alipayH5Model.out_trade_no;
+        resBean.timeoutExpress = alipayH5Model.timeout_express;
+        resBean.totalAmount = alipayH5Model.total_amount;
+        resBean.productCode = alipayH5Model.product_code;
+        resBean.dataType = ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO;
         if (!StringUtils.isBlank(aliOrder)){
             resBean.setAliOrder(aliOrder);
         }

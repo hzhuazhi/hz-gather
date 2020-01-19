@@ -22,6 +22,7 @@ public class RequestAlipay extends BaseRequest implements Serializable {
     public String totalAmount;
     public String productCode;
     public String notifyUrl;
+    public String returnUrl;
 
     public RequestAlipay(){
 
@@ -89,5 +90,13 @@ public class RequestAlipay extends BaseRequest implements Serializable {
 
     public void setNotifyUrl(String notifyUrl) {
         this.notifyUrl = notifyUrl;
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
     }
 }

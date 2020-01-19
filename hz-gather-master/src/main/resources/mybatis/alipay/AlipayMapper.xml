@@ -121,6 +121,9 @@
             <if test="outTradeStatus != null and outTradeStatus != '' " >
                 out_trade_status,
             </if>
+            <if test="dataType != null and dataType != '' " >
+                data_type,
+            </if>
             <if test="curday != null and curday != '' " >
                 curday,
             </if>
@@ -160,6 +163,9 @@
             </if>
             <if test="outTradeStatus != null and outTradeStatus != '' " >
                 <![CDATA[  #{outTradeStatus}, ]]>
+            </if>
+            <if test="dataType != null and dataType != '' " >
+                <![CDATA[  #{dataType}, ]]>
             </if>
             <if test="curday != null and curday != '' " >
                 <![CDATA[  #{curday}, ]]>

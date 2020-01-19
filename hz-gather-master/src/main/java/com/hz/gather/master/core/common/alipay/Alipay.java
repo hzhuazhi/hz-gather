@@ -1,5 +1,6 @@
 package com.hz.gather.master.core.common.alipay;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.CertAlipayRequest;
@@ -7,11 +8,14 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayFundTransUniTransferRequest;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayFundTransUniTransferResponse;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.hz.gather.master.core.common.utils.constant.LoadConstant;
+import com.hz.gather.master.core.model.alipay.AlipayH5Model;
 import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.util.ComponentUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @Description 阿里支付的公共方法（支付宝）
@@ -31,6 +35,11 @@ public class Alipay {
 
 
     public static String privateKey = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDbx1v3H8wJmmZ/08HLiYo1nByvgys3UnRu+PjmtvEM11o9E/t6Y40AQwhIhAXbbAAxYjrhoixDYJ9eZ8hC59eJsoIINwLwCO+vwen956XQdAaVPLgwR0mUXABXKcHuN17QFBJNXt+Cux7Oq/OzJJud0wVuaXt1oZ6Gx3/+iqITqHgfZBUgl1gnTbnxJ6P3zMqb/2SNG6arGkZGdkveGLzSa6S2qLIn42nI8n1GxrEOhLZJ5XWFbNWtE2ksRjir/I6LXGQS7v0RiXHqrEa8DWm0q/pXytWJZ6iKhBQ5VitLmLTn9PVgf7CRd0uX0ptWnWlI+V9T19uH/8A9yAgTvHBRAgMBAAECggEBALcU0dWBVXVCe9RMUIn/X3TdQUAsIpoJRBkVqjJ3f0JVO0TaGomP2Gu5a3MNF9v7kgWRcL95WyodmWUJS1gAzhpU6+FwAjB3IUPmY8gxan3FyZ4UYNNG71J5eYcir/yDf6YSslRljgfXXQiJUY+QFVpZ6ZJaqJALPIXGNyeR0QZRq90QHczyjzVInVvOgy954BfUJoaHCcqSSNZMa+bWPkB7GKxXC2BwJC1IysOrT+tn5pEX3W/b2/sirH2/MNWIsV7hOR99JgrYsQiYkQ4Iq26CnDMNePm4sDF0s9sh/4gnOolFcZUTc/GY5rU08M+V2dGsB1b6PlY12FNR1McEg2kCgYEA7mUNVxhaqiElkhMwyrjgu8PQ/NLlRj3KuQjrDF0Pwetp3mKQep0CNKpUBzkfa+AdXCY07Ol6Y0hNGX+9J40f2BHp/JtMFJTt2k0qxfTabMBNSnPOyCzbdVYW6Vlw1qsaLgq600aeu3UNz4uK7JHhY53mjpSY/vCyu77jVEkYJnsCgYEA7AJdSzCNgFybZyP+JlEe1ZAlL0RINnX52JVFsCjvONyNnAQi6Nn4J0LaLpts05QL+rEMBqoaLJYN/dFplyu9pcYL1V5XfWocPDetjf1GnpMzblGllX3aBY9RISjQHRtH8RcNzEJGk38bA8VAEUHUKivBD1LovmjSL+vUyW7I0KMCgYEA03kg1FnuU20D/wi3B53o/ac/BIewixbVdj7LAzSqfcNvLq8QqzQMeNt/nsi1buRoJw5ddKvIvbmtayk9ipBN50Y84rCAVOGn/Tbm8qO5/y63YYxJqpjgNL4hpO6KgmNV3fH2uOS0emXj0nBe1Gy0G8I+e8yly8GJS7KRxnrwyXECgYBq4tM/x1h+hvJ2rs1eqySM0kCU/Ja724hw94HdO1zEYtbbjuAElxsVJOjNbOTHmegm/GIW7pj2Emt5xYrNxSiZ2GzpkFWNXi41c33trYR7Mu17DA0y/BFurS6wFtzSIdXeMXO1S1rNWCZy+bV/W1HsW26PMxxnh++RdnwjUkIugwKBgQDSehj0piK4TgMibFs1DYMJIFse+rm8CPXgOt12bSW3MjjjQg7J4M2EHrqfUP7UQPfdeThyEYqlGGKd2CcFy0BeQi+OPAyVw0E6mQVcXzzLDWE1KBQdjv/NP4MMxV3rBN4Oy4z6j8Zk14O6sL6gsE9CrweDxTsAiaeU/Cjyzk3CIQ==";
+
+
+    // H5-500-2018031502376903
+    public static String H5_APP_PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCHFNNqJxfqHeWD9gY3xOJURr5zzxAHxMYNwSQGCEBoXCq/zs51NOY7Um+66WT+JLf1hkztTDNRbLynkJYKoxRBBGgI3MiS4s1ShunxJp1e1wHnw0ytbzLrGM1hApWN7Hu75h04LBAuLoIdR6wX5MgxX3ez8oYvv7i94QmkSOGZWAih92Snm462J5+kt2+j/3MltKBBpRjMiYIZzAiMM1pRGmztmPJAuYsRT0RpKkSq24XvL8Ur6w6DABjMxhbpJncuNFfteZDZAjs7tLUfWylFJEPHmO0LkDUAPiLlehxb4O3dO7O+eOhU5pk33SKmGcix6ZS7XNJxpeNpMkw6ncEDAgMBAAECggEAS0En8wiqgwx61ESY/DLcoHT1H5Go7ZsLd5g1WIL6VumaC1fMn3GEHmJzyp7CW+/a6JcUflMod+FrTLL5VB28Z+hriRxvRZ3DI4n0BRwtKiwAbLzaF/lOVblwme4VoYaw/GJbvvKVZRUV+ff3ASy89vyntIGVjj5yTp5zf6n2vTWFqChdz6rN4Rovid8o4u3K0aMt1Z3jIlYzgKgkHoWN3Zr/qZR0+SqvhNeUWPpuDmUw2UBRG2UERu92g+R/zGLSmw3DaEsta0GWvjWLlyWwBvkAuCCco0UF6IMD1ypnSqBeo9bnH291VOVAgQoVw6aB5XIxi/vPni8YNtFj9QK/iQKBgQDF3IXYEkn2fNgFU7ZQLtJAb4iC61s+9THFe6x4vJOV5HOafs/ieg+VcQ3N2+AJF55Rm0F5tBw36Yd0FrElo5l85GY9CsjomYKGw5njzWvzi0Inb3sRVnwC8N48La8MdWRrx9hrCJRBDVdBymLIsrpiZ/Suf1gb2jQJharf/d3DNQKBgQCuxeDLkW/fs1x1IjJ43KCzozvqV943xE3NcIBbt6H68DmZxKCda3IQuNoG393yD1XcyPz0GUGARCRgAJKiYphoGPzj3X2Jqt/Mem46mBq6xC0RFSrt8f930lNFWh+sum9YdEzDWQjgfdi3B1CkDQwTulEREvEpJZtNAzssYxICVwKBgGuud30/ftdR3HMRuw/qW2zMBnxRwIgEA4FZrGTNJHkYKr4zM8oq6d5H995IQqZQH06Ec17b4dugEaLhUqmMXtU0rFueSfckzH+xZkgvHQgfivJRXqXx7m3fTuNrbXAXV3689ZBSy/SXYRyiG57kfkFeGDD7hyUpXNat03AyBoXdAoGAZlJhbq0iQ2S+D7HKvOnmh+VccbGp3xplto5UB951zfWQs47jveYm7NVciEPOrCYATfe56KtUpuS+KxqKvtlcgy2F+V42XkAVMKDJIjLlC01JWUP8UzyoJZ2UtPizrKul/rJwMrpQsSXcmCOHOdSNqosdZRKi8EUdLDRlE3KZG5cCgYEAghpahd0mvRkl011gZ2yn9ZjOmHj8Nk5A1ctP27WEYO5x4BfASvCYyN3Rckr/AmcxypFBCmotrEV36MqRdxTigp4eWa38EDjtkCFJDEBtDrQLoZa0xNQXIdNcUPldp+qztjKHXyj1IgSN9DZFTOwlWPKwumBX44ozd/76B2QwYVo=";
+    public static String H5_ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAji9YdMSNYGWgCMKQrH8AuSZDryGKjws0U1zRjYAX6wh/ZQgFvg/NcBHtvRZy5mOPpbFa0EFHZrXXy6j6KY8pR+ht/38ncBAGOsvVcfX/aBkq2wyEUYtjW/pnK78k+iRW07Z1lyiPCesnTxsvQvMKadngoeQgau916hy7V8f+KZQmcbpFWiYR3gEoUzZvmXcfsHJOLwE7t2w4WqmP0/bUs24DFDIAL1nqTBbo9c4/0KLklwbrdJdBxS3lCeGzmI9SBj3tI/gw8qY+sk7op0z7JhK74Zt+l021Ig5T/AgJeuyWbYvXWl2f6XVznF1KbmG8VsAUc7MMXUEUVbg6LWKP2QIDAQAB";
 
     /**
      * @Description: 组装阿里支付的订单号
@@ -134,7 +143,56 @@ public class Alipay {
     }
 
 
+    /**
+     * @Description: 组装阿里支付的订单号-H5（wap）
+     * @param data - 基本数据
+     * @param returnUrl - 成功之后的跳转地址
+     * @param notifyUrl - 同步地址
+     * @return String
+     * @author yoko
+     * @date 2019/12/19 19:38
+     */
+    public static String createH5AlipaySend(String data,String returnUrl, String notifyUrl){
+        String resultData;
+        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", "2018111362103999", H5_APP_PRIVATE_KEY, "json", "UTF-8", H5_ALIPAY_PUBLIC_KEY, "RSA2"); //获得初始化的AlipayClient
+        AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
+        if (!StringUtils.isBlank(returnUrl)){
+            alipayRequest.setReturnUrl(returnUrl);
+        }
+        alipayRequest.setNotifyUrl(notifyUrl);//在公共参数中设置回跳和通知地址
+        alipayRequest.setBizContent(data);//填充业务参数
+//        alipayRequest.setReturnUrl("http://domain.com/CallBack/return_url.jsp");
+//        alipayRequest.setNotifyUrl("http://domain.com/CallBack/notify_url.jsp");//在公共参数中设置回跳和通知地址
+//        alipayRequest.setBizContent("{" +
+//                " \"out_trade_no\":\"20150320010101002\"," +
+//                " \"total_amount\":\"88.88\"," +
+//                " \"subject\":\"Iphone6 16G\"," +
+//                " \"product_code\":\"QUICK_WAP_PAY\"" +
+//                " }");//填充业务参数
+        try {
+            resultData = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return resultData;
+    }
+
+
     public static void main(String [] args){
-        createAlipaySend(new AlipayModel(), null);
+//        createAlipaySend(new AlipayModel(), null);
+        String returnUrl = "http://www.baidu.com";
+        String notifyUrl = "http://114.55.67.167:8083/mg/ali/notify";
+        AlipayH5Model alipayH5Model = new AlipayH5Model();
+        alipayH5Model.body = "H5支付";
+        alipayH5Model.subject = "500-理财";
+        alipayH5Model.out_trade_no = "df-hz-hz-order-1";
+        alipayH5Model.timeout_express = "30m";
+        alipayH5Model.total_amount = "0.01";
+        alipayH5Model.product_code = "500-lc";
+        String data = JSON.toJSONString(alipayH5Model);
+        String resData = createH5AlipaySend(data, returnUrl, notifyUrl);
+        System.out.println(data);
+        System.out.println(resData);
     }
 }
