@@ -216,7 +216,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     public void addUserInfo(LoginModel loginModel,Integer memberId,String[]  inviteAdd,VcMember vcMember,String phone) throws Exception {
         VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getSuperiorId(),vcMember.getExtensionMemberId(),phone);
         VcMemberResource vcMemberResourceModel  =  PublicMethod.insertVcMemberResource(memberId);
-        VcMemberResource updateResourcePeople  =PublicMethod.updateResourcePeople(memberId);
+        VcMemberResource updateResourcePeople  =PublicMethod.updateResourcePeople(vcMember.getSuperiorId());
         VcMemberRewardTotal vcMemberRewardTotal  =PublicMethod.insertVcMemberRewardTotal(memberId);
         ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople,vcMemberRewardTotal);
     }

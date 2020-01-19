@@ -493,22 +493,22 @@ public class UserController {
     }
 
     @PostMapping("/updateBaseInfo")
-    public JsonResult<Object> updateBaseInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+    public JsonResult<Object> updateBaseInfo(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String data = "";
-        ResponseFirstUqdatePayPw requsetUqPayPw = new ResponseFirstUqdatePayPw();
+//        ResponseFirstUqdatePayPw requsetUqPayPw = new ResponseFirstUqdatePayPw();
         log.info("----------:updateBaseInfo 进来啦!");
         try{
-            data        =   StringUtil.decoderBase64(requestData.jsonData);
+//            data        =   StringUtil.decoderBase64(requestData.jsonData);
 //            requsetUqPayPw  = JSON.parseObject(data, ResponseFirstUqdatePayPw.class);
 
-            ComponentUtil.initServiceImpl.initBasics();
+            ComponentUtil.initService.initBasics();
 
 //            ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
 //            data = PublicMethod.toJson(responseUpdatePayPw);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
-            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
-            resultDataModel.jsonData = encryptionData;
-            return JsonResult.successResult(resultDataModel);
+//            String encryptionData = StringUtil.mergeCodeBase64(data);
+//            ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
+//            resultDataModel.jsonData = encryptionData;
+            return JsonResult.successResult(null);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
