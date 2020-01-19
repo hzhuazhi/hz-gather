@@ -97,8 +97,14 @@ public class UpgradeController {
             UpgradeModel upgradeModel = ComponentUtil.upgradeService.getMaxUpgradeData(upgradeQuery);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
-            String sign = SignUtil.getSgin(stime, upgradeModel.getClientType(), upgradeModel.getClientVer(), upgradeModel.getMd5Value(),
-                    upgradeModel.getResUrl(), upgradeModel.getUpType(), secretKeySign); // stime+clientType+clientVer+md5Value+resUrl+upType秘钥=sign
+            String sign = "";
+            if (upgradeModel != null){
+                sign = SignUtil.getSgin(stime, upgradeModel.getClientType(), upgradeModel.getClientVer(), upgradeModel.getMd5Value(),
+                        upgradeModel.getResUrl(), upgradeModel.getUpType(), secretKeySign); // stime+clientType+clientVer+md5Value+resUrl+upType秘钥=sign
+            }else{
+                SignUtil.getSgin(stime, secretKeySign); // stime+秘钥=sign
+            }
+
             String strData = HodgepodgeMethod.assembleUpgradeDataResult(stime, sign, upgradeModel);
             // 数据加密
             String encryptionData = StringUtil.mergeCodeBase64(strData);

@@ -242,8 +242,10 @@
             where 1=1
             and client_ver > #{clientVer}
             and client_type = #{clientType}
+            and yn = 0
         )
         and a.client_type = #{clientType}
+        and a.yn = 0
         limit 1
     </select>
 

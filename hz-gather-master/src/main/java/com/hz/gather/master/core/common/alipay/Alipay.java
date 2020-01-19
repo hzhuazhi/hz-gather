@@ -41,6 +41,9 @@ public class Alipay {
     public static String H5_APP_PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCHFNNqJxfqHeWD9gY3xOJURr5zzxAHxMYNwSQGCEBoXCq/zs51NOY7Um+66WT+JLf1hkztTDNRbLynkJYKoxRBBGgI3MiS4s1ShunxJp1e1wHnw0ytbzLrGM1hApWN7Hu75h04LBAuLoIdR6wX5MgxX3ez8oYvv7i94QmkSOGZWAih92Snm462J5+kt2+j/3MltKBBpRjMiYIZzAiMM1pRGmztmPJAuYsRT0RpKkSq24XvL8Ur6w6DABjMxhbpJncuNFfteZDZAjs7tLUfWylFJEPHmO0LkDUAPiLlehxb4O3dO7O+eOhU5pk33SKmGcix6ZS7XNJxpeNpMkw6ncEDAgMBAAECggEAS0En8wiqgwx61ESY/DLcoHT1H5Go7ZsLd5g1WIL6VumaC1fMn3GEHmJzyp7CW+/a6JcUflMod+FrTLL5VB28Z+hriRxvRZ3DI4n0BRwtKiwAbLzaF/lOVblwme4VoYaw/GJbvvKVZRUV+ff3ASy89vyntIGVjj5yTp5zf6n2vTWFqChdz6rN4Rovid8o4u3K0aMt1Z3jIlYzgKgkHoWN3Zr/qZR0+SqvhNeUWPpuDmUw2UBRG2UERu92g+R/zGLSmw3DaEsta0GWvjWLlyWwBvkAuCCco0UF6IMD1ypnSqBeo9bnH291VOVAgQoVw6aB5XIxi/vPni8YNtFj9QK/iQKBgQDF3IXYEkn2fNgFU7ZQLtJAb4iC61s+9THFe6x4vJOV5HOafs/ieg+VcQ3N2+AJF55Rm0F5tBw36Yd0FrElo5l85GY9CsjomYKGw5njzWvzi0Inb3sRVnwC8N48La8MdWRrx9hrCJRBDVdBymLIsrpiZ/Suf1gb2jQJharf/d3DNQKBgQCuxeDLkW/fs1x1IjJ43KCzozvqV943xE3NcIBbt6H68DmZxKCda3IQuNoG393yD1XcyPz0GUGARCRgAJKiYphoGPzj3X2Jqt/Mem46mBq6xC0RFSrt8f930lNFWh+sum9YdEzDWQjgfdi3B1CkDQwTulEREvEpJZtNAzssYxICVwKBgGuud30/ftdR3HMRuw/qW2zMBnxRwIgEA4FZrGTNJHkYKr4zM8oq6d5H995IQqZQH06Ec17b4dugEaLhUqmMXtU0rFueSfckzH+xZkgvHQgfivJRXqXx7m3fTuNrbXAXV3689ZBSy/SXYRyiG57kfkFeGDD7hyUpXNat03AyBoXdAoGAZlJhbq0iQ2S+D7HKvOnmh+VccbGp3xplto5UB951zfWQs47jveYm7NVciEPOrCYATfe56KtUpuS+KxqKvtlcgy2F+V42XkAVMKDJIjLlC01JWUP8UzyoJZ2UtPizrKul/rJwMrpQsSXcmCOHOdSNqosdZRKi8EUdLDRlE3KZG5cCgYEAghpahd0mvRkl011gZ2yn9ZjOmHj8Nk5A1ctP27WEYO5x4BfASvCYyN3Rckr/AmcxypFBCmotrEV36MqRdxTigp4eWa38EDjtkCFJDEBtDrQLoZa0xNQXIdNcUPldp+qztjKHXyj1IgSN9DZFTOwlWPKwumBX44ozd/76B2QwYVo=";
     public static String H5_ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAji9YdMSNYGWgCMKQrH8AuSZDryGKjws0U1zRjYAX6wh/ZQgFvg/NcBHtvRZy5mOPpbFa0EFHZrXXy6j6KY8pR+ht/38ncBAGOsvVcfX/aBkq2wyEUYtjW/pnK78k+iRW07Z1lyiPCesnTxsvQvMKadngoeQgau916hy7V8f+KZQmcbpFWiYR3gEoUzZvmXcfsHJOLwE7t2w4WqmP0/bUs24DFDIAL1nqTBbo9c4/0KLklwbrdJdBxS3lCeGzmI9SBj3tI/gw8qY+sk7op0z7JhK74Zt+l021Ig5T/AgJeuyWbYvXWl2f6XVznF1KbmG8VsAUc7MMXUEUVbg6LWKP2QIDAQAB";
 
+    public static String ALIPAY_SEND_APP_ID = "2018031502376903";
+    public static String ALIPAY_SEND_H5_APP_ID = "2018111362103999";
+
     /**
      * @Description: 组装阿里支付的订单号
      * @param alipayModel - 基本数据
@@ -54,7 +57,7 @@ public class Alipay {
         //实例化客户端
 //        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", APP_ID, APP_PRIVATE_KEY, "json", CHARSET, ALIPAY_PUBLIC_KEY, "RSA2");
         AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do",
-                "2018031502376903", APP_PRIVATE_KEY, "json", "UTF-8", ALIPAY_PUBLIC_KEY, "RSA2");
+                ALIPAY_SEND_APP_ID, APP_PRIVATE_KEY, "json", "UTF-8", ALIPAY_PUBLIC_KEY, "RSA2");
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
         AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
         //SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
@@ -154,7 +157,7 @@ public class Alipay {
      */
     public static String createH5AlipaySend(String data,String returnUrl, String notifyUrl){
         String resultData;
-        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", "2018111362103999", H5_APP_PRIVATE_KEY, "json", "UTF-8", H5_ALIPAY_PUBLIC_KEY, "RSA2"); //获得初始化的AlipayClient
+        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do", ALIPAY_SEND_H5_APP_ID, H5_APP_PRIVATE_KEY, "json", "UTF-8", H5_ALIPAY_PUBLIC_KEY, "RSA2"); //获得初始化的AlipayClient
         AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
         if (!StringUtils.isBlank(returnUrl)){
             alipayRequest.setReturnUrl(returnUrl);

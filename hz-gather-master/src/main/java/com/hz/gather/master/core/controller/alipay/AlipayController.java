@@ -77,7 +77,7 @@ public class AlipayController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/ali/sendAli
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"memberId":1,"returnUrl":"http://www.baidu.com","body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"memberId":1,"body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
      * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
      * result={
@@ -172,9 +172,9 @@ public class AlipayController {
      *     "resultCode": "0",
      *     "message": "success",
      *     "data": {
-     *         "jsonData": "eyJhbGlPcmRlciI6ImFsaXBheV9zZGs9YWxpcGF5LXNkay1qYXZhLTQuOC43My5BTEwmYXBwX2lkPTIwMTgwMzE1MDIzNzY5MDMmYml6X2NvbnRlbnQ9JTdCJTIyYm9keSUyMiUzQSUyMiVFOCVCNCVCOSVFNyU5NCVBOCVFNyVCQyVCNCVFNyVCQSVCMyUyMiUyQyUyMm91dF90cmFkZV9ubyUyMiUzQSUyMjIwMjAwMTE2MTEyMjQzMDAwMDAwMSUyMiUyQyUyMnByb2R1Y3RfY29kZSUyMiUzQSUyMjUwMF9IWSUyMiUyQyUyMnN1YmplY3QlMjIlM0ElMjI1MDAlRTglQjQlQjklRTclOTQlQTglMjIlMkMlMjJ0aW1lb3V0X2V4cHJlc3MlMjIlM0ElMjIzMG0lMjIlMkMlMjJ0b3RhbF9hbW91bnQlMjIlM0ElMjI1LjAlMjIlN0QmY2hhcnNldD1VVEYtOCZmb3JtYXQ9anNvbiZtZXRob2Q9YWxpcGF5LnRyYWRlLmFwcC5wYXkmbm90aWZ5X3VybD1odHRwJTNBJTJGJTJGMTE0LjU1LjY3LjE2NyUzQTgwODIlMkZwbGF5JTJGYWxpJTJGbm90aWZ5JnNpZ249TWZPR2pYNkN5Y0ltJTJCWWZDJTJCZDJaaWhxMXVDcGZqdmI1empYJTJGS0hrU1M3QjFDRXVyUVlLaHQ3c1hlJTJCZDY2ZDIwZnhjY3daTWQzT0dDTnhGd3ZmbFgydHNaTk5Bc2ZpJTJCSzFCclhscFElMkZmM1hOSUIzT2lEQ2JTU012U1RjVEg4N25GR2NFaFpUMkRadSUyRjZkYlFtOCUyQnlzSmlSbSUyRkYlMkZYWHJWWmVTTWtPb1lLQyUyQjhTanlHUVhtTUtUYnhIRiUyQnJKNExpUiUyQm5TUEI5MEo5cXhBNUtOSzhoZTJ3aWdteWtGMlYlMkYwM3JrSm5ySlFhMUtvbko0dGJCelpHNjU1a1liYVdDbFhmb3l6UzRSQ091MGtFNDYyNjZmUG9TNGwwbFNLREpaOUdJRXRMcEJuYlhpMGExekdBNWpSVHE1Z05BV2U1eGFYZ214alZFbWVTVXZGS2l4WSUyQllDMk93JTNEJTNEJnNpZ25fdHlwZT1SU0EyJnRpbWVzdGFtcD0yMDIwLTAxLTE2KzExJTNBMjIlM0E1NSZ2ZXJzaW9uPTEuMCIsInN0aW1lIjoxNTc5MTQ0OTgyNTMwLCJ0b2tlbiI6ImM4M2I0YjZhNmVhOGM5Y2VkODgyZjYxOGQ2MDY4Nzc1In0="
+     *         "jsonData": "eyJhbGlPcmRlciI6Ijxmb3JtIG5hbWU9XCJwdW5jaG91dF9mb3JtXCIgbWV0aG9kPVwicG9zdFwiIGFjdGlvbj1cImh0dHBzOi8vb3BlbmFwaS5hbGlwYXkuY29tL2dhdGV3YXkuZG8/Y2hhcnNldD1VVEYtOCZtZXRob2Q9YWxpcGF5LnRyYWRlLndhcC5wYXkmc2lnbj1LdHh5JTJCM25JTkpiTW1rWUJIWnZNMDBCJTJGOEVsR2RwWVJwQURrWjVEbGdtUjQxalBRdGtzbWc4Y052ZDgzT25rUkR5SE1CRE40Y3o4YWhHbXk2VXRJQ2hqRDBBYXRxZU9IR2k3YzZSanRHczZKeDZGSTJTOGkwdkdsNkxDQnFaZyUyRlRnSEhtcyUyQlNqbWV3dWFvQ0tudjBjJTJCOXNuMmhDNXNZM3p3UUIlMkJveW9hdlZWcUIyVHRwNE1XckdzalB5R3ptQTVSdVJYMW1jemI4VEdMQmc3QzFtdk1qenVuajglMkJjNWxWcnZKc1laRTEyZllqTjREQzZHYlVTV3E2MiUyRnVuQ1V6aHl5MUlkRyUyRmtNemRwZGNENzklMkJmWlJBd1didnhURjE0Y2tVdENDeGJvdXRIclFRaVZjemx5TnNDJTJCYlBSbjkza0tGc1NkNDN1NzJWT3BBbUQzTU1UMGJ3JTNEJTNEJm5vdGlmeV91cmw9aHR0cCUzQSUyRiUyRjExNC41NS42Ny4xNjclM0E4MDgzJTJGbWclMkZhbGklMkZub3RpZnkmdmVyc2lvbj0xLjAmYXBwX2lkPTIwMTgxMTEzNjIxMDM5OTkmc2lnbl90eXBlPVJTQTImdGltZXN0YW1wPTIwMjAtMDEtMTkrMTclM0EzOSUzQTQwJmFsaXBheV9zZGs9YWxpcGF5LXNkay1qYXZhLTQuOC43My5BTEwmZm9ybWF0PWpzb25cIj5cbjxpbnB1dCB0eXBlPVwiaGlkZGVuXCIgbmFtZT1cImJpel9jb250ZW50XCIgdmFsdWU9XCJ7JnF1b3Q7Ym9keSZxdW90OzomcXVvdDvotLnnlKjnvLTnurMmcXVvdDssJnF1b3Q7b3V0X3RyYWRlX25vJnF1b3Q7OiZxdW90OzIwMjAwMTE5MTczOTA0MDAwMDAwMSZxdW90OywmcXVvdDtwcm9kdWN0X2NvZGUmcXVvdDs6JnF1b3Q7NTAwX0hZJnF1b3Q7LCZxdW90O3N1YmplY3QmcXVvdDs6JnF1b3Q7NTAw6LS555SoJnF1b3Q7LCZxdW90O3RpbWVvdXRfZXhwcmVzcyZxdW90OzomcXVvdDszMG0mcXVvdDssJnF1b3Q7dG90YWxfYW1vdW50JnF1b3Q7OiZxdW90OzAuMDEmcXVvdDt9XCI+XG48aW5wdXQgdHlwZT1cInN1Ym1pdFwiIHZhbHVlPVwi56uL5Y2z5pSv5LuYXCIgc3R5bGU9XCJkaXNwbGF5Om5vbmVcIiA+XG48L2Zvcm0+XG48c2NyaXB0PmRvY3VtZW50LmZvcm1zWzBdLnN1Ym1pdCgpOzwvc2NyaXB0PiIsInNpZ24iOiIxNDM3MWFhNTFhNmM0ZmQwM2I2NmM2M2NlYTdiYTY3OCIsInN0aW1lIjoxNTc5NDI2NzkzMTI2fQ=="
      *     },
-     *     "sgid": "202001161122430000001",
+     *     "sgid": "202001191739040000001",
      *     "cgid": ""
      * }
      */
@@ -242,7 +242,7 @@ public class AlipayController {
 
 
     /**
-     * @Description: 接收阿里支付宝的数据
+     * @Description: 接收阿里支付宝的数据-APP
      * @param request
      * @param response
      * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
@@ -252,7 +252,7 @@ public class AlipayController {
      */
     @RequestMapping(value = "/notify", method = {RequestMethod.POST})
 //    public JsonResult<Object> notify(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
-    public JsonResult<Object> notify(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void notify(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
         String ip = StringUtil.getIpAddress(request);
@@ -277,7 +277,13 @@ public class AlipayController {
             //boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
             String resultData = JSON.toJSONString(params);// 阿里返回的数据
             log.info(String.format("the AlipayController.notify() , the resultData=%s ", resultData));
-            boolean flag = AlipaySignature.rsaCheckV1(params, Alipay.ALIPAY_PUBLIC_KEY, "UTF-8","RSA2");
+            String ALIPAY_PUBLIC_KEY = "";
+            if(params.get("app_id").equals(Alipay.ALIPAY_SEND_APP_ID)){
+                ALIPAY_PUBLIC_KEY = Alipay.ALIPAY_PUBLIC_KEY;
+            }else if(params.get("app_id").equals(Alipay.ALIPAY_SEND_H5_APP_ID)){
+                ALIPAY_PUBLIC_KEY = Alipay.H5_ALIPAY_PUBLIC_KEY;
+            }
+            boolean flag = AlipaySignature.rsaCheckV1(params, ALIPAY_PUBLIC_KEY, "UTF-8","RSA2");
             if (flag){
                 AlipayNotifyModel alipayNotifyModel = HodgepodgeMethod.assembleAlipayNotify(params);
                 if (alipayNotifyModel != null){
@@ -286,14 +292,72 @@ public class AlipayController {
             }
             log.info(String.format("the AlipayController.notify() , the flag=%s ", flag));
             // 返回数据给客户端
-            return JsonResult.successResult(null, cgid, sgid);
+            response.getWriter().write("success");//直接将完整的表单html输出到页面
+//            return JsonResult.successResult(null, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
             log.error(String.format("this AlipayController.notify() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, request.getQueryString()));
             e.printStackTrace();
-            return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
+//            return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
         }
     }
+
+
+//    /**
+//     * @Description: 接收阿里支付宝的数据-H5
+//     * @param request
+//     * @param response
+//     * @return com.gd.chain.common.utils.JsonResult<java.lang.Object>
+//     * @author yoko
+//     * @date 2019/11/25 22:58
+//     * local:http://localhost:8082/mg/ali/notifyH5
+//     */
+//    @RequestMapping(value = "/notifyH5", method = {RequestMethod.POST})
+////    public JsonResult<Object> notifyH5(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+//    public void notifyH5(HttpServletRequest request, HttpServletResponse response) throws Exception{
+//        String sgid = ComponentUtil.redisIdService.getNewId();
+//        String cgid = "";
+//        String ip = StringUtil.getIpAddress(request);
+//        RequestAlipay requestAlipay = new RequestAlipay();
+//        try{
+//            //获取支付宝POST过来反馈信息
+//            Map<String,String> params = new HashMap<String,String>();
+//            Map requestParams = request.getParameterMap();
+//            for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+//                String name = (String) iter.next();
+//                String[] values = (String[]) requestParams.get(name);
+//                String valueStr = "";
+//                for (int i = 0; i < values.length; i++) {
+//                    valueStr = (i == values.length - 1) ? valueStr + values[i]
+//                            : valueStr + values[i] + ",";
+//                }
+//                log.info("");
+//                //乱码解决，这段代码在出现乱码时使用。
+//                //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
+//                params.put(name, valueStr);
+//            }
+//            //切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
+//            //boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
+//            String resultData = JSON.toJSONString(params);// 阿里返回的数据
+//            log.info(String.format("the AlipayController.notify() , the resultData=%s ", resultData));
+//            boolean flag = AlipaySignature.rsaCheckV1(params, Alipay.ALIPAY_PUBLIC_KEY, "UTF-8","RSA2");
+//            if (flag){
+//                AlipayNotifyModel alipayNotifyModel = HodgepodgeMethod.assembleAlipayNotify(params);
+//                if (alipayNotifyModel != null){
+//                    ComponentUtil.alipayService.addAlipayNotify(alipayNotifyModel);
+//                }
+//            }
+//            log.info(String.format("the AlipayController.notifyH5() , the flag=%s ", flag));
+//            // 返回数据给客户端
+//            response.getWriter().write("success");//直接将完整的表单html输出到页面
+////            return JsonResult.successResult(null, cgid, sgid);
+//        }catch (Exception e){
+//            Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+//            log.error(String.format("this AlipayController.notifyH5() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, request.getQueryString()));
+//            e.printStackTrace();
+////            return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
+//        }
+//    }
 
 
 }
