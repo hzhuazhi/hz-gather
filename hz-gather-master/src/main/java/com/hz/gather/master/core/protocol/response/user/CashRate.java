@@ -18,7 +18,7 @@ public class CashRate {
     /**
      * 金额
      */
-    private  String   monoy;
+    private  String   money;
 
     public String getValue() {
         return value;
@@ -36,11 +36,11 @@ public class CashRate {
         this.create_time = create_time;
     }
 
-    public String getMonoy() {
-        return monoy;
+    public String getMoney() {
+        return money;
     }
 
-    public void setMonoy(String monoy) {
-        this.monoy = monoy;
+    public void setMoney(String money) {
+        this.money = money;
     }
 }

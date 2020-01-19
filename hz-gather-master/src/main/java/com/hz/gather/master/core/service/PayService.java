@@ -192,4 +192,20 @@ public interface PayService<T> extends BaseService<T> {
      */
     void     isInsertSysNoticeInfo(Integer  memberId,Double money);
 
+    /*****
+     * 执行失效时间更新状态
+     */
+    void     executeInvalidTimeInfo();
+
+    /**
+     * 修改过期的信息，然后更新状态
+     * @param memberId
+     * @param id  修改id
+     * @return
+     */
+    Integer  insertLimitedTimeLog(Integer  memberId,Long id);
+
+
+
+
 }

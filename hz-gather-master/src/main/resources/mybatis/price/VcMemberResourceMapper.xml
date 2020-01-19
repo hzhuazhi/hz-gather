@@ -196,4 +196,16 @@
   </update>
 
 
+
+  <update id="updateByCleanFissionPeople" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="fissionPeopleNum != null" >
+        fission_people_num = #{fissionPeopleNum},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
+
 </mapper>

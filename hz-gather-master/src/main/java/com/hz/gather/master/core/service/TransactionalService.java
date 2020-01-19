@@ -31,7 +31,7 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param uMoneyLog
      * @param uMoneyList
      */
-    void   addBatchNoVIP(VcMemberResource vcMemberResource,UMoneyLog  uMoneyLog,UMoneyList uMoneyList);
+    void   addBatchNoVIP(VcMemberResource vcMemberResource,UMoneyLog  uMoneyLog,UMoneyList uMoneyList,VcMemberRewardTotal vcMemberRewardTotal);
 
     /**
      * 非vip  添加
@@ -39,18 +39,22 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param updateTimeLog
      * @param uMoneyLog
      */
-    void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog);
+    void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal);
 
     /**
      * 添加裂变的信息
      * @param uLimitedTimeLog
      * @param uBatchLog
      */
-    void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog);
+    void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog,VcMemberRewardTotal vcMemberRewardTotal);
 
 
 
     void  upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list);
 
+
+    int   updateULimitedTimeLogIsValid(ULimitedTimeLog uqdateULimitedTimeLog,ULimitedTimeLog  insertULimitedTimeLog,VcMemberResource vcMemberResource);
+
+    void  insertSysNoticeInfo(VcMemberRewardTotal vcMemberRewardTotal,SysNoticeInfo sysNoticeInfo);
 
 }

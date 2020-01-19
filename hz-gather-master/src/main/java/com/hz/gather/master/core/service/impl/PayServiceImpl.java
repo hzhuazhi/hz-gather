@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -122,7 +123,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         VcMemberResource vcMemberResource =PublicMethod.toVcMemberResource(memberId);
         VcMemberResource  vcMemberResource1=vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
         BigDecimal b1 = new BigDecimal(Double.toString(money));
-        if(vcMemberResource1.getAlreadyMoney().compareTo(b1)<0){
+        if(vcMemberResource1.getSurplusMoney().compareTo(b1)<0){
             throw  new ServiceException(ENUM_ERROR.P00003.geteCode(),ENUM_ERROR.P00003.geteDesc());
         }
 
@@ -235,6 +236,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
     @Override
     public Integer updateTypePermanentVIP(Integer memberId, Integer type,Double money,String outTradeNo,Integer createMemberId) {
+        VcMemberRewardTotal   vcMemberRewardTotal  = PublicMethod.uqdateVcMemberRewardTotal(memberId,2,money);
         //更新会员资源表  人数和金额
         VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceVIP(memberId,money,type);
         //直接添加数据裂变表
@@ -242,7 +244,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         //直接添加资金明细表
         UMoneyList uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,money);
 //        PublicMethod
-        ComponentUtil.transactionalService.addBatchNoVIP(vcMemberResource,uMoneyLog,uMoneyList);
+        ComponentUtil.transactionalService.addBatchNoVIP(vcMemberResource,uMoneyLog,uMoneyList,vcMemberRewardTotal);
 //         VcMember  vcMember  =PublicMethod.updateGradeType(memberId,1);
 
         //查看资源明细表是否到底了添加记录表信息
@@ -253,6 +255,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     @Override
     public Integer updateTypeNOPermanentVIP(Integer memberId, Integer type,Double money,String outTradeNo,Integer createMemberId) {
         if (type==1){ //直推情况
+            VcMemberRewardTotal   vcMemberRewardTotal  = PublicMethod.uqdateVcMemberRewardTotal(memberId,2,money);
             VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceNoVIP(memberId,type,Constant.PUSH_PEOPLE_MONEY);
             //直接添加数据裂变表
             UMoneyLog  uMoneyLog = PublicMethod.insertUMoneyLog(memberId,createMemberId,outTradeNo,Constant.PUSH_PEOPLE_MONEY,type);
@@ -261,14 +264,16 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
             ULimitedTimeLog  updateTimeLog = PublicMethod.uqdateULimitedTimeLog(uLimitedTimeLogh.getBatchNum());
             UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
-            ComponentUtil.transactionalService.addBatchNoNoVIP(vcMemberResource,updateTimeLog,uMoneyLog);
+            ComponentUtil.transactionalService.addBatchNoNoVIP(vcMemberResource,updateTimeLog,uMoneyLog,vcMemberRewardTotal);
         }else{ //裂变情况
+//            VcMemberResource  vcMemberResource = PublicMethod.updateFissionPeople(memberId);
+            VcMemberRewardTotal   vcMemberRewardTotal  = PublicMethod.uqdateVcMemberRewardTotal(memberId,2,money);
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
             ULimitedTimeLog updateTimeLog =PublicMethod.updateFissionMoney(uLimitedTimeLogh.getBatchNum(),Constant.EVERY_PEOPLE_MONEY);
             UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
-            ComponentUtil.transactionalService.addfissionInfo(updateTimeLog,insertBatchLog);
+            ComponentUtil.transactionalService.addfissionInfo(updateTimeLog,insertBatchLog,vcMemberRewardTotal);
         }
 
 
@@ -372,7 +377,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 cashRate.setValue("提现成功");
             }
             cashRate.setCreate_time(sdfLongTimePlus.format(uCashOutLog1.getCreateTime()));
-            cashRate.setMonoy(uCashOutLog1.getMoney()+"");
+            cashRate.setMoney(uCashOutLog1.getMoney()+"");
             list1.add(cashRate);
         }
         return list1;
@@ -388,5 +393,35 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
 
 
 
+    }
+
+    @Override
+    public void executeInvalidTimeInfo() {
+        while (true){
+            ULimitedTimeLog    uLimitedTimeLog = PublicMethod.getULimitedTimeLog(new Date());
+            List<ULimitedTimeLog>   list=uLimitedTimeLogMapper.selectByInvalidTime(uLimitedTimeLog);
+            if(list.size()==0){
+                try{
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                for (ULimitedTimeLog    uLimitedTimeLog1 :  list){
+                    ComponentUtil.payService.insertLimitedTimeLog(uLimitedTimeLog1.getMemberId(),uLimitedTimeLog1.getId());
+                }
+            }
+        }
+    }
+
+    @Override
+    public Integer insertLimitedTimeLog(Integer memberId,Long id) {
+        ULimitedTimeLog  limitedTimeLogUpdate =PublicMethod.uqdateULimitedTimeLogIsIsValid(id);
+        String  batchNum = ComponentUtil.generateService.getBatchNum();
+        ULimitedTimeLog  limitedTimeLog = PublicMethod.insertULimitedTimeLog(memberId,batchNum);
+
+        VcMemberResource  vcMemberResource = PublicMethod.cleanFissinonPeople(memberId);
+        int  count  = ComponentUtil.transactionalService.updateULimitedTimeLogIsValid(limitedTimeLogUpdate,limitedTimeLog,vcMemberResource);
+        return count;
     }
 }

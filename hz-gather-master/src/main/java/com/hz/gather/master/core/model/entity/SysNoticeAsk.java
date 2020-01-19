@@ -22,7 +22,14 @@ public class SysNoticeAsk {
      *
      * @mbggenerated
      */
-    private Boolean isFinish;
+    private Integer isFinish;
+
+    /**
+     * 等级
+     *
+     * @mbggenerated
+     */
+    private Integer level;
 
     public Long getId() {
         return id;
@@ -40,11 +47,19 @@ public class SysNoticeAsk {
         this.receiveMoney = receiveMoney;
     }
 
-    public Boolean getIsFinish() {
+    public Integer getIsFinish() {
         return isFinish;
     }
 
-    public void setIsFinish(Boolean isFinish) {
+    public void setIsFinish(Integer isFinish) {
         this.isFinish = isFinish;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }

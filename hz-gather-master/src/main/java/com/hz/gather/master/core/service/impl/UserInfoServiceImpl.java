@@ -4,17 +4,21 @@ import com.hz.gather.master.core.common.dao.BaseDao;
 import com.hz.gather.master.core.common.enums.ENUM_ERROR;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
+import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.FundListModel;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.core.service.UserInfoService;
+import com.hz.gather.master.core.singleton.SysNoticeAskSingleton;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +50,8 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
     private UMoneyListMapper uMoneyListMapper;
     @Autowired
     private UMoneyLogMapper uMoneyLogMapper;
+    @Autowired
+    private VcMemberRewardTotalMapper vcMemberRewardTotalMapper;
 
 
     @Override
@@ -186,5 +192,48 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void executeInsertNoticeInfo() {
+        while(true){
+            List<VcMemberRewardTotal>   list =vcMemberRewardTotalMapper.selectByIsCount();
+            if(list.size()==0){
+                try{
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                for(VcMemberRewardTotal vcMemberRewardTotal: list){
+
+                }
+            }
+        }
+    }
+
+    @Override
+    public void compareRewardTotal(VcMemberRewardTotal vcMemberRewardTotal) {
+        List<SysNoticeAsk>  list = SysNoticeAskSingleton.getInstance().getSysNoticeAskList();
+        for(SysNoticeAsk  sysNoticeAsk:list ){
+            if(vcMemberRewardTotal.getRewardLevel()==8){
+                break;
+            }
+           if(sysNoticeAsk.getLevel()>vcMemberRewardTotal.getRewardLevel()){
+               BigDecimal  levelBig =  sysNoticeAsk.getReceiveMoney();
+               BigDecimal  userLeve =  StringUtil.getBigDecimalAdd(vcMemberRewardTotal.getNotCountMoney(),vcMemberRewardTotal.getTotalMoney());
+
+               if(userLeve.compareTo(levelBig)>0){
+                   VcMember  vcMember1 =PublicMethod.toVcMember(vcMemberRewardTotal.getMemberId());
+                   VcMember vcMember  =vcMemberMapper.selectByPrimaryKey(vcMember1);
+                   if(vcMember==null){
+                       break;
+                   }
+                   VcMemberRewardTotal  vcMemberRewardTotal1 = PublicMethod.uqdateVcMemberRewardTotal(vcMemberRewardTotal.getMemberId(),1,userLeve);
+                   SysNoticeInfo               sysNoticeInfo = PublicMethod.insertSysNoticeInfo(vcMemberRewardTotal.getMemberId(),sysNoticeAsk.getLevel(),vcMember.getNickname(),sysNoticeAsk.getReceiveMoney());
+                   ComponentUtil.transactionalService.insertSysNoticeInfo(vcMemberRewardTotal1,sysNoticeInfo);
+               }
+           }
+        }
     }
 }

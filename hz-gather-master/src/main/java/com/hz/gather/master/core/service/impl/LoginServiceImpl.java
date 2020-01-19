@@ -291,6 +291,10 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     @Override
     public String sendForgetPassword(String phone) throws Exception {
+        boolean flag = ComponentUtil.loginService.isPhoneExist(phone);
+        if(!flag){
+            throw  new ServiceException(ENUM_ERROR.A00009.geteCode(),ENUM_ERROR.A00009.geteDesc());
+        }
         String  time  = ComponentUtil.loginService.createTime(phone,2);
         return time;
     }
@@ -303,6 +307,10 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 
     @Override
     public String sendSmsPayPassword(String phone) throws Exception {
+        boolean flag = ComponentUtil.loginService.isPhoneExist(phone);
+        if(!flag){
+            throw  new ServiceException(ENUM_ERROR.A00009.geteCode(),ENUM_ERROR.A00009.geteDesc());
+        }
         String  time  = ComponentUtil.loginService.createTime(phone,4);
         return time;
     }

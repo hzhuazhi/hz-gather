@@ -16,6 +16,10 @@ public class UMoneyLogResp {
      */
     private  String  symbol_type_value;
     /**
+     * 符号类型:  1、收入  2、支出
+     */
+    private  Integer  symbol_type_key;
+    /**
      * 时间
      */
     private  String  create_time;
@@ -66,5 +70,13 @@ public class UMoneyLogResp {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Integer getSymbol_type_key() {
+        return symbol_type_key;
+    }
+
+    public void setSymbol_type_key(Integer symbol_type_key) {
+        this.symbol_type_key = symbol_type_key;
     }
 }

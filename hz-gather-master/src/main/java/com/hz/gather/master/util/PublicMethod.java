@@ -613,7 +613,7 @@ public class PublicMethod {
             String           expireTime      =  DateUtil.format(limitedTimeLog.getInvalidTime(),sdfLongTimePlus);Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expireTime);
             Long expireTimelong = parse.getTime();
 
-            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.EVERY_PEOPLE_MONEY+"");
+            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.PUSH_PEOPLE_MONEY+"");
             responseUserInfo.setExpire_time(expireTimelong);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
@@ -1185,6 +1185,19 @@ public class PublicMethod {
         return uLimitedTimeLog;
     }
 
+
+    /**
+     * 清除裂变人数
+     * @param memberId
+     * @return
+     */
+    public  static VcMemberResource  cleanFissinonPeople(Integer  memberId){
+        VcMemberResource  vcMemberResource = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setFissionPeopleNum(0);
+        return vcMemberResource;
+    }
+
     /**
      * @Description: 添加裂变奖励明细表
      * @param memberId
@@ -1299,6 +1312,7 @@ public class PublicMethod {
         }else{
             uMoneyLogResp.setReward_type_value("提现成功");
         }
+        uMoneyLogResp.setSymbol_type_key(uMoneyList.getRewardType());
 
         if(uMoneyList.getRewardType()==1){
             uMoneyLogResp.setSymbol_type_value("收入");
@@ -1339,6 +1353,13 @@ public class PublicMethod {
         ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
         uLimitedTimeLog.setBatchNum(bacthNo);
         uLimitedTimeLog.setFissionMoney(new BigDecimal(Double.valueOf(Constant.EVERY_PEOPLE_MONEY)));
+        return uLimitedTimeLog;
+    }
+
+    public static  ULimitedTimeLog   uqdateULimitedTimeLogIsIsValid(Long  id){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setId(id);
+        uLimitedTimeLog.setIsValid(2);
         return uLimitedTimeLog;
     }
 
@@ -1502,5 +1523,63 @@ public class PublicMethod {
         vcMemberRewardTotal.setMemberId(memberId);
         return vcMemberRewardTotal;
     }
+
+
+    /***
+     * 根据date 组成查询条件
+     * @param date
+     * @return
+     */
+    public  static  ULimitedTimeLog   getULimitedTimeLog(Date date){
+        ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
+        uLimitedTimeLog.setInvalidTime(date);
+        return uLimitedTimeLog;
+    }
+
+
+    /**
+     * 修改状态
+     * @param memberId
+     * @param type
+     * @param money
+     * @return
+     */
+    public  static VcMemberRewardTotal  uqdateVcMemberRewardTotal(Integer memberId,Integer type,Double  money){
+        VcMemberRewardTotal  vcMemberRewardTotal =  new VcMemberRewardTotal();
+        vcMemberRewardTotal.setMemberId(memberId);
+        vcMemberRewardTotal.setIsCount(type);
+        vcMemberRewardTotal.setNotCountMoney(new BigDecimal(money));
+        return  vcMemberRewardTotal;
+    }
+
+    /**
+     * 修改用户信息
+     * @param memberId
+     * @param type
+     * @param totalMoney
+     * @return
+     */
+    public  static VcMemberRewardTotal  uqdateVcMemberRewardTotal(Integer memberId,Integer type,BigDecimal  totalMoney){
+        VcMemberRewardTotal  vcMemberRewardTotal =  new VcMemberRewardTotal();
+        vcMemberRewardTotal.setTotalMoney(totalMoney);
+        vcMemberRewardTotal.setMemberId(memberId);
+        vcMemberRewardTotal.setIsCount(type);
+        vcMemberRewardTotal.setNotCountMoney(new BigDecimal("0"));
+        return  vcMemberRewardTotal;
+    }
+
+
+    public  static SysNoticeInfo  insertSysNoticeInfo(Integer memberId,Integer type,String nickName,BigDecimal  totalMoney){
+        DateModel dateModel= PublicMethod.getDate();
+        SysNoticeInfo  sysNoticeInfo  = new SysNoticeInfo();
+        BeanUtils.copy(dateModel,sysNoticeInfo);
+        sysNoticeInfo.setMemberId(memberId);
+        sysNoticeInfo.setDataType(type+1);
+        sysNoticeInfo.setNickname(nickName);
+        sysNoticeInfo.setReceiveMoney(totalMoney);
+        return  sysNoticeInfo;
+    }
+
+
 
 }

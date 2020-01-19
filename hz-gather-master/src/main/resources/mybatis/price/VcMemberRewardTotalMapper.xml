@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hz.gather.master.core.mapper.VcMemberRewardTotalMapper" >
   <sql id="Base_Column_List" >
-    id, member_id, total_money, curday, curhour, curminute, create_time, update_time, 
+    id, member_id, total_money, curday, curhour, curminute, create_time, update_time, not_count_money,is_count,
     is_valid
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberRewardTotal">
@@ -46,6 +46,12 @@
       <if test="isValid != null" >
         is_valid,
       </if>
+      <if test="isCount != null" >
+        is_count,
+      </if>
+      <if test="notCountMoney != null" >
+        not_count_money,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -75,14 +81,17 @@
       <if test="isValid != null" >
         #{isValid},
       </if>
+      <if test="isCount != null" >
+        #{is_count},
+      </if>
+      <if test="notCountMoney != null" >
+        #{not_count_money},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcMemberRewardTotal" >
     update vc_member_reward_total
     <set >
-      <if test="memberId != null" >
-        member_id = #{memberId},
-      </if>
       <if test="totalMoney != null" >
         total_money = #{totalMoney},
       </if>
@@ -104,8 +113,35 @@
       <if test="isValid != null" >
         is_valid = #{isValid},
       </if>
+      <if test="isCount != null" >
+        is_count = #{isCount},
+      </if>
+      <if test="notCountMoney != null" >
+        not_count_money = #{notCountMoney},
+      </if>
     </set>
-    where id = #{id}
+    where member_id = #{memberId}
   </update>
+
+
+  <update id="updateByCountMoney" parameterType="com.hz.gather.master.core.model.entity.VcMemberRewardTotal" >
+    update vc_member_reward_total
+    <set >
+      <if test="isCount != null" >
+        is_count = #{isCount},
+      </if>
+      <if test="notCountMoney != null" >
+        not_count_money = #{notCountMoney},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
+  <select id="selectByIsCount" >
+    select
+    <include refid="Base_Column_List" />
+    from vc_member_reward_total
+    where is_count = 2
+  </select>
 
 </mapper>

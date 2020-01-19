@@ -36,7 +36,9 @@ public class UUIDUtils {
         SecureRandom ranGen = new SecureRandom();
         byte[] bs = new byte[6]; // 16 bytes = 128 bits
         ranGen.nextBytes(bs);
-        return Hex.encodeHexString(bs);
+        String InviteCode=Hex.encodeHexString(bs).substring(0,6);
+        return InviteCode;
     }
+
 
 }

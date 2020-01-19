@@ -67,6 +67,28 @@ public class VcMemberRewardTotal {
      */
     private Integer isValid;
 
+
+    /**
+     * 是否需要计算 1、不需要 2是需要
+     *
+     * @mbggenerated
+     */
+    private Integer isCount;
+
+    /**
+     * 未计算金额
+     *
+     * @mbggenerated
+     */
+    private BigDecimal notCountMoney;
+
+    /**
+     * 领取过的奖励等级
+     *
+     * @mbggenerated
+     */
+    private Integer rewardLevel;
+
     public Long getId() {
         return id;
     }
@@ -138,5 +160,29 @@ public class VcMemberRewardTotal {
 
     public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public Integer getIsCount() {
+        return isCount;
+    }
+
+    public void setIsCount(Integer isCount) {
+        this.isCount = isCount;
+    }
+
+    public BigDecimal getNotCountMoney() {
+        return notCountMoney;
+    }
+
+    public void setNotCountMoney(BigDecimal notCountMoney) {
+        this.notCountMoney = notCountMoney;
+    }
+
+    public Integer getRewardLevel() {
+        return rewardLevel;
+    }
+
+    public void setRewardLevel(Integer rewardLevel) {
+        this.rewardLevel = rewardLevel;
     }
 }

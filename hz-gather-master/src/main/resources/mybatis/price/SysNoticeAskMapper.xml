@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.SysNoticeAskMapper" >
 
   <sql id="Base_Column_List" >
-    id, receive_money, is_finish
+    id, receive_money, is_finish,level
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.SysNoticeAsk" >
     select 

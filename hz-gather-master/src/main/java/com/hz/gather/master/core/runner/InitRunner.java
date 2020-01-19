@@ -25,6 +25,23 @@ public class InitRunner implements ApplicationRunner {
         /****************  初始化信息 ************/
         log.debug("初始化信息！");
         ComponentUtil.initService.querySysNoticeAsk();
+
+
+        new Thread() {
+            public void run() {
+                log.debug("修改结果状态！");
+                ComponentUtil.payService.executeInvalidTimeInfo();
+            }
+        }.start();
+
+
+        new Thread() {
+            public void run() {
+                log.debug("执行公告记录！");
+                ComponentUtil.userInfoService.executeInsertNoticeInfo();
+            }
+        }.start();
+
     }
 
 }

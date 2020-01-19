@@ -165,6 +165,17 @@
   </select>
 
 
+
+  <select id="selectByInvalidTime" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
+    select
+    <include refid="Base_Column_List" />
+    from u_limited_time_log
+    where invalid_time &lt; #{invalidTime}
+    and   is_valid = 1
+    and   is_finish = 1
+  </select>
+
+
   <update id="updateByPushNumber" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
     update u_limited_time_log
     <set >

@@ -82,24 +82,28 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void addBatchNoVIP(VcMemberResource vcMemberResource, UMoneyLog uMoneyLog, UMoneyList uMoneyList) {
+    public void addBatchNoVIP(VcMemberResource vcMemberResource, UMoneyLog uMoneyLog, UMoneyList uMoneyList,VcMemberRewardTotal vcMemberRewardTotal) {
         uMoneyListMapper.insertSelective(uMoneyList);
         uMoneyLogMapper.insertSelective(uMoneyLog);
         vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
+        vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
     }
 
     @Override
-    public void addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog, UMoneyLog uMoneyLog) {
+    public void addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog, UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal) {
         vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
         uLimitedTimeLogMapper.updateByPushNumber(updateTimeLog);
         uMoneyLogMapper.insertSelective(uMoneyLog);
+        vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
 //        uBatchLogMapper.insertSelective(uBatchLog);
     }
 
     @Override
-    public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog) {
+    public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog,VcMemberRewardTotal  vcMemberRewardTotal) {
         uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog);
         uBatchLogMapper.insertSelective(uBatchLog);
+        vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
+//        vcMemberResourceMapper.updateByFissionPeople(vcMemberResource);
     }
 
     @Override
@@ -113,5 +117,19 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
         vcMemberMapper.updateByPrimaryKeySelective(vcMember);
         sysNoticeInfoMapper.insertSelective(noticeModel);
+    }
+
+    @Override
+    public int updateULimitedTimeLogIsValid(ULimitedTimeLog uqdateULimitedTimeLog, ULimitedTimeLog insertULimitedTimeLog,VcMemberResource vcMemberResource) {
+        uLimitedTimeLogMapper.updateByPrimaryKeySelective(uqdateULimitedTimeLog);
+        uLimitedTimeLogMapper.insertSelective(insertULimitedTimeLog);
+        vcMemberResourceMapper.updateByCleanFissionPeople(vcMemberResource);
+        return 1;
+    }
+
+    @Override
+    public void insertSysNoticeInfo(VcMemberRewardTotal vcMemberRewardTotal, SysNoticeInfo sysNoticeInfo) {
+        vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
+        sysNoticeInfoMapper.insertSelective(sysNoticeInfo);
     }
 }

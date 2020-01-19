@@ -1,10 +1,7 @@
 package com.hz.gather.master.core.service;
 
 import com.hz.gather.master.core.common.service.BaseService;
-import com.hz.gather.master.core.model.entity.UMoneyList;
-import com.hz.gather.master.core.model.entity.UMoneyLog;
-import com.hz.gather.master.core.model.entity.VcMember;
-import com.hz.gather.master.core.model.entity.VcMemberResource;
+import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.protocol.request.user.RequestEditUser;
 import com.hz.gather.master.core.protocol.response.user.*;
 
@@ -89,5 +86,9 @@ public interface UserInfoService<T> extends BaseService<T> {
     public Integer updatePayPassword(Integer memberId,String payPassword);
 
     public boolean queryPayPassword(Integer memberId,String payPassword);
+
+    void    executeInsertNoticeInfo();
+
+    void    compareRewardTotal(VcMemberRewardTotal vcMemberRewardTotal);
 
 }
