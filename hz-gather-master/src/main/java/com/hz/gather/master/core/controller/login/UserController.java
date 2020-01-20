@@ -13,7 +13,6 @@ import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.CommonModel;
-import com.hz.gather.master.core.protocol.request.login.ForgetPasswordModel;
 import com.hz.gather.master.core.protocol.request.user.*;
 import com.hz.gather.master.core.protocol.response.user.*;
 import com.hz.gather.master.util.ComponentUtil;

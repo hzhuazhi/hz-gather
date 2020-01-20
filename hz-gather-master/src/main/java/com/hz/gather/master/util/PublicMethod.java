@@ -602,10 +602,14 @@ public class PublicMethod {
             int fissionCount =0;
 
             if(list!=null){
-                for(VcMember vcMember1:listVcMember){
-                    addList.add(vcMember1.getMemberAdd());
-                    pushCount++;
+
+                if(null!=listVcMember){
+                    for(VcMember vcMember1:listVcMember){
+                        addList.add(vcMember1.getMemberAdd());
+                        pushCount++;
+                    }
                 }
+
 
                 for(UBatchLog uBatchLog:list){
                     if(uBatchLog.getDataType()==1){

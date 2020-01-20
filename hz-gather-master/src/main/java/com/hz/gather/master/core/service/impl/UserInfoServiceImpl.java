@@ -93,8 +93,10 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             timeLog  = uLimitedTimeLogMapper.selectByMaxBatchNum(limitedTimeLog);
             if(timeLog!=null){
                 List<Integer>  list1=PublicMethod.toMemberList(timeLog.getPushId());
-                VcMember vcMember1 =PublicMethod.toMember(list1);
-                list2 =vcMemberMapper.selectBySuperiorIdMember(vcMember1);
+                if(list1.size()!=0){
+                    VcMember vcMember1 =PublicMethod.toMember(list1);
+                    list2 =vcMemberMapper.selectBySuperiorIdMember(vcMember1);
+                }
                 UBatchLog    uBatchLog   =   PublicMethod.toUBatchLog(timeLog.getBatchNum());
                 list =   uBatchLogMapper.selectByBatchNum(uBatchLog);
 //                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
