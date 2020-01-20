@@ -58,6 +58,9 @@
       <if test="remarks != null" >
         remarks,
       </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -98,6 +101,9 @@
       </if>
       <if test="remarks != null" >
         #{remarks},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo},
       </if>
     </trim>
   </insert>
