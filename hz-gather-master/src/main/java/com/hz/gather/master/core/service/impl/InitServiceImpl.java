@@ -55,6 +55,8 @@ public class InitServiceImpl<T> extends BaseServiceImpl<T> implements InitServic
                 SysNoticeAskSingleton.getInstance().setMemberAdd(sysTypeDictionary.getValue());
             }else if(sysTypeDictionary.getTypeValue().equals("5")){//奖励裂变层级数
                 SysNoticeAskSingleton.getInstance().setRewardFissionCount(Integer.parseInt(sysTypeDictionary.getValue()));
+            }else if(sysTypeDictionary.getTypeValue().equals("7")){//用户设置最大提现次数
+                SysNoticeAskSingleton.getInstance().setUserCashMaxCount(Integer.parseInt(sysTypeDictionary.getValue()));
             }
         }
     }

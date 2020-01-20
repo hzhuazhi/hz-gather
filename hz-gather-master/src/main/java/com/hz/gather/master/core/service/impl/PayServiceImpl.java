@@ -139,8 +139,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         }
 
         uCashOutLog  =  PublicMethod.toUCashOutLog(memberId,aliPayNo,alname,outTradeNo,moneyCashOut);
-        if(moneyProced==0D){
-            uCashOutProcedLog = PublicMethod.toUCashOutProcedLog(memberId,aliPayNo,outTradeNo,moneyCashOut);
+        if(moneyProced!=0D){
+            uCashOutProcedLog = PublicMethod.toUCashOutProcedLog(memberId,aliPayNo,outTradeNo,moneyProced);
         }
         VcMemberResource   vcMemberResourceFlag   = PublicMethod.updateVcMemberResource(money,vcMemberResource1);
 

@@ -68,4 +68,7 @@ public class Constant {
 
     /*************** 默认注册地址 ****************/
     public   static  String   REGISTERADD=SysNoticeAskSingleton.getInstance().getRegisterAdd();
+
+    /*************** 提现次数限制地址 ****************/
+    public   static  Integer   USERCASHMAX = SysNoticeAskSingleton.getInstance().getUserCashMaxCount();
 }

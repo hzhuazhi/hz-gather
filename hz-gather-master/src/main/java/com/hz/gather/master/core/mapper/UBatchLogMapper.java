@@ -20,4 +20,5 @@ public interface UBatchLogMapper<T> extends BaseDao<T> {
 
     List<UBatchLog> selectByBatchNum(UBatchLog record);
 
+    UBatchLog selectByUserCount(UBatchLog record);
 }

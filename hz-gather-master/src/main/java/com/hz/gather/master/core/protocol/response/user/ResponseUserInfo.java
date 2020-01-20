@@ -90,6 +90,12 @@ public class ResponseUserInfo extends ResponseUser{
      */
     private String     rq_code;
 
+
+    /**
+     * 用户提现最大次数
+     */
+    private Integer    userCaseMax;
+
     public String getRq_code() {
         return rq_code;
     }
@@ -232,5 +238,13 @@ public class ResponseUserInfo extends ResponseUser{
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public Integer getUserCaseMax() {
+        return userCaseMax;
+    }
+
+    public void setUserCaseMax(Integer userCaseMax) {
+        this.userCaseMax = userCaseMax;
     }
 }

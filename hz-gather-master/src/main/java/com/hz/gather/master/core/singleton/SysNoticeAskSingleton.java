@@ -42,6 +42,7 @@ public class SysNoticeAskSingleton {
     public  Double   everyPeopleMoney;
     public  Double   pushPeopleMoney;
     public  Integer  rewardFissionCount;
+    public  Integer  userCashMaxCount;
 
 
     public String getMemberAdd() {
@@ -86,5 +87,13 @@ public class SysNoticeAskSingleton {
 
     public void setRegisterAdd(String registerAdd) {
         this.registerAdd = registerAdd;
+    }
+
+    public Integer getUserCashMaxCount() {
+        return userCashMaxCount;
+    }
+
+    public void setUserCashMaxCount(Integer userCashMaxCount) {
+        this.userCashMaxCount = userCashMaxCount;
     }
 }

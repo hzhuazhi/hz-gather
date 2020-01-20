@@ -215,4 +215,18 @@
   </select>
 
 
+  <select id="selectByUserCount" resultType="com.hz.gather.master.core.model.entity.UCashOutLog"  >
+    select
+     count(id)  num
+    from u_cash_out_log
+    where 1=1
+    <if test="curday != null" >
+     and   curday = #{curday},
+    </if>
+    <if test="memberId != null" >
+      and  member_id = #{memberId},
+    </if>
+    and  run_status = 3
+  </select>
+
 </mapper>

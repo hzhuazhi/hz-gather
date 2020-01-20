@@ -589,6 +589,7 @@ public class PublicMethod {
      */
     public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog,List<UBatchLog> list ,List<VcMember> listVcMember)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
+        responseUserInfo.setUserCaseMax(Constant.USERCASHMAX);
         responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
         responseUserInfo.setNickname(vcMember.getNickname());

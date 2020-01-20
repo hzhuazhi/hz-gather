@@ -244,4 +244,10 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
            }
         }
     }
+
+    @Override
+    public Integer isCountMemberId(Integer  memberId) {
+
+        return null;
+    }
 }

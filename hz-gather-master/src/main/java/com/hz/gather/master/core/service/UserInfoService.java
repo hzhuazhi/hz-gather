@@ -91,4 +91,6 @@ public interface UserInfoService<T> extends BaseService<T> {
 
     void    compareRewardTotal(VcMemberRewardTotal vcMemberRewardTotal);
 
+    Integer   isCountMemberId(Integer  memberId);
+
 }
