@@ -165,6 +165,32 @@
     where member_id = #{memberId}
   </update>
 
+
+
+
+  <update id="updateUpPeopleAll" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="teamActiveAll != null" >
+        team_active_all =team_active_all+ #{teamActiveAll},
+      </if>
+      <if test="pushPeopleAll != null" >
+        push_people_all =push_people_all+ #{pushPeopleAll},
+      </if>
+    </set>
+    where 1=1
+    <if test="idList != null and idList.size()>0">
+      and member_id  in
+      <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </update>
+
+
+
+
+
   <update id="updateByChargeMoney" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     update vc_member_resource
     <set >

@@ -22,4 +22,6 @@ public interface VcMemberResourceMapper<T> extends BaseDao<T> {
 
     int updateByCleanFissionPeople(VcMemberResource record);
 
+    int updateUpPeopleAll(VcMemberResource record);
+
 }

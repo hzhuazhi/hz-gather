@@ -186,7 +186,34 @@ public class PublicMethod {
      */
     public  static VcMemberResource updateResourcePeople(Integer memberId){
         VcMemberResource   vcMemberResourceModel  =  new  VcMemberResource();
+
+//        String []   rgs = extensionMemberId.split(",");
+//        List<Integer>   idList = new ArrayList<>();
+//        for(String str:rgs){
+//            if(memberId!=Integer.parseInt(str)){
+//                idList.add(Integer.parseInt(str));
+//            }
+//        }
         vcMemberResourceModel.setMemberId(memberId);
+        vcMemberResourceModel.setPushPeopleAll(1);
+        vcMemberResourceModel.setTeamActiveAll(1);
+        vcMemberResourceModel.setUpdateTime(new Date());
+        return   vcMemberResourceModel;
+    }
+
+
+    public  static VcMemberResource updateResourcePeopleAll(Integer memberId,String extensionMemberId){
+        VcMemberResource   vcMemberResourceModel  =  new  VcMemberResource();
+
+        String []   rgs = extensionMemberId.split(",");
+        List<Integer>   idList = new ArrayList<>();
+        for(String str:rgs){
+            if(memberId!=Integer.parseInt(str)){
+                idList.add(Integer.parseInt(str));
+            }
+        }
+        vcMemberResourceModel.setIdList(idList);
+//        vcMemberResourceModel.setMemberId(memberId);
         vcMemberResourceModel.setPushPeopleAll(1);
         vcMemberResourceModel.setTeamActiveAll(1);
         vcMemberResourceModel.setUpdateTime(new Date());
@@ -632,12 +659,12 @@ public class PublicMethod {
             responseUserInfo.setExpire_time(expireTimelong);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
-            responseUserInfo.setRequire_fission_count(fissionCount+"");
+            responseUserInfo.setRequire_fission_count(pushCount+"");
 
 
         }else if(vcMember.getGradeType()==2){
             responseUserInfo.setAddList(addList);
-            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.EVERY_PEOPLE_MONEY+"");
+            responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.PUSH_PEOPLE_MONEY+"");
             responseUserInfo.setFission_money(vcMemberResource.getTeamPeople()*Constant.EVERY_PEOPLE_MONEY+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
             responseUserInfo.setRequire_fission_count(vcMemberResource.getTeamPeople()+"");
@@ -697,8 +724,8 @@ public class PublicMethod {
         ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
         reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamPeople()+"");
-        reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()+"");
-        reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()+"");
+        reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()-vcMemberResource.getPushPeople()+"");
+        reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()-vcMemberResource.getPushPeople()-vcMemberResource.getTeamPeople()+"");
         List <Object>   rsList = new ArrayList<>();
         for(VcMember vcMember:list){
             FriendModel  friendModel = new FriendModel();

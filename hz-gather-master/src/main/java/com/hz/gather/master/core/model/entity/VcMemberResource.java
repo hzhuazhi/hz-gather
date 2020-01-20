@@ -2,6 +2,7 @@ package com.hz.gather.master.core.model.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class VcMemberResource {
     /**
@@ -116,7 +117,12 @@ public class VcMemberResource {
      */
     private BigDecimal pushMoney;
 
-
+    /**
+     * memberid  集合
+     *
+     * @mbggenerated
+     */
+    private List<Integer> idList;
 
     public Long getId() {
         return id;
@@ -244,5 +250,13 @@ public class VcMemberResource {
 
     public void setFissionPeopleNum(Integer fissionPeopleNum) {
         this.fissionPeopleNum = fissionPeopleNum;
+    }
+
+    public List<Integer> getIdList() {
+        return idList;
+    }
+
+    public void setIdList(List<Integer> idList) {
+        this.idList = idList;
     }
 }

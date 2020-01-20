@@ -62,7 +62,7 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal) {
         vcMemberMapper.insertSelective(vcMember);
         vcMemberResourceMapper.insertSelective(vcMemberResource);
-        vcMemberResourceMapper.updateUpPeople(uqVcMemberResource);
+        vcMemberResourceMapper.updateUpPeopleAll(uqVcMemberResource);
         vcMemberRewardTotalMapper.insertSelective(vcMemberRewardTotal);
     }
 
