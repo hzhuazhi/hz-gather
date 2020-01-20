@@ -1380,6 +1380,7 @@ public class PublicMethod {
     public static  ULimitedTimeLog   uqdatePushTimeLog(String  bacthNo,String pushId,String oldpushId){
         ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
         uLimitedTimeLog.setBatchNum(bacthNo);
+        uLimitedTimeLog.setPushNumber(1);
         if(StringUtils.isBlank(oldpushId)){
             uLimitedTimeLog.setPushId(pushId);
         }else{

@@ -227,7 +227,6 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 }else{
                     ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
                 }
-
                 if(superiorFlag){//上级id 需要更新
                     ComponentUtil.payService.upgradeVIPUpdateInfo(vcMember.getMemberId(),vcMember.getNickname());
                 }
