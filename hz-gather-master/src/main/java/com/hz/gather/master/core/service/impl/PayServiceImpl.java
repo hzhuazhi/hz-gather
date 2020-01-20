@@ -379,12 +379,14 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(UCashOutLog uCashOutLog1:list){
             CashRate  cashRate = new CashRate();
-            if (uCashOutLog1.getPaymentType()==1){
-                cashRate.setValue("提现进行中");
-            }else if(uCashOutLog1.getPaymentType()==2){
-                cashRate.setValue("提现失败");
+            if (uCashOutLog1.getRunStatus()==1){
+                cashRate.setValue("提现进行中!");
+            }else if(uCashOutLog1.getRunStatus()==2){
+                cashRate.setValue("提现失败!");
+            }else if(uCashOutLog1.getRunStatus()==0){
+                cashRate.setValue("提现初始化中！");
             }else{
-                cashRate.setValue("提现成功");
+                cashRate.setValue("提现成功!");
             }
             cashRate.setCreate_time(sdfLongTimePlus.format(uCashOutLog1.getCreateTime()));
             cashRate.setMoney(uCashOutLog1.getMoney()+"");
