@@ -270,9 +270,8 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
-
             ULimitedTimeLog  updateTimeLog = PublicMethod.uqdatePushTimeLog(uLimitedTimeLogh.getBatchNum(),createMemberId+"",uLimitedTimeLogh.getPushId());
-            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
+            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(createMemberId,uLimitedTimeLogh.getBatchNum(),type,money);
             UMoneyList   uMoneyList =  PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,money);
             ComponentUtil.transactionalService.addBatchNoNoVIP(vcMemberResource,updateTimeLog,uMoneyLog,vcMemberRewardTotal,uMoneyList);
         }else{ //裂变情况
@@ -281,9 +280,11 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
+            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceTeamPeople(memberId);
+
             ULimitedTimeLog updateTimeLog =PublicMethod.updateFissionMoney(uLimitedTimeLogh.getBatchNum(),Constant.EVERY_PEOPLE_MONEY);
-            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(memberId,uLimitedTimeLogh.getBatchNum(),type,money);
-            ComponentUtil.transactionalService.addfissionInfo(updateTimeLog,insertBatchLog,vcMemberRewardTotal);
+            UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(createMemberId,uLimitedTimeLogh.getBatchNum(),type,money);
+            ComponentUtil.transactionalService.addfissionInfo(updateTimeLog,insertBatchLog,vcMemberRewardTotal,vcMemberResource);
         }
 
 
@@ -335,13 +336,14 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
         if(uLimited != null){
             if(uLimited.getPushNumber()>=3){
-                VcMemberResource    vcMemberResource =  PublicMethod.toVcMemberResource(uLimited);
+
                 ULimitedTimeLog updatelog = PublicMethod.updateTimeLogFinish(uLimited.getBatchNum());
                 VcMember vcMember= PublicMethod.updateVcMemberGradeType(memberId);
                 UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());
                 //添加公告
                 SysNoticeInfo sysNoticeInfo  =PublicMethod.insertNoticeModel(memberId,nickname,1,uLimited.getFissionMoney());
                 List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
+                VcMemberResource    vcMemberResource =  PublicMethod.toVcMemberResource(uLimited,list);
                 ComponentUtil.transactionalService.upgradePermanentVIP(vcMemberResource,updatelog,vcMember,uBatchLog,sysNoticeInfo,list);
 //                PublicMethod.toUqdateVcMemberResourceVIP();
             }

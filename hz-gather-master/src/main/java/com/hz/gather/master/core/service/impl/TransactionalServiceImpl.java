@@ -100,11 +100,11 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog,VcMemberRewardTotal  vcMemberRewardTotal) {
+    public void addfissionInfo(ULimitedTimeLog uLimitedTimeLog, UBatchLog uBatchLog,VcMemberRewardTotal  vcMemberRewardTotal,VcMemberResource  vcMemberResource) {
         uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog);
         uBatchLogMapper.insertSelective(uBatchLog);
         vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
-//        vcMemberResourceMapper.updateByFissionPeople(vcMemberResource);
+//        vcMemberResourceMapper.updateUpPeople(vcMemberResource);
     }
 
     @Override

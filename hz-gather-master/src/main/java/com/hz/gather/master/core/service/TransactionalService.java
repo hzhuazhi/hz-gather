@@ -46,7 +46,7 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param uLimitedTimeLog
      * @param uBatchLog
      */
-    void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog,VcMemberRewardTotal vcMemberRewardTotal);
+    void  addfissionInfo(ULimitedTimeLog uLimitedTimeLog,UBatchLog uBatchLog,VcMemberRewardTotal vcMemberRewardTotal,VcMemberResource  vcMemberResource);
 
 
 

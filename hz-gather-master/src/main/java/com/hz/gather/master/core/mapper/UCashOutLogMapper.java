@@ -30,4 +30,8 @@ public interface UCashOutLogMapper<T> extends BaseDao<T> {
      * @date 2020/1/14 17:30
      */
     public List<UCashOutLog> getUCashOutLog(UCashOutLog model);
+
+    public UCashOutLog selectByUserCount(UCashOutLog model);
+
+
 }

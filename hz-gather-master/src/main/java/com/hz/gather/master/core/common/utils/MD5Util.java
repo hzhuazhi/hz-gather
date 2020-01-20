@@ -163,6 +163,10 @@ public class MD5Util {
         return re_md5;
     }
 
+    public static  void  main(String[] args){
+//            System.out.println(MD5Utils.("crp941918"));
+    }
+
 //    public static void main(String[] args) throws IOException {
 //        long begin = System.currentTimeMillis();
 //

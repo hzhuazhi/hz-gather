@@ -724,7 +724,7 @@ public class PublicMethod {
     public  static ResponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource, List<VcMember>   list){
         ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
-        reponseMyFriend.setTeam_active_vip(vcMemberResource.getTeamPeople()+"");
+        reponseMyFriend.setTeam_active_vip(vcMemberResource.getPushPeople()+vcMemberResource.getTeamPeople()+"");
         reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()-vcMemberResource.getPushPeople()+"");
         reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()-vcMemberResource.getPushPeople()-vcMemberResource.getTeamPeople()+"");
         List <Object>   rsList = new ArrayList<>();
@@ -1402,6 +1402,23 @@ public class PublicMethod {
     }
 
 
+    public static  VcMemberResource   toUqdateVcMemberResourceTeamPeople(Integer  memberId){
+        VcMemberResource  vcMemberResource = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setTeamActiveAll(1);
+        return vcMemberResource;
+    }
+
+
+    public static  UCashOutLog   queryUCashOutLog(Integer  memberId){
+        Date  date  =new Date();
+        UCashOutLog  uCashOutLog = new UCashOutLog();
+        uCashOutLog.setCurday(DateUtil.getDayNumber(date));
+        uCashOutLog.setMemberId(memberId);
+        return uCashOutLog;
+    }
+
+
     /**
      * 直推修改的限时表
      * @param bacthNo
@@ -1511,11 +1528,12 @@ public class PublicMethod {
      * @param uLimited
      * @return
      */
-    public static VcMemberResource     toVcMemberResource(ULimitedTimeLog  uLimited){
+    public static VcMemberResource     toVcMemberResource(ULimitedTimeLog  uLimited,List<UBatchLog> list){
         VcMemberResource  vcMemberResource  = new VcMemberResource();
         vcMemberResource.setMemberId(uLimited.getMemberId());
         vcMemberResource.setTotalMoney(uLimited.getFissionMoney());
         vcMemberResource.setSurplusMoney(uLimited.getFissionMoney());
+        vcMemberResource.setTeamPeople(list.size());
         return vcMemberResource;
     }
 

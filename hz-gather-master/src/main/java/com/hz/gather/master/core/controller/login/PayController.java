@@ -266,6 +266,11 @@ public class PayController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
+            Integer  caseCount =ComponentUtil.userInfoService.isCountMemberId(memberId);
+            if(caseCount>=Constant.USERCASHMAX){
+                throw  new ServiceException(ENUM_ERROR.P00011.geteCode(),ENUM_ERROR.P00011.geteDesc());
+            }
+
             flag = ComponentUtil.userInfoService.queryPayPassword(memberId,requestPayCashOut.getPayPassword());
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.P00010.geteCode(),ENUM_ERROR.P00010.geteDesc());

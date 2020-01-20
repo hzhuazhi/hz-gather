@@ -52,8 +52,8 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
     private UMoneyLogMapper uMoneyLogMapper;
     @Autowired
     private VcMemberRewardTotalMapper vcMemberRewardTotalMapper;
-
-
+    @Autowired
+    private UCashOutLogMapper  uCashOutLogMapper;
     @Override
     public BaseDao<T> getDao() {
         return null;
@@ -247,7 +247,12 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
     @Override
     public Integer isCountMemberId(Integer  memberId) {
-
-        return null;
+        Integer   count  =0;
+        UCashOutLog uCashOutLog = PublicMethod.queryUCashOutLog(memberId);
+        UCashOutLog countuCashOutLog =uCashOutLogMapper.selectByUserCount(uCashOutLog);
+        if (countuCashOutLog!=null){
+            count=countuCashOutLog.getNum();
+        }
+        return count;
     }
 }

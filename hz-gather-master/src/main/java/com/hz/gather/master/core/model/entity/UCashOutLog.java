@@ -114,6 +114,8 @@ public class UCashOutLog extends BasePage {
      */
     private Integer runStatus;
 
+    private Integer num;
+
     public Long getId() {
         return id;
     }
@@ -241,5 +243,13 @@ public class UCashOutLog extends BasePage {
 
     public void setRunStatus(Integer runStatus) {
         this.runStatus = runStatus;
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
     }
 }
