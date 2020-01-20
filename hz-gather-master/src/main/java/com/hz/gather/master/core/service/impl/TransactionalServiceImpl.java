@@ -90,11 +90,12 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog, UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal) {
+    public void addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog, UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal,UMoneyList uMoneyList) {
         vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
         uLimitedTimeLogMapper.updateByPushNumber(updateTimeLog);
         uMoneyLogMapper.insertSelective(uMoneyLog);
         vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
+        uMoneyListMapper.insertSelective(uMoneyList);
 //        uBatchLogMapper.insertSelective(uBatchLog);
     }
 

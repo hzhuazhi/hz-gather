@@ -39,7 +39,7 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param updateTimeLog
      * @param uMoneyLog
      */
-    void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal);
+    void   addBatchNoNoVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updateTimeLog,UMoneyLog uMoneyLog,VcMemberRewardTotal  vcMemberRewardTotal,UMoneyList uMoneyList);
 
     /**
      * 添加裂变的信息
