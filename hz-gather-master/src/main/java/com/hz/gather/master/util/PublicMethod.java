@@ -604,6 +604,7 @@ public class PublicMethod {
             if(list!=null){
                 for(VcMember vcMember1:listVcMember){
                     addList.add(vcMember1.getMemberAdd());
+                    pushCount++;
                 }
 
                 for(UBatchLog uBatchLog:list){
@@ -611,7 +612,6 @@ public class PublicMethod {
                         recommendMoney = StringUtil.getBigDecimalAdd(recommendMoney,uBatchLog.getReceiveMoney()+"");
 //                    recommendMoney=recommendMoney+uBatchLog.getReceiveMoney();
 //                        addList.add(uBatchLog.getMemberAdd());
-                        pushCount++;
                     }else{
                         fissionCount++;
                     }
