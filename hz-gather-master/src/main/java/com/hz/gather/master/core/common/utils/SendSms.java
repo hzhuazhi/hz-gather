@@ -29,7 +29,8 @@ public class SendSms {
      * @date 2019/12/9 20:36
     */
     public static boolean aliSendSms(String phoneNum, String code){
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI8UsQKfgMqzse", "BSc6JnPo8efgW78MQWzqg1HQ9Dhdhm");
+//        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI8UsQKfgMqzse", "BSc6JnPo8efgW78MQWzqg1HQ9Dhdhm");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI4FoLtbXepN66yL6kB9ns", "66crjO6kEtjOnw5cAsJKXdxEF824k2");
         IAcsClient client = new DefaultAcsClient(profile);
         CommonRequest request = new CommonRequest();
         request.setMethod(MethodType.POST);
@@ -38,8 +39,10 @@ public class SendSms {
         request.setAction("SendSms");
         request.putQueryParameter("RegionId", "cn-hangzhou");
         request.putQueryParameter("PhoneNumbers", phoneNum);
-        request.putQueryParameter("SignName", "趣红人");
-        request.putQueryParameter("TemplateCode", "SMS_180051427");
+//        request.putQueryParameter("SignName", "趣红人");
+//        request.putQueryParameter("TemplateCode", "SMS_180051427");
+        request.putQueryParameter("SignName", "五百分享缤纷");
+        request.putQueryParameter("TemplateCode", "SMS_182677934");
         request.putQueryParameter("TemplateParam", "{\"code\":"+ code +"}");
         try {
             CommonResponse response = client.getCommonResponse(request);
