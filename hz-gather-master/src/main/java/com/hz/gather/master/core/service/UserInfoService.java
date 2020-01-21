@@ -93,4 +93,7 @@ public interface UserInfoService<T> extends BaseService<T> {
 
     Integer   isCountMemberId(Integer  memberId);
 
+
+    Integer   caseMoneyFail(Integer  memeberId,Double  money);
+
 }

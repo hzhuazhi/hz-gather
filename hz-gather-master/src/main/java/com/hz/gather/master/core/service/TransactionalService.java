@@ -19,7 +19,7 @@ public interface TransactionalService <T> extends BaseService<T> {
      * @param vcMemberResource  自己的资源信息
      * @param uqVcMemberResource   上级需要修改的
      */
-    void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal);
+    void   userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal,List<VcMemberResource>  list);
 
     void   addCashOut(UCashOutLog uCashOutLog , UCashOutProcedLog uCashOutProcedLog, VcMemberResource  uqVcMemberResource);
 
@@ -56,5 +56,7 @@ public interface TransactionalService <T> extends BaseService<T> {
     int   updateULimitedTimeLogIsValid(ULimitedTimeLog uqdateULimitedTimeLog,ULimitedTimeLog  insertULimitedTimeLog,VcMemberResource vcMemberResource);
 
     void  insertSysNoticeInfo(VcMemberRewardTotal vcMemberRewardTotal,SysNoticeInfo sysNoticeInfo);
+
+    void  updateCaseMoneyFail(UMoneyList uMoneyList,VcMemberResource vcMemberResource);
 
 }

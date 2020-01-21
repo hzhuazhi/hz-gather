@@ -123,6 +123,12 @@ public class VcMemberResource {
      * @mbggenerated
      */
     private List<Integer> idList;
+    /**
+     * 推荐总人数
+     *
+     * @mbggenerated
+     */
+    private Integer peopleAll;
 
     public Long getId() {
         return id;
@@ -258,5 +264,13 @@ public class VcMemberResource {
 
     public void setIdList(List<Integer> idList) {
         this.idList = idList;
+    }
+
+    public Integer getPeopleAll() {
+        return peopleAll;
+    }
+
+    public void setPeopleAll(Integer peopleAll) {
+        this.peopleAll = peopleAll;
     }
 }

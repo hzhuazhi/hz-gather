@@ -138,7 +138,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             moneyProced  = Constant.SERVICE_MOMNEY * money;
         }
 
-        uCashOutLog  =  PublicMethod.toUCashOutLog(memberId,aliPayNo,alname,outTradeNo,moneyCashOut);
+        uCashOutLog  =  PublicMethod.toUCashOutLog(memberId,aliPayNo,alname,outTradeNo,moneyCashOut,money);
         if(moneyProced!=0D){
             uCashOutProcedLog = PublicMethod.toUCashOutProcedLog(memberId,aliPayNo,outTradeNo,moneyProced);
         }

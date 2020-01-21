@@ -59,11 +59,16 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     }
 
     @Override
-    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal) {
+    public void userRegister(VcMember vcMember, VcMemberResource vcMemberResource, VcMemberResource  uqVcMemberResource,VcMemberRewardTotal vcMemberRewardTotal,List<VcMemberResource>  list) {
         vcMemberMapper.insertSelective(vcMember);
         vcMemberResourceMapper.insertSelective(vcMemberResource);
         vcMemberResourceMapper.updateUpPeopleAll(uqVcMemberResource);
         vcMemberRewardTotalMapper.insertSelective(vcMemberRewardTotal);
+        if(list.size()!=0){
+            for(VcMemberResource vcMemberResource1:list){
+                vcMemberResourceMapper.updateUpPeopleAll(vcMemberResource1);
+            }
+        }
     }
 
     @Override
@@ -110,7 +115,7 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     @Override
     public void upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list) {
         for(UBatchLog uBatchLog1:list){
-            UMoneyList  uMoneyList  = PublicMethod.insertUMoneyList(uBatchLog1.getMemberId(), Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,uBatchLog1.getReceiveMoney());
+            UMoneyList  uMoneyList  = PublicMethod.insertUMoneyList(vcMemberResource.getMemberId(), Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,uBatchLog1.getReceiveMoney());
             uMoneyListMapper.insertSelective(uMoneyList);
         }
 //        uBatchLogMapper.insertSelective(uBatchLog);
@@ -132,5 +137,11 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     public void insertSysNoticeInfo(VcMemberRewardTotal vcMemberRewardTotal, SysNoticeInfo sysNoticeInfo) {
         vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
         sysNoticeInfoMapper.insertSelective(sysNoticeInfo);
+    }
+
+    @Override
+    public void updateCaseMoneyFail(UMoneyList uMoneyList, VcMemberResource vcMemberResource) {
+        uMoneyListMapper.insertSelective(uMoneyList);
+        vcMemberResourceMapper.updateByPrimaryKeySelective(vcMemberResource);
     }
 }

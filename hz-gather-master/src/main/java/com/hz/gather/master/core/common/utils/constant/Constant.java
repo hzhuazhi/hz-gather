@@ -59,6 +59,7 @@ public class Constant {
     /*************** 用户资金明细类型 ****************/
     public  static  Integer   REWARD_TYPE1  =  1; //裂变奖励
     public  static  Integer   REWARD_TYPE2  =  2; //提现奖励
+    public  static  Integer   REWARD_TYPE3  =  3; //提现失败奖励
 
     /*************** 用户符号类型****************/
     public  static  Integer   SYMBO_TYPE1  =  1; //加

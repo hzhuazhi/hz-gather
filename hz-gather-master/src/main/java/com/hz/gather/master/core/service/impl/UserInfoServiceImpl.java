@@ -5,6 +5,7 @@ import com.hz.gather.master.core.common.enums.ENUM_ERROR;
 import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.service.impl.BaseServiceImpl;
 import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.mapper.*;
 import com.hz.gather.master.core.model.entity.*;
 import com.hz.gather.master.core.model.user.FundListModel;
@@ -254,5 +255,14 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             count=countuCashOutLog.getNum();
         }
         return count;
+    }
+
+    @Override
+    public Integer caseMoneyFail(Integer memberId, Double money) {
+        UMoneyList   uMoneyList =PublicMethod.insertUMoneyList(memberId, Constant.REWARD_TYPE3,Constant.SYMBO_TYPE1,money);
+        VcMemberResource  vcMemberResource= PublicMethod.updateVcMemberResource(memberId,money);
+        ComponentUtil.transactionalService.updateCaseMoneyFail(uMoneyList,vcMemberResource);
+
+        return 1;
     }
 }

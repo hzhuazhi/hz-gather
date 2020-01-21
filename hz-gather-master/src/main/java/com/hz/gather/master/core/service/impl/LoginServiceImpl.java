@@ -83,7 +83,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         if (amsVerification.startsWith("0")){
             amsVerification = amsVerification.replaceFirst("0" , "1");
         }
-        SendSms.aliSendSms(phone,amsVerification);
+//        SendSms.aliSendSms(phone,amsVerification);
         //缺少一个发送短信
         if(type==1){
             ComponentUtil.redisService.set(CacheKey.REGISTER_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
@@ -217,8 +217,10 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         VcMember   vcMember1 =PublicMethod.insertVcMember(memberId,loginModel,inviteAdd,vcMember.getMemberId(),vcMember.getExtensionMemberId(),phone);
         VcMemberResource vcMemberResourceModel  =  PublicMethod.insertVcMemberResource(memberId);
         VcMemberResource updateResourcePeople  = PublicMethod.updateResourcePeopleAll(memberId,vcMember.getExtensionMemberId());
+
+        List<VcMemberResource>  list =PublicMethod.updatePeopleInfo(memberId,vcMember.getExtensionMemberId(),vcMember.getMemberId());
         VcMemberRewardTotal vcMemberRewardTotal  =PublicMethod.insertVcMemberRewardTotal(memberId);
-        ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople,vcMemberRewardTotal);
+        ComponentUtil.transactionalService.userRegister(vcMember1,vcMemberResourceModel,updateResourcePeople,vcMemberRewardTotal,list);
     }
 
 
