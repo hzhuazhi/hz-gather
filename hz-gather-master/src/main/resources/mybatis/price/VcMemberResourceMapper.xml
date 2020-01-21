@@ -250,4 +250,15 @@
     </if>
   </select>
 
+
+  <update id="updateCaseFail" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
+    update vc_member_resource
+    <set >
+      <if test="surplusMoney != null" >
+        surplus_money =surplus_money+ #{surplusMoney},
+      </if>
+    </set>
+    where member_id = #{memberId}
+  </update>
+
 </mapper>

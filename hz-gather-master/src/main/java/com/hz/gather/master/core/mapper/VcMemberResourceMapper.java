@@ -26,4 +26,7 @@ public interface VcMemberResourceMapper<T> extends BaseDao<T> {
 
     VcMemberResource selectEightFissionPeople(VcMemberResource record);
 
+    int updateCaseFail(VcMemberResource record);
+
+
 }

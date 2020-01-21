@@ -142,6 +142,6 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
     @Override
     public void updateCaseMoneyFail(UMoneyList uMoneyList, VcMemberResource vcMemberResource) {
         uMoneyListMapper.insertSelective(uMoneyList);
-        vcMemberResourceMapper.updateByPrimaryKeySelective(vcMemberResource);
+        vcMemberResourceMapper.updateCaseFail(vcMemberResource);
     }
 }
