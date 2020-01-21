@@ -58,6 +58,7 @@ public class TaskAlipay {
         List<UCashOutLog> synchroList = ComponentUtil.taskService.getTransferList(statusQuery);
         for (UCashOutLog data : synchroList){
             if (data != null){
+                boolean flag = false;
                 try{
                     String lockKey = CachedKeyUtils.getCacheKey(CacheKey.LOCK_TRANSFER, data.getId());
                     boolean flagLock = ComponentUtil.redisIdService.lock(lockKey);
@@ -68,11 +69,12 @@ public class TaskAlipay {
                         AlipayFundTransUniTransferResponse alipayFundTransUniTransferResponse = Alipay.transferAlipay(strData);
                         if (alipayFundTransUniTransferResponse != null){
                             if (alipayFundTransUniTransferResponse.isSuccess()){
-                                // 添加提现成功数据
-                                ComponentUtil.payService.insertSuccess(data.getMemberId(), data.getRealMoney().doubleValue());
+                                flag = true;
                                 // 更新此次task的状态：更新成成功
                                 StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_THREE);
                                 ComponentUtil.taskService.updateTransStatus(statusModel);
+                                // 添加提现成功数据
+                                ComponentUtil.payService.insertSuccess(data.getMemberId(), data.getRealMoney().doubleValue());
                             }else{
                                 // 更新此次task的状态：更新成失败
                                 StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
@@ -81,9 +83,13 @@ public class TaskAlipay {
                             AlipayData addAlipayData = TaskMethod.assembleAlipayData(alipayTransferModel, alipayFundTransUniTransferResponse, data);
                             ComponentUtil.taskService.addTransData(addAlipayData);
                         }else{
-                            // 更新此次task的状态：更新成失败
-                            StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-                            ComponentUtil.taskService.updateTransStatus(statusModel);
+                            if (!flag){
+                                // #这里如果阿里支付已经转账成功，则不进行重试了；因为如果重试则表示又要给对方进行转账
+                                // 更新此次task的状态：更新成失败
+                                StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
+                                ComponentUtil.taskService.updateTransStatus(statusModel);
+                            }
+
                         }
                     }
                     // 解锁
