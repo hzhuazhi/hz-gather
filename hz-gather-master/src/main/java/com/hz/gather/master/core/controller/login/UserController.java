@@ -45,7 +45,7 @@ public class UserController {
     * @param jsonData
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
-     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad"}
+     * 字段格式 { "token":"e1a5d05a171242698ba0682c80632b72"}
      * @date 2020/1/9 14:15
      */
     @PostMapping("/queryUserInfo")
