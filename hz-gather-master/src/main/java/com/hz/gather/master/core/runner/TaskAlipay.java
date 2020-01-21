@@ -69,7 +69,7 @@ public class TaskAlipay {
                         if (alipayFundTransUniTransferResponse != null){
                             if (alipayFundTransUniTransferResponse.isSuccess()){
                                 // 添加提现成功数据
-                                ComponentUtil.payService.insertSuccess(data.getMemberId(), data.getMoney().doubleValue());
+                                ComponentUtil.payService.insertSuccess(data.getMemberId(), data.getRealMoney().doubleValue());
                                 // 更新此次task的状态：更新成成功
                                 StatusModel statusModel = TaskMethod.assembleUpdateStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_THREE);
                                 ComponentUtil.taskService.updateTransStatus(statusModel);
