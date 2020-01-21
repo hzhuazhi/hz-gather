@@ -706,6 +706,28 @@ public class PublicMethod {
         return vcMember;
     }
 
+
+    public  static  VcMember  toVcMemberSuperiorIdList(Integer superiorId){
+        VcMember  vcMember =  new  VcMember();
+        List<Integer> list = new ArrayList<>();
+        list.add(superiorId);
+        vcMember.setIdList(list);
+        return vcMember;
+    }
+
+    public  static  List<Integer>   toVcMember(List<VcMember> list){
+        List<Integer>  listrs = new ArrayList<>();
+        if(list.size()==0){
+            return  listrs;
+        }
+
+        for(VcMember vcMember1:list){
+            listrs.add(vcMember1.getMemberId());
+        }
+        return listrs;
+    }
+
+
     /**
      *
      * @param memberId
@@ -731,21 +753,41 @@ public class PublicMethod {
         ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
         reponseMyFriend.setTeam_active_vip(vcMemberResource.getPushPeople()+vcMemberResource.getTeamPeople()+"");
-        reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()-vcMemberResource.getPushPeople()+"");
-        reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()-vcMemberResource.getPushPeople()-vcMemberResource.getTeamPeople()+"");
+        reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()-vcMemberResource.getTeamPeople()+"");
+        reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()-vcMemberResource.getPushPeople()+"");
         List <Object>   rsList = new ArrayList<>();
         for(VcMember vcMember:list){
+//            List<Integer>  list1 = PublicMethod.getMember(vcMemberResource.getMemberId(),vcMember.getBenefitMemberId());
+//            vcMemberResourceM   .selectEightFissionPeople
+            Integer   fissionPeople=ComponentUtil.userInfoService.EightFissionPeople(vcMember.getMemberId());
             FriendModel  friendModel = new FriendModel();
             friendModel.setNickname(vcMember.getNickname());
             friendModel.setNickadd(vcMember.getMemberAdd());
-            friendModel.setMoney(vcMember.getTotalMoney()+"");
+            friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
             friendModel.setVip_type(vcMember.getGradeType()+"");
             friendModel.setCreate_time(vcMember.getCreateTime()+"");
-            friendModel.setFission_people(vcMember.getPushPeople()+"");
+            friendModel.setFission_people(fissionPeople+1+"");
             rsList.add(friendModel);
         }
         reponseMyFriend.setPush_people_list(rsList);
         return reponseMyFriend;
+    }
+
+    /***
+     * 获取有效的下级信息
+     * @param memberId
+     * @param bennfitId
+     * @return
+     */
+    public  static   List<Integer>  getMember(Integer memberId,String  bennfitId){
+        List<Integer>  list = new ArrayList<>();
+        String   [] str = bennfitId.split(",");
+        for(String dd:str){
+            if(memberId<Integer.parseInt(dd)){
+                list.add(Integer.parseInt(dd));
+            }
+        }
+        return list;
     }
 
     /**
@@ -1416,7 +1458,7 @@ public class PublicMethod {
     public static  VcMemberResource   toUqdateVcMemberResourceTeamPeople(Integer  memberId){
         VcMemberResource  vcMemberResource = new VcMemberResource();
         vcMemberResource.setMemberId(memberId);
-        vcMemberResource.setTeamActiveAll(1);
+        vcMemberResource.setTeamPeople(1);
         return vcMemberResource;
     }
 
@@ -1544,7 +1586,7 @@ public class PublicMethod {
         vcMemberResource.setMemberId(uLimited.getMemberId());
         vcMemberResource.setTotalMoney(uLimited.getFissionMoney());
         vcMemberResource.setSurplusMoney(uLimited.getFissionMoney());
-        vcMemberResource.setTeamPeople(list.size());
+//        vcMemberResource.setTeamPeople(list.size());
         return vcMemberResource;
     }
 

@@ -262,7 +262,68 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         UMoneyList   uMoneyList =PublicMethod.insertUMoneyList(memberId, Constant.REWARD_TYPE3,Constant.SYMBO_TYPE1,money);
         VcMemberResource  vcMemberResource= PublicMethod.updateVcMemberResource(memberId,money);
         ComponentUtil.transactionalService.updateCaseMoneyFail(uMoneyList,vcMemberResource);
-
         return 1;
+    }
+
+    @Override
+    public Integer EightFissionPeople(Integer  memberId) {
+
+        List<Integer>   listCount = new ArrayList<>();
+        VcMember  vcMember=PublicMethod.toVcMemberSuperiorIdList(memberId);
+        List<VcMember> rsList =vcMemberMapper.selectSuperiorIdList(vcMember);
+
+        if(rsList==null||rsList.size()==0){
+            return 0;
+        }
+        List<Integer>  listOne = new ArrayList<>();
+        for(VcMember rsVcMember:rsList){
+            listOne.add(rsVcMember.getMemberId());
+            listCount.add(rsVcMember.getMemberId());
+        }
+        List<VcMember> rsList1 = new ArrayList<>();
+        for (int i=1;i<7;i++){
+            if (i == 1){
+                VcMember  vc =new VcMember();
+                vc.setIdList(listOne);
+                rsList1 =vcMemberMapper.selectSuperiorIdList(vc);
+                if(rsList1 == null || rsList1.size() == 0){
+                    break;
+                }
+                for (VcMember vcData : rsList1){
+                    listCount.add(vcData.getMemberId());
+                }
+
+            }else{
+                VcMember  vc =new VcMember();
+                vc.setIdList(PublicMethod.toVcMember(rsList1));
+                rsList1 = vcMemberMapper.selectSuperiorIdList(vc);
+                if(rsList1 == null || rsList1.size() == 0){
+                    break;
+                }
+                for (VcMember vcData : rsList1){
+                    listCount.add(vcData.getMemberId());
+                }
+            }
+//
+//            for(Integer memberIds:listOne){
+//                listCount.add(memberIds);
+//            }
+//            VcMember  vc =new VcMember();
+//            vc.setIdList(listOne);
+//
+//            List<VcMember> rsList1 = new ArrayList<>();
+//            rsList1 =vcMemberMapper.selectSuperiorIdList(vcMember);
+//           listOne=PublicMethod.toVcMember(rsList1);
+//            if(listOne.size()==0){
+//                break;
+//            }
+        }
+        VcMemberResource  vcMemberResource=   new VcMemberResource();
+        vcMemberResource.setIdList(listCount);
+        VcMemberResource  count =vcMemberResourceMapper.selectEightFissionPeople(vcMemberResource);
+        if(count==null){
+            return 0;
+        }
+        return count.getPushPeople();
     }
 }

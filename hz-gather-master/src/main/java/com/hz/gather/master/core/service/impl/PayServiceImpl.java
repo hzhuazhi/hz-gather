@@ -228,7 +228,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                     ComponentUtil.payService.updateTypeNOPermanentVIP(vcMember.getMemberId(),type,Constant.EVERY_PEOPLE_MONEY,outTradeNo,createMemberId);
                 }
                 if(superiorFlag){//上级id 需要更新
-                    ComponentUtil.payService.upgradeVIPUpdateInfo(vcMember.getMemberId(),vcMember.getNickname());
+                    ComponentUtil.payService.upgradeVIPUpdateInfo(vcMember.getMemberId(),vcMember.getNickname(),createMemberId);
                 }
             }else if(vcMember.getGradeType()==2){
                 if(type==1) {
@@ -331,7 +331,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     }
 
     @Override
-    public void upgradeVIPUpdateInfo(Integer memberId,String nickname) {
+    public void upgradeVIPUpdateInfo(Integer memberId,String nickname,Integer createMemberId) {
         ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
         ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
         if(uLimited != null){
@@ -344,7 +344,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 SysNoticeInfo sysNoticeInfo  =PublicMethod.insertNoticeModel(memberId,nickname,1,uLimited.getFissionMoney());
                 List<UBatchLog> list = uBatchLogMapper.selectByBatchNum(uBatchLog);
                 VcMemberResource    vcMemberResource =  PublicMethod.toVcMemberResource(uLimited,list);
-                ComponentUtil.transactionalService.upgradePermanentVIP(vcMemberResource,updatelog,vcMember,uBatchLog,sysNoticeInfo,list);
+                ComponentUtil.transactionalService.upgradePermanentVIP(vcMemberResource,updatelog,vcMember,uBatchLog,sysNoticeInfo,list,createMemberId);
 //                PublicMethod.toUqdateVcMemberResourceVIP();
             }
         }

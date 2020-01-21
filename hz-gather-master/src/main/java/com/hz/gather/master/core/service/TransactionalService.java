@@ -50,7 +50,7 @@ public interface TransactionalService <T> extends BaseService<T> {
 
 
 
-    void  upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list);
+    void  upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list,Integer  createMemberId);
 
 
     int   updateULimitedTimeLogIsValid(ULimitedTimeLog uqdateULimitedTimeLog,ULimitedTimeLog  insertULimitedTimeLog,VcMemberResource vcMemberResource);

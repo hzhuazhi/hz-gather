@@ -83,6 +83,13 @@ public class UMoneyList extends BasePage {
      */
     private Integer isValid;
 
+    /**
+     * 来源id
+     *
+     * @mbggenerated
+     */
+    private Integer createMemberId;
+
 
     public Long getId() {
         return id;
@@ -170,5 +177,13 @@ public class UMoneyList extends BasePage {
 
     public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public Integer getCreateMemberId() {
+        return createMemberId;
+    }
+
+    public void setCreateMemberId(Integer createMemberId) {
+        this.createMemberId = createMemberId;
     }
 }

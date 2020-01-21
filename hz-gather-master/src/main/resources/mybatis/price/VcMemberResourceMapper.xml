@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.VcMemberResourceMapper" >
   <sql id="Base_Column_List" >
     id, member_id, total_money, already_money, surplus_money, cash_money, push_people, 
-    team_people, push_people_all, team_active_all, create_time, update_time, is_valid
+    team_people, push_people_all, team_active_all, create_time, update_time, is_valid,people_all
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberResource">
     select 
@@ -236,5 +236,18 @@
     where member_id = #{memberId}
   </update>
 
+
+  <select id="selectEightFissionPeople" resultType="com.hz.gather.master.core.model.entity.VcMemberResource">
+    select
+    count(push_people)  push_people
+    from vc_member_resource
+    where 1=1
+    <if test="idList != null and idList.size()>0">
+      and member_id  in
+      <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
 
 </mapper>

@@ -109,11 +109,11 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         uLimitedTimeLogMapper.updateByPushNumber(uLimitedTimeLog);
         uBatchLogMapper.insertSelective(uBatchLog);
         vcMemberRewardTotalMapper.updateByCountMoney(vcMemberRewardTotal);
-//        vcMemberResourceMapper.updateUpPeople(vcMemberResource);
+        vcMemberResourceMapper.updateByChargeMoney(vcMemberResource);
     }
 
     @Override
-    public void upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list) {
+    public void upgradePermanentVIP(VcMemberResource vcMemberResource, ULimitedTimeLog updatelog, VcMember vcMember, UBatchLog uBatchLog, SysNoticeInfo noticeModel, List<UBatchLog> list,Integer  createMemberId) {
         for(UBatchLog uBatchLog1:list){
             UMoneyList  uMoneyList  = PublicMethod.insertUMoneyList(vcMemberResource.getMemberId(), Constant.REWARD_TYPE1,Constant.SYMBO_TYPE1,uBatchLog1.getReceiveMoney());
             uMoneyListMapper.insertSelective(uMoneyList);
