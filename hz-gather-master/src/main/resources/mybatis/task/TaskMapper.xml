@@ -8,7 +8,7 @@
     <!-- 定义数据库基本列,只适用代替单表的-要转账的数据*-->
     <sql id="Base_Column_List_UCashOutLog">
         a.id,a.member_id,a.out_trade_no,a.receiva_pay_id,a.money,a.payment_type,a.zfb_name,a.remarks,
-        a.run_num,a.run_status,a.create_time,a.update_time,a.is_valid
+        a.run_num,a.run_status,a.create_time,a.update_time,a.is_valid,a.real_money
     </sql>
 
 
