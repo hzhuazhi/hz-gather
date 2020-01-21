@@ -61,6 +61,7 @@ public class TaskHodgepodge {
                     boolean flagLock = ComponentUtil.redisIdService.lock(lockKey);
                     if (flagLock){
 //                        int num = 1;
+                        // 执行用户金额返还
                         int num = ComponentUtil.userInfoService.caseMoneyFail(data.getMemberId(), data.getRealMoney().doubleValue());
                         if (num == ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE){
                             // 更新此次task的状态：更新成成功
