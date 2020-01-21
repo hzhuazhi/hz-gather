@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.UCashOutLogMapper" >
   <sql id="Base_Column_List" >
     id, member_id, receiva_pay_id, money, curday, curhour, curminute, create_time,
-    update_time, payment_type, is_valid,zfb_name,remarks,run_status,run_num
+    update_time, payment_type, is_valid,zfb_name,remarks,run_status,run_num,real_money
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UCashOutLog"  >
     select 
@@ -61,6 +61,9 @@
       <if test="outTradeNo != null" >
         out_trade_no,
       </if>
+      <if test="realMoney != null" >
+        real_money,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -105,6 +108,9 @@
       <if test="outTradeNo != null" >
         #{outTradeNo},
       </if>
+      <if test="realMoney != null" >
+        #{realMoney},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.UCashOutLog" >
@@ -145,6 +151,9 @@
       </if>
       <if test="remarks != null" >
         remarks = #{remarks},
+      </if>
+      <if test="realMoney != null" >
+        real_money = #{realMoney},
       </if>
     </set>
     where id = #{id}
@@ -221,10 +230,10 @@
     from u_cash_out_log
     where 1=1
     <if test="curday != null" >
-     and   curday = #{curday},
+     and   curday = #{curday}
     </if>
     <if test="memberId != null" >
-      and  member_id = #{memberId},
+      and  member_id = #{memberId}
     </if>
     and  run_status = 3
   </select>

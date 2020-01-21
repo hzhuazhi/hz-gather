@@ -204,7 +204,6 @@ public class PublicMethod {
 
     public  static VcMemberResource updateResourcePeopleAll(Integer memberId,String extensionMemberId){
         VcMemberResource   vcMemberResourceModel  =  new  VcMemberResource();
-
         String []   rgs = extensionMemberId.split(",");
         List<Integer>   idList = new ArrayList<>();
         for(String str:rgs){
@@ -213,9 +212,7 @@ public class PublicMethod {
             }
         }
         vcMemberResourceModel.setIdList(idList);
-//        vcMemberResourceModel.setMemberId(memberId);
-        vcMemberResourceModel.setPushPeopleAll(1);
-        vcMemberResourceModel.setTeamActiveAll(1);
+        vcMemberResourceModel.setPeopleAll(1);
         vcMemberResourceModel.setUpdateTime(new Date());
         return   vcMemberResourceModel;
     }
@@ -454,6 +451,15 @@ public class PublicMethod {
         vcMemberResource.setMemberId(memberId);
         return vcMemberResource;
     }
+
+
+    public  static  VcMemberResource  updateVcMemberResource(Integer memberId,Double money){
+        VcMemberResource  vcMemberResource =  new  VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setSurplusMoney(new BigDecimal(money));
+        return vcMemberResource;
+    }
+
 
 
     /**
@@ -999,7 +1005,7 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/10 14:39
      */
-    public static  UCashOutLog   toUCashOutLog(Integer  memberId,String aliPayNo,String aliName,String outTradeNo,Double money){
+    public static  UCashOutLog   toUCashOutLog(Integer  memberId,String aliPayNo,String aliName,String outTradeNo,Double money,Double realMoney){
         UCashOutLog  uCashOutLog  = new  UCashOutLog();
         DateModel dateModel= PublicMethod.getDate();
         BeanUtils.copy(dateModel,uCashOutLog);
@@ -1008,6 +1014,7 @@ public class PublicMethod {
         uCashOutLog.setRemarks(Constant.PAY_REMARKS);
         uCashOutLog.setReceivaPayId(aliPayNo);
         uCashOutLog.setOutTradeNo(outTradeNo);
+        uCashOutLog.setRealMoney(new BigDecimal(realMoney));
         uCashOutLog.setMoney(new BigDecimal(Double.toString(money)));
         return uCashOutLog;
     }
@@ -1363,13 +1370,17 @@ public class PublicMethod {
         UMoneyLogResp uMoneyLogResp = new UMoneyLogResp();
         if(uMoneyList.getRewardType()==1){
             uMoneyLogResp.setReward_type_value("裂变收益");
-        }else{
+        }else if(uMoneyList.getRewardType()==2){
             uMoneyLogResp.setReward_type_value("提现成功");
+        }else if(uMoneyList.getRewardType()==3){
+            uMoneyLogResp.setReward_type_value("提现失败");
         }
         uMoneyLogResp.setSymbol_type_key(uMoneyList.getRewardType());
 
         if(uMoneyList.getRewardType()==1){
             uMoneyLogResp.setSymbol_type_value("收入");
+        }else if(uMoneyList.getRewardType()==3){
+            uMoneyLogResp.setSymbol_type_value("已返还");
         }else{
             uMoneyLogResp.setSymbol_type_value("支出");
         }
@@ -1684,5 +1695,29 @@ public class PublicMethod {
     }
 
 
+    /***
+     * 修改用户的人数
+     * @param memberId   自己不计算id
+     * @param extensionMemberId   总的id
+     * @param superiorId    上级id
+     * @return
+     */
+    public  static List<VcMemberResource> updatePeopleInfo(Integer memberId,String extensionMemberId,Integer superiorId ){
+        List<VcMemberResource>  list =    new ArrayList<>();
+        String []   rgs = extensionMemberId.split(",");
+        for(String str:rgs){
+            if(memberId!=Integer.parseInt(str)){
+                VcMemberResource   vcMemberResource =  new VcMemberResource();
+                vcMemberResource.setMemberId(Integer.parseInt(str));
+                if(Integer.parseInt(str)==superiorId){
+                    vcMemberResource.setPushPeopleAll(1);
+                }else{
+                    vcMemberResource.setTeamActiveAll(1);
+                }
+                list.add(vcMemberResource);
+            }
+        }
+        return   list;
+    }
 
 }

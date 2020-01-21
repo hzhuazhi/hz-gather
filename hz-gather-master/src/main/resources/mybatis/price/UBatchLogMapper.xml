@@ -7,7 +7,7 @@
   </sql>
 
   <sql id="Base_Column_List_Member" >
-       b.member_add,b.phone,b.nickname,a.batch_num,a.data_type,a.receive_money
+       b.member_add,b.phone,b.nickname,a.batch_num,a.data_type,a.receive_money,a.member_id
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UBatchLog"  >
     select 

@@ -165,9 +165,6 @@
     where member_id = #{memberId}
   </update>
 
-
-
-
   <update id="updateUpPeopleAll" parameterType="com.hz.gather.master.core.model.entity.VcMemberResource" >
     update vc_member_resource
     <set >
@@ -177,8 +174,14 @@
       <if test="pushPeopleAll != null" >
         push_people_all =push_people_all+ #{pushPeopleAll},
       </if>
+      <if test="peopleAll != null" >
+        people_all =people_all+ #{peopleAll},
+      </if>
     </set>
     where 1=1
+    <if test="memberId != null" >
+     and  member_id = #{memberId}
+    </if>
     <if test="idList != null and idList.size()>0">
       and member_id  in
       <foreach item="item" index="index" collection="idList" open="(" separator="," close=")">

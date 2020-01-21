@@ -53,6 +53,13 @@ public class UCashOutLog extends BasePage {
     private BigDecimal money;
 
     /**
+     * 真实金额
+     *
+     * @mbggenerated
+     */
+    private BigDecimal realMoney;
+
+    /**
      * 创建日期：存的日期格式20160530
      *
      * @mbggenerated
@@ -251,5 +258,13 @@ public class UCashOutLog extends BasePage {
 
     public void setNum(Integer num) {
         this.num = num;
+    }
+
+    public BigDecimal getRealMoney() {
+        return realMoney;
+    }
+
+    public void setRealMoney(BigDecimal realMoney) {
+        this.realMoney = realMoney;
     }
 }
