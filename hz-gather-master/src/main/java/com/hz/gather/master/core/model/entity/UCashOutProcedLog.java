@@ -81,6 +81,11 @@ public class UCashOutProcedLog {
      */
     private Boolean isValid;
 
+    /**
+     * 用户提现/系统转账是否成功：1成功，2失败
+     */
+    private Integer isOk;
+
     public Long getId() {
         return id;
     }
@@ -167,5 +172,13 @@ public class UCashOutProcedLog {
 
     public void setIsValid(Boolean isValid) {
         this.isValid = isValid;
+    }
+
+    public Integer getIsOk() {
+        return isOk;
+    }
+
+    public void setIsOk(Integer isOk) {
+        this.isOk = isOk;
     }
 }

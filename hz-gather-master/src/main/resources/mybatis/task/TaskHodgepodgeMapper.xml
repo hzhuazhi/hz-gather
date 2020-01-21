@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hz.gather.master.core.mapper.TaskHodgepodgeMapper">
+
+
+
+
+    <!-- 定义数据库基本列,只适用代替单表的-要转账的数据*-->
+    <sql id="Base_Column_List_UCashOutLog">
+        a.id,a.member_id,a.out_trade_no,a.receiva_pay_id,a.money,a.payment_type,a.zfb_name,a.remarks,
+        a.run_num,a.run_status,a.create_time,a.update_time,a.is_valid,a.handle_num,a.handle_status,a.real_money
+    </sql>
+
+
+
+    <!-- 查询条件-要转的数据 -->
+    <sql id="Example_Where_Clause_UCashOutLog">
+        where 1=1
+        <trim  suffixOverrides="," >
+            <if test="id != null and id != '' " >
+                and a.id = #{id}
+            </if>
+            <if test="curday != null and curday != '' " >
+                and a.curday = #{curday}
+            </if>
+            <if test="curdayStart != null and curdayStart != '' and curdayEnd != null and curdayEnd != '' " >
+                and a.curday >= #{curdayStart} and a.curday &lt;= #{curdayEnd}
+            </if>
+            and (a.run_num = 5 and a.run_status = 2 ) or a.run_status = 3
+            <if test="handleNum != null and handleNum != '' " >
+                and a.handle_num &lt; #{handleNum}
+            </if>
+            <if test="handleStatus != null and handleStatus != '' " >
+                and a.handle_status &lt; #{handleStatus}
+            </if>
+            and a.is_valid = 1
+        </trim>
+    </sql>
+
+
+
+    <!-- 查询条件_id -->
+    <sql id="Example_Where_Clause_id">
+        where 1=1
+        <trim  suffixOverrides="," >
+            <if test="id != null and id != '' " >
+                and a.id = #{id}
+            </if>
+            <!--and a.yn =  0-->
+        </trim>
+    </sql>
+
+
+
+    <!-- 查询转账、提现结果的数据 -->
+    <select id="getTransferResultList" parameterType="Object" resultType="com.hz.gather.master.core.model.entity.UCashOutLog">
+        select
+        <include refid="Base_Column_List_UCashOutLog" />
+        from u_cash_out_log a
+        <include refid="Example_Where_Clause_UCashOutLog"/>
+        limit #{limitNum}
+    </select>
+
+
+    <!-- 更新转账、提现结果的数据的运行成功、失败的结果 -->
+    <update id="updateTransResultStatus" parameterType="Object">
+        UPDATE u_cash_out_log a
+        <trim prefix="set" suffixOverrides=",">
+            <if test="handleNum != null and handleNum != '' " >
+                a.handle_num = a.handle_num + #{handleNum},
+            </if>
+            <if test="handleStatus != null and handleStatus != '' " >
+                a.handle_status = #{handleStatus},
+            </if>
+            a.update_time = NOW(),
+        </trim>
+        <include refid="Example_Where_Clause_id"/>
+    </update>
+
+
+    <!-- 用户转账/提现失败，更新状态 -->
+    <update id="updateCashOutProcedLogTheIsOk" parameterType="Object">
+        UPDATE u_cash_out_proced_log a
+        <trim prefix="set" suffixOverrides=",">
+            <if test="isOk != null and isOk != '' " >
+                a.is_ok = #{isOk},
+            </if>
+        </trim>
+        where 1=1
+        and a.member_id = #{memberId}
+        and a.out_trade_no = #{outTradeNo}
+    </update>
+
+
+
+</mapper>

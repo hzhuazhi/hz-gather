@@ -32,6 +32,7 @@ public class ComponentUtil {
     public static SpreadNoticeService spreadNoticeService;
     public static InitServiceImpl initServiceImpl;
     public static PayCustService payCustService;
+    public static TaskHodgepodgeService taskHodgepodgeService;
 
 
 }

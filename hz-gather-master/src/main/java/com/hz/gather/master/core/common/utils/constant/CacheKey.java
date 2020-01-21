@@ -105,4 +105,10 @@ public interface CacheKey {
      * 阿里支付：用户频繁调起支付宝转账
      */
     String ALIPAY_MEMBER = "-15";
+
+    /**
+     * task操作支付宝转账结果操作
+     * 如果多台服务器运行，会出现问题，所以在变量名称前加了lock
+     */
+    String LOCK_TRANSFER_RESULT = "-17";
 }

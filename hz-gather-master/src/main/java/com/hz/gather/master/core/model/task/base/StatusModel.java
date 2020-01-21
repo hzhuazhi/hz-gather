@@ -39,6 +39,16 @@ public class StatusModel implements Serializable {
     private Integer runStatusWhere;
 
     /**
+     * 运行次数
+     */
+    private Integer handleNum;
+
+    /**
+     * 运行计算状态：0初始化，1锁定，2计算失败，3计算成功
+     */
+    private Integer handleStatus;
+
+    /**
      * 查询多少条数据
      */
     private Integer limitNum;
@@ -124,5 +134,19 @@ public class StatusModel implements Serializable {
         this.runStatusWhere = runStatusWhere;
     }
 
+    public Integer getHandleNum() {
+        return handleNum;
+    }
 
+    public void setHandleNum(Integer handleNum) {
+        this.handleNum = handleNum;
+    }
+
+    public Integer getHandleStatus() {
+        return handleStatus;
+    }
+
+    public void setHandleStatus(Integer handleStatus) {
+        this.handleStatus = handleStatus;
+    }
 }

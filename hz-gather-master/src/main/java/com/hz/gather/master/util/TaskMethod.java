@@ -10,6 +10,7 @@ import com.hz.gather.master.core.model.alipay.AlipayData;
 import com.hz.gather.master.core.model.alipay.AlipayTransferModel;
 import com.hz.gather.master.core.model.alipay.PayeeInfo;
 import com.hz.gather.master.core.model.entity.UCashOutLog;
+import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
 import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.task.base.StatusModel;
 import org.apache.commons.lang.StringUtils;
@@ -169,6 +170,58 @@ public class TaskMethod {
         resBean.setCurday(DateUtil.getDayNumber(new Date()));
         resBean.setCurhour(DateUtil.getHour(new Date()));
         resBean.setCurminute(DateUtil.getCurminute(new Date()));
+        return resBean;
+    }
+
+
+    /**
+     * @Description: 组装查询定时任务阿里支付宝转账失败、成功的查询条件
+     * @param limitNum - 多少条数据
+     * @return
+     * @author yoko
+     * @date 2020/1/11 16:23
+     */
+    public static StatusModel assembleTaskByCashOutHandleStatusQuery(int limitNum){
+        StatusModel resBean = new StatusModel();
+        resBean.setHandleNum(ServerConstant.PUBLIC_CONSTANT.RUN_NUM_FIVE);
+        resBean.setHandleStatus(ServerConstant.PUBLIC_CONSTANT.RUN_STATUS_THREE);
+        resBean.setLimitNum(limitNum);
+        return resBean;
+    }
+
+    /**
+     * @Description: 组装更改运行状态的数据
+     * @param id - 主键ID
+     * @param runStatus - 运行计算状态：：0初始化，1锁定，2计算失败，3计算成功
+     * @return StatusModel
+     * @author yoko
+     * @date 2019/12/10 10:42
+     */
+    public static StatusModel assembleUpdateResultStatusModel(long id, int runStatus){
+        StatusModel resBean = new StatusModel();
+        resBean.setId(id);
+        resBean.setHandleStatus(runStatus);
+        if (runStatus == ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO){
+            // 表示失败：失败则需要运行次数加一
+            resBean.setHandleNum(ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE);
+        }
+        return resBean;
+    }
+
+    /**
+     * @Description: 组装更新用户提现结果的更新数据
+     * @param memberId - 用户ID
+     * @param outTradeNo - 订单号
+     * @param isOk - 用户提现/系统转账是否成功：0初始化，1成功，2失败
+     * @return com.hz.gather.master.core.model.entity.UCashOutProcedLog
+     * @author yoko
+     * @date 2020/1/21 20:56
+     */
+    public static UCashOutProcedLog assembleUCashOutProcedLog(Integer memberId, String outTradeNo, Integer isOk){
+        UCashOutProcedLog resBean = new UCashOutProcedLog();
+        resBean.setMemberId(memberId);
+        resBean.setOutTradeNo(outTradeNo);
+        resBean.setIsOk(isOk);
         return resBean;
     }
 }
