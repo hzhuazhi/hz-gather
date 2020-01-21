@@ -26,13 +26,13 @@
             <if test="curdayStart != null and curdayStart != '' and curdayEnd != null and curdayEnd != '' " >
                 and a.curday >= #{curdayStart} and a.curday &lt;= #{curdayEnd}
             </if>
-            and (a.run_num = 5 and a.run_status = 2 ) or a.run_status = 3
+            and ((a.run_num = 5 and a.run_status = 2) or a.run_status = 3)
             <if test="handleNum != null and handleNum != '' " >
-                and a.handle_num &lt; #{handleNum}
+                and ( a.handle_num &lt; #{handleNum} and a.handle_status &lt; #{handleStatus} )
             </if>
-            <if test="handleStatus != null and handleStatus != '' " >
-                and a.handle_status &lt; #{handleStatus}
-            </if>
+            <!--<if test="handleStatus != null and handleStatus != '' " >-->
+                <!--and a.handle_status &lt; #{handleStatus}-->
+            <!--</if>-->
             and a.is_valid = 1
         </trim>
     </sql>

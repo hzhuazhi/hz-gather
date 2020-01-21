@@ -62,7 +62,7 @@ public class TaskHodgepodge {
                     if (flagLock){
                         if (data.getRunStatus() == ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO){
                             // 执行用户金额返还
-                            int num = ComponentUtil.userInfoService.caseMoneyFail(data.getMemberId(), data.getRealMoney().doubleValue());
+                            int num = ComponentUtil.userInfoService.caseMoneyFail(data.getMemberId(), data.getRealMoney().doubleValue(), data.getOutTradeNo());
                             if (num == ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ONE){
                                 // 更新此次task的状态：更新成成功
                                 StatusModel statusModel = TaskMethod.assembleUpdateResultStatusModel(data.getId(), ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_THREE);
