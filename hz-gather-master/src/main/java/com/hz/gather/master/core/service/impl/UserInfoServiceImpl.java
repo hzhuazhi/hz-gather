@@ -258,8 +258,14 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
     }
 
     @Override
-    public Integer caseMoneyFail(Integer memberId, Double money) {
-        UMoneyList   uMoneyList =PublicMethod.insertUMoneyList(memberId, Constant.REWARD_TYPE3,Constant.SYMBO_TYPE1,money);
+    public Integer caseMoneyFail(Integer memberId, Double money,String outTradeNo) {
+        UMoneyList  query=PublicMethod.quertUMoneyList(outTradeNo);
+        UMoneyList  list= uMoneyListMapper.selectByPrimaryKey(query);
+        if(list!=null){
+            return 1;
+        }
+
+        UMoneyList   uMoneyList =PublicMethod.insertUMoneyList(memberId, Constant.REWARD_TYPE3,Constant.SYMBO_TYPE1,money,outTradeNo);
         VcMemberResource  vcMemberResource= PublicMethod.updateVcMemberResource(memberId,money);
         ComponentUtil.transactionalService.updateCaseMoneyFail(uMoneyList,vcMemberResource);
         return 1;

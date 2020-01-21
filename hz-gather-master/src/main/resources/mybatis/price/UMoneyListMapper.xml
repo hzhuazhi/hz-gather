@@ -3,13 +3,19 @@
 <mapper namespace="com.hz.gather.master.core.mapper.UMoneyListMapper" >
   <sql id="Base_Column_List" >
     id, member_id, reward_type, symbol_type, money, curday, curhour, curminute, create_time, 
-    update_time, is_valid
+    update_time, is_valid,out_trade_no
   </sql>
-  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UMoneyList" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.UMoneyList" >
     select 
     <include refid="Base_Column_List" />
     from u_money_list
-    where member_id = #{memberId}
+    where 1=1
+    <if test="memberId != null and memberId != '' " >
+      and member_id = #{memberId}
+    </if>
+    <if test="outTradeNo != null and outTradeNo != '' " >
+      and out_trade_no = #{outTradeNo}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from u_money_list
@@ -51,6 +57,9 @@
       <if test="isValid != null" >
         is_valid,
       </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -85,6 +94,9 @@
       </if>
       <if test="isValid != null" >
         #{isValid,jdbcType=BIT},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo},
       </if>
     </trim>
   </insert>

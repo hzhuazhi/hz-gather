@@ -1335,6 +1335,26 @@ public class PublicMethod {
         return uMoneyList;
     }
 
+
+    public  static UMoneyList  insertUMoneyList(Integer memberId,Integer rewardType,Integer symbolType,Double money,String outTradeNo){
+        DateModel dateModel= PublicMethod.getDate();
+        UMoneyList  uMoneyList = new UMoneyList();
+        BeanUtils.copy(dateModel,uMoneyList);
+        uMoneyList.setMemberId(memberId);
+        uMoneyList.setRewardType(rewardType);
+        uMoneyList.setSymbolType(symbolType);
+        uMoneyList.setOutTradeNo(outTradeNo);
+        uMoneyList.setMoney(new BigDecimal(Double.valueOf(money)));
+        return uMoneyList;
+    }
+
+
+    public  static UMoneyList  quertUMoneyList(String outTradeNo){
+        UMoneyList  uMoneyList = new UMoneyList();
+        uMoneyList.setOutTradeNo(outTradeNo);
+        return uMoneyList;
+    }
+
     public  static UMoneyList  insertUMoneyList(Integer memberId,Integer rewardType,Integer symbolType,BigDecimal money){
         DateModel dateModel= PublicMethod.getDate();
         UMoneyList  uMoneyList = new UMoneyList();

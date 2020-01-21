@@ -391,7 +391,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
                 cashRate.setValue("提现成功!");
             }
             cashRate.setCreate_time(sdfLongTimePlus.format(uCashOutLog1.getCreateTime()));
-            cashRate.setMoney(uCashOutLog1.getMoney()+"");
+            cashRate.setMoney(uCashOutLog1.getRealMoney()+"");
             list1.add(cashRate);
         }
         return list1;

@@ -89,7 +89,12 @@ public class UMoneyList extends BasePage {
      * @mbggenerated
      */
     private Integer createMemberId;
-
+    /**
+     * 失败订单号
+     *
+     * @mbggenerated
+     */
+    private String outTradeNo;
 
     public Long getId() {
         return id;
@@ -185,5 +190,13 @@ public class UMoneyList extends BasePage {
 
     public void setCreateMemberId(Integer createMemberId) {
         this.createMemberId = createMemberId;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
     }
 }
