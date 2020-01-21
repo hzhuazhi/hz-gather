@@ -1443,6 +1443,7 @@ public class PublicMethod {
             uMoneyLogResp.setSymbol_type_value("收入");
         }else if(uMoneyList.getRewardType()==3){
             uMoneyLogResp.setSymbol_type_value("已返还");
+            uMoneyLogResp.setSymbol_type_key(1);
         }else{
             uMoneyLogResp.setSymbol_type_value("支出");
         }
