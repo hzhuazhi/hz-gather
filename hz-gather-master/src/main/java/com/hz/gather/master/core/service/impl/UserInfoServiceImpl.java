@@ -281,7 +281,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             listCount.add(rsVcMember.getMemberId());
         }
         List<VcMember> rsList1 = new ArrayList<>();
-        for (int i=1;i<7;i++){
+        for (int i=1;i<8;i++){
             if (i == 1){
                 VcMember  vc =new VcMember();
                 vc.setIdList(listOne);
