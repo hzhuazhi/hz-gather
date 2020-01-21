@@ -107,7 +107,8 @@ public class Alipay {
         try{
             CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
             certAlipayRequest.setServerUrl("https://openapi.alipay.com/gateway.do");
-            certAlipayRequest.setAppId("2017072507891356");
+//            certAlipayRequest.setAppId("2017072507891356");
+            certAlipayRequest.setAppId("2019072665936796");
             certAlipayRequest.setPrivateKey(privateKey);
             certAlipayRequest.setFormat("json");
             certAlipayRequest.setCharset("UTF-8");
