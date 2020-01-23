@@ -362,6 +362,7 @@
         #{item}
       </foreach>
     </if>
+    and  grade_type!=0
   </select>
 
 
