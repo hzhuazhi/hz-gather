@@ -763,7 +763,12 @@ public class PublicMethod {
             FriendModel  friendModel = new FriendModel();
             friendModel.setNickname(vcMember.getNickname());
             friendModel.setNickadd(vcMember.getMemberAdd());
-            friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
+            if(vcMember.getGradeType()==0){
+                friendModel.setMoney(0+"");
+            }else{
+                friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
+            }
+//            friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
             friendModel.setVip_type(vcMember.getGradeType()+"");
             friendModel.setCreate_time(vcMember.getCreateTime()+"");
             friendModel.setFission_people(fissionPeople+1+"");
