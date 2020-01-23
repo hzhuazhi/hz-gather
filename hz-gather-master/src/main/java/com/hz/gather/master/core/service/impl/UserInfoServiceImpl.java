@@ -116,6 +116,10 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
     @Override
     public ResponseMyFriend queryMyFriend(Integer memberId) throws Exception {
+
+        VcMember  vcMember1=PublicMethod.toVcMember(memberId);
+        VcMember  rsvcMember = vcMemberMapper.selectByPrimaryKey(vcMember1);
+
         VcMemberResource    vcMemberResource  =  PublicMethod.toVcMemberResource(memberId);
         VcMemberResource  rsVcMemberResource = vcMemberResourceMapper.selectByPrimaryKey(vcMemberResource);
 
@@ -125,7 +129,7 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         if(rsVcMemberResource ==null ){
             throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
         }
-        ResponseMyFriend reponseMyFriend=PublicMethod.toVcMemberSuperiorId(rsVcMemberResource,list);
+        ResponseMyFriend reponseMyFriend=PublicMethod.toVcMemberSuperiorId(rsVcMemberResource,list,rsvcMember);
         return reponseMyFriend;
     }
 

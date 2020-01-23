@@ -749,29 +749,41 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/9 11:39
      */
-    public  static ResponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource, List<VcMember>   list){
+    public  static ResponseMyFriend toVcMemberSuperiorId(VcMemberResource vcMemberResource, List<VcMember>   list,VcMember rsvcMember){
         ResponseMyFriend  reponseMyFriend =  new  ResponseMyFriend();
         reponseMyFriend.setPush_people_vip(vcMemberResource.getPushPeople()+"");
         reponseMyFriend.setTeam_active_vip(vcMemberResource.getPushPeople()+vcMemberResource.getTeamPeople()+"");
         reponseMyFriend.setTeam_active_all(vcMemberResource.getTeamActiveAll()-vcMemberResource.getTeamPeople()+"");
         reponseMyFriend.setPush_people_all(vcMemberResource.getPushPeopleAll()-vcMemberResource.getPushPeople()+"");
         List <Object>   rsList = new ArrayList<>();
+
         for(VcMember vcMember:list){
 //            List<Integer>  list1 = PublicMethod.getMember(vcMemberResource.getMemberId(),vcMember.getBenefitMemberId());
 //            vcMemberResourceM   .selectEightFissionPeople
-            Integer   fissionPeople=ComponentUtil.userInfoService.EightFissionPeople(vcMember.getMemberId());
+            Integer   fissionPeople=0;
             FriendModel  friendModel = new FriendModel();
             friendModel.setNickname(vcMember.getNickname());
             friendModel.setNickadd(vcMember.getMemberAdd());
-            if(vcMember.getGradeType()==0){
-                friendModel.setMoney(0+"");
+
+            if(rsvcMember.getGradeType()==2){
+                fissionPeople = ComponentUtil.userInfoService.EightFissionPeople(vcMember.getMemberId());
+                if(vcMember.getGradeType()==0){
+                    friendModel.setMoney(0+"");
+                }else{
+                    friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
+                }
             }else{
-                friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
+                if(vcMember.getGradeType()==0){
+                    friendModel.setMoney(0+"");
+                }else{
+                    friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+"");
+                }
             }
+
 //            friendModel.setMoney(Constant.PUSH_PEOPLE_MONEY+fissionPeople*Constant.EVERY_PEOPLE_MONEY+"");
             friendModel.setVip_type(vcMember.getGradeType()+"");
             friendModel.setCreate_time(vcMember.getCreateTime()+"");
-            friendModel.setFission_people(fissionPeople+1+"");
+            friendModel.setFission_people(fissionPeople+"");
             rsList.add(friendModel);
         }
         reponseMyFriend.setPush_people_list(rsList);
