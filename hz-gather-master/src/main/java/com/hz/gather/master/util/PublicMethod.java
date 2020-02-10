@@ -596,13 +596,18 @@ public class PublicMethod {
     public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog,List<UBatchLog> list ,List<VcMember> listVcMember)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
         responseUserInfo.setUserCaseMax(Constant.USERCASHMAX);
-        responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
         responseUserInfo.setNickname(vcMember.getNickname());
         responseUserInfo.setSex(vcMember.getSex()+"");
         responseUserInfo.setBirthday(vcMember.getBirthday());
         responseUserInfo.setPhone(vcMember.getPhone());
-        responseUserInfo.setInviteCode(vcMember.getInviteCode());
+        responseUserInfo.setInviteCode("");
+        responseUserInfo.setRq_code("");
+        if(vcMember.getGradeType()!=0){
+            responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
+            responseUserInfo.setInviteCode(vcMember.getInviteCode());
+        }
+
 
         Long  time1=vcMember.getCreateTime()*1000L;
         String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time1);
@@ -1758,7 +1763,15 @@ public class PublicMethod {
         vcMemberRewardTotal.setTotalMoney(totalMoney);
         vcMemberRewardTotal.setMemberId(memberId);
         vcMemberRewardTotal.setIsCount(type);
-        vcMemberRewardTotal.setNotCountMoney(new BigDecimal("0"));
+//        vcMemberRewardTotal.setNotCountMoney(new BigDecimal("0"));
+        return  vcMemberRewardTotal;
+    }
+
+
+    public  static VcMemberRewardTotal  uqdateVcMemberRewardTotal(Integer memberId,Integer type){
+        VcMemberRewardTotal  vcMemberRewardTotal =  new VcMemberRewardTotal();
+        vcMemberRewardTotal.setMemberId(memberId);
+        vcMemberRewardTotal.setIsCount(type);
         return  vcMemberRewardTotal;
     }
 

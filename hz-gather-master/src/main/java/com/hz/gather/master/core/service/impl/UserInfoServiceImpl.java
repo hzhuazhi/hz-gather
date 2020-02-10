@@ -227,27 +227,44 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
     @Override
     public void compareRewardTotal(VcMemberRewardTotal vcMemberRewardTotal) {
+        int count  = 0;
         List<SysNoticeAsk>  list = SysNoticeAskSingleton.getInstance().getSysNoticeAskList();
+
+        SysNoticeInfo    sysNoticeInfo   =  new SysNoticeInfo();
+        VcMemberRewardTotal  vcMemberRewardTotal1 =null;
         for(SysNoticeAsk  sysNoticeAsk:list ){
             if(vcMemberRewardTotal.getRewardLevel()==8){
                 break;
             }
+            System.out.println("========="+sysNoticeAsk.getLevel());
+            System.out.println("========="+vcMemberRewardTotal.getRewardLevel());
            if(sysNoticeAsk.getLevel()>vcMemberRewardTotal.getRewardLevel()){
                BigDecimal  levelBig =  sysNoticeAsk.getReceiveMoney();
                BigDecimal  userLeve =  StringUtil.getBigDecimalAdd(vcMemberRewardTotal.getNotCountMoney(),vcMemberRewardTotal.getTotalMoney());
 
-               if(userLeve.compareTo(levelBig)>0){
+               if(userLeve.compareTo(levelBig)>=0){
                    VcMember  vcMember1 =PublicMethod.toVcMember(vcMemberRewardTotal.getMemberId());
                    VcMember vcMember  =vcMemberMapper.selectByPrimaryKey(vcMember1);
                    if(vcMember==null){
                        break;
                    }
-                   VcMemberRewardTotal  vcMemberRewardTotal1 = PublicMethod.uqdateVcMemberRewardTotal(vcMemberRewardTotal.getMemberId(),1,userLeve);
-                   SysNoticeInfo               sysNoticeInfo = PublicMethod.insertSysNoticeInfo(vcMemberRewardTotal.getMemberId(),sysNoticeAsk.getLevel(),vcMember.getNickname(),sysNoticeAsk.getReceiveMoney());
-                   ComponentUtil.transactionalService.insertSysNoticeInfo(vcMemberRewardTotal1,sysNoticeInfo);
+                   vcMemberRewardTotal1 = PublicMethod.uqdateVcMemberRewardTotal(vcMemberRewardTotal.getMemberId(),1,userLeve);
+                   sysNoticeInfo = PublicMethod.insertSysNoticeInfo(vcMemberRewardTotal.getMemberId(),sysNoticeAsk.getLevel(),vcMember.getNickname(),sysNoticeAsk.getReceiveMoney());
+
+                   count++;
+               }else{
+                   break;
                }
            }
         }
+
+        if(count==0){
+            VcMemberRewardTotal  updateVcMemberRewardTotal =PublicMethod.uqdateVcMemberRewardTotal(vcMemberRewardTotal.getMemberId(),1);
+            vcMemberRewardTotalMapper.updateByCountMoney(updateVcMemberRewardTotal);
+        }else{
+            ComponentUtil.transactionalService.insertSysNoticeInfo(vcMemberRewardTotal1,sysNoticeInfo);
+        }
+
     }
 
     @Override

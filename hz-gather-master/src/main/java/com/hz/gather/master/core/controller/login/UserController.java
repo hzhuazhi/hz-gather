@@ -147,7 +147,7 @@ public class UserController {
      * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad"}
      * @author long
      * local:   http://localhost:8082/mg/user/queryUser
-     * 字段格式: { "token":"xxxaxxsadasqweqeqweqsad"}
+     * 字段格式: { "token":"de7c16c96ccd475c8108935db685584e"}
      * {
      *     "resultCode": "0",
      *     "message": "success",
@@ -257,7 +257,7 @@ public class UserController {
      * @return com.hz.gather.master.core.common.utils.JsonResult<java.lang.Object>
      * @author long
      * local:   http://localhost:8082/mg/user/myFundList
-     * 字段格式 { "token":"xxxaxxsadasqweqeqweqsad","pageNumber":1,"pageSize":3}
+     * 字段格式 { "token":"de7c16c96ccd475c8108935db685584e","pageNumber":1,"pageSize":3}
      * @date 2020/1/9 19:54
      */
     @PostMapping("/myFundList")

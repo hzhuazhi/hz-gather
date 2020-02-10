@@ -131,12 +131,12 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         UCashOutProcedLog uCashOutProcedLog  =  null;
         Double   moneyCashOut = 0D;
         Double   moneyProced  = 0D;
-        if(money == Constant.PAY_MAX_MOMNEY){
-            moneyCashOut = Constant.PAY_MAX_MOMNEY;
-        }else{
-            moneyCashOut = (1-Constant.SERVICE_MOMNEY)*money;
-            moneyProced  = Constant.SERVICE_MOMNEY * money;
-        }
+//        if(money == Constant.PAY_MAX_MOMNEY){
+//            moneyCashOut = Constant.PAY_MAX_MOMNEY;
+//        }else{
+            moneyCashOut = money;
+//            moneyProced  = Constant.SERVICE_MOMNEY * money;
+//        }
 
         uCashOutLog  =  PublicMethod.toUCashOutLog(memberId,aliPayNo,alname,outTradeNo,moneyCashOut,money);
         if(moneyProced!=0D){

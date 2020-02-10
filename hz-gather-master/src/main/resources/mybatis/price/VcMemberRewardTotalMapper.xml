@@ -3,7 +3,7 @@
 <mapper namespace="com.hz.gather.master.core.mapper.VcMemberRewardTotalMapper" >
   <sql id="Base_Column_List" >
     id, member_id, total_money, curday, curhour, curminute, create_time, update_time, not_count_money,is_count,
-    is_valid
+    is_valid,reward_level
   </sql>
   <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcMemberRewardTotal">
     select 
