@@ -22,6 +22,9 @@ public class BaseRequest extends BasePage implements Serializable {
     public Long cctime;
     public String sign;
     public String token;
+    public String channel; //渠道码
+    public String channelNum; //渠道号
+    public String spreadValue; //推广码
 
     public BaseRequest(){
 
@@ -89,5 +92,29 @@ public class BaseRequest extends BasePage implements Serializable {
 
     public void setClientType(Integer clientType) {
         this.clientType = clientType;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getChannelNum() {
+        return channelNum;
+    }
+
+    public void setChannelNum(String channelNum) {
+        this.channelNum = channelNum;
+    }
+
+    public String getSpreadValue() {
+        return spreadValue;
+    }
+
+    public void setSpreadValue(String spreadValue) {
+        this.spreadValue = spreadValue;
     }
 }
