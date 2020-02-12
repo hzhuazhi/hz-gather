@@ -20,6 +20,8 @@ import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
 import com.hz.gather.master.core.model.region.RegionModel;
 import com.hz.gather.master.core.model.spread.SpreadNoticeModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
 import com.hz.gather.master.core.protocol.request.itembank.ItemBankAnswer;
@@ -828,6 +830,153 @@ public class HodgepodgeMethod {
     public static void setAliPayMember(long memberId) throws Exception{
         String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.ALIPAY_MEMBER, memberId);
         ComponentUtil.redisService.set(strKeyCache, String.valueOf(memberId), 10, TimeUnit.SECONDS);
+    }
+
+
+    /**
+     * @Description: 根据token获取缓存中用户ID的值
+     * @param token - 登录token
+     * @return Long
+     * @author yoko
+     * @date 2019/11/21 18:01
+     */
+    public static long getMemberIdByToken(String token){
+        Long memberId = 0L;
+        if (!StringUtils.isBlank(token)){
+            //        String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.TOKEN_INFO, token);
+            String strCache = (String) ComponentUtil.redisService.get(token);
+            if (!StringUtils.isBlank(strCache)) {
+                // 登录存储在缓存中的用户id
+                memberId = Long.parseLong(strCache);
+            }
+        }
+        return memberId;
+    }
+
+
+    /**
+     * @Description: 组装用户访问流水、异常的数据
+     * @param sgid - 服务端会话ID
+     * @param cgid - 客户端会话ID
+     * @param memberId - 用户ID
+     * @param regionModel - 地域
+     * @param requestObj - 请求的数据参数
+     * @param actionType - 接口类型-枚举
+     * @param actionName - 接口名称-枚举
+     * @param parametJson - 客户端传参
+     * @param resultJson - 服务端返回的参数
+     * @param consumerChannelModel - 用户的请求渠道信息
+     * @param errorMap - 异常
+     * @return com.pf.play.rule.core.model.stream.StreamConsumerModel
+     * @author yoko
+     * @date 2019/12/18 18:40
+     */
+    public static StreamConsumerModel assembleStream(String sgid, String cgid, long memberId, RegionModel regionModel, Object requestObj,
+                                                     int actionType, String actionName, String parametJson,
+                                                     String resultJson, ConsumerChannelModel consumerChannelModel, Map<String,String> errorMap) throws Exception{
+        StreamConsumerModel resBean = new StreamConsumerModel();
+        resBean.setSgid(sgid);
+        if (!StringUtils.isBlank(cgid)){
+            resBean.setCgid(cgid);
+        }
+        resBean.setMemberId(memberId);
+        if (regionModel != null){
+            // 获取地域信息
+            if (!StringUtils.isBlank(regionModel.getIp())){
+                regionModel = ComponentUtil.regionService.getCacheRegion(regionModel);
+                resBean.setIp(regionModel.getIp());
+                if (!StringUtils.isBlank(regionModel.getProvince())){
+                    resBean.setProvince(regionModel.getProvince());
+                }
+                if (!StringUtils.isBlank(regionModel.getCity())){
+                    resBean.setCity(regionModel.getCity());
+                }
+            }
+        }
+
+        if (requestObj != null){
+            Map<String, Object> requestMap = BeanUtils.transBeanToMap(requestObj);
+            if (requestMap != null){
+                if (requestMap.get("androidVer") != null){
+                    resBean.setAndroidVer((String) requestMap.get("androidVer"));
+                }
+                if (requestMap.get("clientVer") != null){
+                    resBean.setClientVer((Integer) requestMap.get("clientVer"));
+                }
+                if (requestMap.get("agtVer") != null){
+                    resBean.setAgtVer((Integer) requestMap.get("agtVer"));
+                }
+                if (requestMap.get("clientType") != null){
+                    resBean.setClientType((Integer) requestMap.get("clientType"));
+                }
+                if (requestMap.get("token") != null){
+                    resBean.setToken((String) requestMap.get("token"));
+                }
+            }
+        }
+        resBean.setActionType(actionType);
+        resBean.setActionName(actionName);
+
+        if (!StringUtils.isBlank(parametJson)){
+            resBean.setParametJson(parametJson);
+        }
+        if (!StringUtils.isBlank(resultJson)){
+            resBean.setResultJson(resultJson);
+        }
+
+        if (consumerChannelModel != null ){
+            if (!StringUtils.isBlank(consumerChannelModel.getR_channel())){
+                resBean.setR_channel(consumerChannelModel.getR_channel());
+            }
+            if (!StringUtils.isBlank(consumerChannelModel.getR_channelNum())){
+                resBean.setR_channelNum(consumerChannelModel.getR_channelNum());
+            }
+            if (!StringUtils.isBlank(consumerChannelModel.getR_spreadValue())){
+                resBean.setR_spreadValue(consumerChannelModel.getR_spreadValue());
+            }
+            if (consumerChannelModel.getR_relationType() != null){
+                resBean.setR_relationType(consumerChannelModel.getR_relationType());
+            }
+
+            if (!StringUtils.isBlank(consumerChannelModel.getL_channel())){
+                resBean.setL_channel(consumerChannelModel.getL_channel());
+            }
+            if (!StringUtils.isBlank(consumerChannelModel.getL_channelNum())){
+                resBean.setL_channelNum(consumerChannelModel.getL_channelNum());
+            }
+            if (!StringUtils.isBlank(consumerChannelModel.getL_spreadValue())){
+                resBean.setL_spreadValue(consumerChannelModel.getL_spreadValue());
+            }
+            if (consumerChannelModel.getL_relationType() != null){
+                resBean.setL_relationType(consumerChannelModel.getL_relationType());
+            }
+
+        }
+        if (errorMap != null){
+            if (!StringUtils.isBlank(errorMap.get("dbCode"))){
+                resBean.setErrorCode(errorMap.get("dbCode"));
+                if (!StringUtils.isBlank(errorMap.get("dbMessage"))){
+                    resBean.setErrorInfo(errorMap.get("dbMessage"));
+                }
+            }else {
+                if (!StringUtils.isBlank(errorMap.get("code"))){
+                    resBean.setErrorInfo(errorMap.get("code"));
+                    if (!StringUtils.isBlank(errorMap.get("message"))){
+                        if (errorMap.get("message").length() > 200){
+                            resBean.setErrorInfo(errorMap.get("message").substring(0, 190));
+                        }else {
+                            resBean.setErrorInfo(errorMap.get("message"));
+                        }
+                    }
+                }
+            }
+        }
+        resBean.setCurday(DateUtil.getDayNumber(new Date()));
+        resBean.setCurhour(DateUtil.getHour(new Date()));
+        resBean.setCurminute(DateUtil.getCurminute(new Date()));
+        resBean.setSuffix(String.valueOf(DateUtil.getDayNumber(new Date())));
+        return resBean;
+
     }
 
 }

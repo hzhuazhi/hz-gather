@@ -9,10 +9,14 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
+import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.model.upgrade.UpgradeModel;
 import com.hz.gather.master.core.protocol.request.upgrade.RequestUpgrade;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +71,7 @@ public class UpgradeController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/up/getData
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+秘钥=sign
      * 服务端加密字段:stime+clientType+clientVer+md5Value+resUrl+upType秘钥=sign
      * result={
@@ -84,15 +88,29 @@ public class UpgradeController {
     public JsonResult<Object> getData(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
+        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
+        long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestUpgrade requestModel = new RequestUpgrade();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestUpgrade.class);
-            // 百问百答详情数据
+
+            // 获取用户ID
+            if (requestModel != null && !StringUtils.isBlank(requestModel.token)){
+                token = requestModel.token;
+                // #零时数据
+//                ComponentUtil.redisService.set(token, "3");
+                memberId = HodgepodgeMethod.getMemberIdByToken(requestModel.token);
+
+            }
+
+            // 客户端升级详情数据
             UpgradeModel upgradeQuery = BeanUtils.copy(requestModel, UpgradeModel.class);
             UpgradeModel upgradeModel = ComponentUtil.upgradeService.getMaxUpgradeData(upgradeQuery);
             // 组装返回客户端的数据
@@ -110,12 +128,18 @@ public class UpgradeController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.UP_GETDATA.getType(),
+                    ServerConstant.InterfaceEnum.UP_GETDATA.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.UP_GETDATA.getType(),
+                    ServerConstant.InterfaceEnum.UP_GETDATA.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this UpgradeController.getData() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);

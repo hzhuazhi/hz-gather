@@ -33,6 +33,8 @@ public class ComponentUtil {
     public static InitServiceImpl initServiceImpl;
     public static PayCustService payCustService;
     public static TaskHodgepodgeService taskHodgepodgeService;
+    public static RegionService regionService;
+    public static StreamConsumerService streamConsumerService;
 
 
 }

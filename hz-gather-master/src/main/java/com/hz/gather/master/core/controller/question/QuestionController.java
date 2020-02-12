@@ -11,9 +11,13 @@ import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.question.QuestionDModel;
 import com.hz.gather.master.core.model.question.QuestionMModel;
+import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.protocol.request.question.RequestQuestion;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +70,7 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataMList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3,"token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+秘钥=sign
      * 服务端加密字段:stime+秘钥=sign
      * result={
@@ -83,14 +87,26 @@ public class QuestionController {
     public JsonResult<Object> getDataMList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
+        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
+        long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestQuestion requestModel = new RequestQuestion();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestQuestion.class);
+
+            // 获取用户ID
+            if (requestModel != null && !StringUtils.isBlank(requestModel.token)){
+                token = requestModel.token;
+                // #零时数据
+                memberId = HodgepodgeMethod.getMemberIdByToken(requestModel.token);
+            }
+
             // 百问百答类别数据
             QuestionMModel questionMQuery = BeanUtils.copy(requestModel, QuestionMModel.class);
             List<QuestionMModel> questionMList = ComponentUtil.questionMService.queryByList(questionMQuery);
@@ -102,12 +118,18 @@ public class QuestionController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATAMLIST.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATAMLIST.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATAMLIST.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATAMLIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this QuestionController.getDataMList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -124,7 +146,7 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataDList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"questionMId":1,"searchKey":"YY简述_1_1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3}
+     * 必填字段:{"questionMId":1,"searchKey":"YY简述_1_1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","pageNumber":1,"pageSize":3,"token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+秘钥=sign
      * 服务端加密字段:stime+秘钥=sign
      * result={
@@ -141,14 +163,28 @@ public class QuestionController {
     public JsonResult<Object> getDataDList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
+        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
+        long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestQuestion requestModel = new RequestQuestion();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestQuestion.class);
+
+            // 获取用户ID
+            if (requestModel != null && !StringUtils.isBlank(requestModel.token)){
+                token = requestModel.token;
+                // #零时数据
+//                ComponentUtil.redisService.set(token, "3");
+                memberId = HodgepodgeMethod.getMemberIdByToken(requestModel.token);
+
+            }
+
             // 百问百答-详情集合数据
             QuestionDModel questionDQuery = BeanUtils.copy(requestModel, QuestionDModel.class);
             List<QuestionDModel> questionDList = ComponentUtil.questionDService.queryByList(questionDQuery);
@@ -160,12 +196,18 @@ public class QuestionController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATADLIST.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATADLIST.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATADLIST.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATADLIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this QuestionController.getDataDList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -182,7 +224,7 @@ public class QuestionController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/qt/getDataD
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"id":1,"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 必填字段:{"id":1,"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+秘钥=sign
      * 服务端加密字段:stime+秘钥=sign
      * result={
@@ -199,14 +241,28 @@ public class QuestionController {
     public JsonResult<Object> getDataD(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
+        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
+        long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestQuestion requestModel = new RequestQuestion();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestQuestion.class);
+
+            // 获取用户ID
+            if (requestModel != null && !StringUtils.isBlank(requestModel.token)){
+                token = requestModel.token;
+                // #零时数据
+//                ComponentUtil.redisService.set(token, "3");
+                memberId = HodgepodgeMethod.getMemberIdByToken(requestModel.token);
+
+            }
+
             // 百问百答详情数据
             QuestionDModel questionDQuery = BeanUtils.copy(requestModel, QuestionDModel.class);
             QuestionDModel questionDModel = (QuestionDModel) ComponentUtil.questionDService.findByObject(questionDQuery);
@@ -218,12 +274,18 @@ public class QuestionController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATAD.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATAD.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.QT_GETDATAD.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATAD.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this QuestionController.getDataD() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);

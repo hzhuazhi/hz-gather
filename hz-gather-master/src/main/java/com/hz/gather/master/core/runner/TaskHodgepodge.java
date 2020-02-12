@@ -1,13 +1,8 @@
 package com.hz.gather.master.core.runner;
 
-import com.alibaba.fastjson.JSON;
-import com.alipay.api.response.AlipayFundTransUniTransferResponse;
-import com.hz.gather.master.core.common.alipay.Alipay;
 import com.hz.gather.master.core.common.utils.constant.CacheKey;
 import com.hz.gather.master.core.common.utils.constant.CachedKeyUtils;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
-import com.hz.gather.master.core.model.alipay.AlipayData;
-import com.hz.gather.master.core.model.alipay.AlipayTransferModel;
 import com.hz.gather.master.core.model.entity.UCashOutLog;
 import com.hz.gather.master.core.model.entity.UCashOutProcedLog;
 import com.hz.gather.master.core.model.task.base.StatusModel;

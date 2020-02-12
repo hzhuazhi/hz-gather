@@ -16,9 +16,13 @@ import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.itembank.ItemBankAnswerModel;
 import com.hz.gather.master.core.model.itembank.ItemBankModel;
+import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.protocol.request.itembank.RequestItemBank;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,7 +79,7 @@ public class ItemBankController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/bk/getDataList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg"}
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+秘钥=sign
      * 服务端加密字段:stime+秘钥=sign
      *
@@ -93,14 +97,34 @@ public class ItemBankController {
     public JsonResult<Object> getDataList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
+        String token;
         String ip = StringUtil.getIpAddress(request);
         String data = "";
-
+        long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+//        consumerChannelModel.setR_channel("r_channel_1");
+//        consumerChannelModel.setR_channelNum("r_channelNum_1");
+//        consumerChannelModel.setR_spreadValue("r_spreadValue_1");
+//        consumerChannelModel.setR_relationType(1);
+//        consumerChannelModel.setL_channel("l_channel_1");
+//        consumerChannelModel.setL_channelNum("l_channelNum_1");
+//        consumerChannelModel.setL_spreadValue("l_spreadValue_1");
+//        consumerChannelModel.setL_relationType(2);
         RequestItemBank requestModel = new RequestItemBank();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
+
+            // 获取用户ID
+            if (requestModel != null && !StringUtils.isBlank(requestModel.token)){
+                token = requestModel.token;
+                // #零时数据
+//                ComponentUtil.redisService.set(token, "3");
+                memberId = HodgepodgeMethod.getMemberIdByToken(requestModel.token);
+
+            }
             // 密保数据
             ItemBankModel itemBankQuery = BeanUtils.copy(requestModel, ItemBankModel.class);
             List<ItemBankModel> itemBankList = ComponentUtil.itemBankService.getItemBankList(itemBankQuery, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_ZERO);
@@ -112,12 +136,18 @@ public class ItemBankController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_GETDATALIST.getType(),
+                    ServerConstant.InterfaceEnum.BK_GETDATALIST.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_GETDATALIST.getType(),
+                    ServerConstant.InterfaceEnum.BK_GETDATALIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this ItemBankController.getDataList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -135,7 +165,7 @@ public class ItemBankController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/bk/getCustomerDataList
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+token+秘钥=sign
      * 服务端加密字段:stime+token+秘钥=sign
      * result={
@@ -156,11 +186,11 @@ public class ItemBankController {
         String ip = StringUtil.getIpAddress(request);
         String data = "";
         long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-//            String tempToken = "111111";
-//            ComponentUtil.redisService.set(tempToken, "1");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
@@ -179,12 +209,18 @@ public class ItemBankController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_GETCUSTOMERDATALIST.getType(),
+                    ServerConstant.InterfaceEnum.BK_GETCUSTOMERDATALIST.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_GETCUSTOMERDATALIST.getType(),
+                    ServerConstant.InterfaceEnum.BK_GETCUSTOMERDATALIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this ItemBankController.getCustomerDataList() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -202,7 +238,7 @@ public class ItemBankController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/bk/add
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+token+秘钥=sign
      * 服务端加密字段:stime+token+秘钥=sign
      * result={
@@ -223,11 +259,11 @@ public class ItemBankController {
         String ip = StringUtil.getIpAddress(request);
         String data = "";
         long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-//            String tempToken = "111111";
-//            ComponentUtil.redisService.set(tempToken, "1");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
@@ -252,12 +288,18 @@ public class ItemBankController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_ADD.getType(),
+                    ServerConstant.InterfaceEnum.BK_ADD.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_ADD.getType(),
+                    ServerConstant.InterfaceEnum.BK_ADD.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this ItemBankController.add() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -274,7 +316,7 @@ public class ItemBankController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/bk/check
      * 请求的属性类:RequestAppeal
-     * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"answerList":[{"itemBankId":1,"answer":"小一_4"},{"itemBankId":2,"answer":"小二_4"},{"itemBankId":3,"answer":"国小_4"},{"itemBankId":4,"answer":"国初_4"}],"agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+token+秘钥=sign
      * 服务端加密字段:stime+token+秘钥=sign
      * result={
@@ -295,11 +337,11 @@ public class ItemBankController {
         String ip = StringUtil.getIpAddress(request);
         String data = "";
         long memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
 
         RequestItemBank requestModel = new RequestItemBank();
         try{
-//            String tempToken = "111111";
-//            ComponentUtil.redisService.set(tempToken, "4");
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
             requestModel  = JSON.parseObject(data, RequestItemBank.class);
@@ -327,10 +369,15 @@ public class ItemBankController {
                 String encryptionData = StringUtil.mergeCodeBase64(strData);
                 ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
                 resultDataModel.jsonData = encryptionData;
-                // #添加流水
-                // 返回数据给客户端
+                // 添加流水
+                StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_CHECK.getType(),
+                        ServerConstant.InterfaceEnum.BK_CHECK.getDesc(), data, strData, consumerChannelModel, null);
+                ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
+                // 验证通过-添加缓存-供其它接口使用
                 String strKeyCache = CachedKeyUtils.getCacheKey(CacheKey.ITEM_BANK_ANSWER, memberId);
                 ComponentUtil.redisService.set(strKeyCache, String.valueOf(memberId), FIVE_MIN);
+                // 返回数据给客户端
                 return JsonResult.successResult(resultDataModel, cgid, sgid);
             }else{
                 throw new ServiceException(ErrorCode.ENUM_ERROR.I00010.geteCode(), ErrorCode.ENUM_ERROR.I00010.geteDesc());
@@ -338,7 +385,10 @@ public class ItemBankController {
 
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.BK_CHECK.getType(),
+                    ServerConstant.InterfaceEnum.BK_CHECK.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this ItemBankController.add() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);

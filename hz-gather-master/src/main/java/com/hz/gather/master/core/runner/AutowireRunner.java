@@ -91,6 +91,12 @@ public class AutowireRunner implements ApplicationRunner {
 
     @Autowired
     private TaskHodgepodgeService taskHodgepodgeService;
+
+    @Autowired
+    private RegionService regionService;
+
+    @Autowired
+    private StreamConsumerService streamConsumerService;
     Thread runThread = null;
 
 
@@ -125,6 +131,8 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.spreadNoticeService = spreadNoticeService;
         ComponentUtil.payCustService = payCustService;
         ComponentUtil.taskHodgepodgeService = taskHodgepodgeService;
+        ComponentUtil.regionService = regionService;
+        ComponentUtil.streamConsumerService = streamConsumerService;
         runThread = new RunThread();
         runThread.start();
 

@@ -15,6 +15,8 @@ import com.hz.gather.master.core.model.alipay.AlipayModel;
 import com.hz.gather.master.core.model.alipay.AlipayNotifyModel;
 import com.hz.gather.master.core.model.pay.PayCustModel;
 import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.protocol.request.RequestAlipay;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
@@ -67,7 +69,7 @@ public class AlipayController {
 
 
     /**
-     * @Description: 阿里支付宝：生成订单码
+     * @Description: 阿里支付宝：生成订单码-APP
      * <p>
      *     把调用阿里支付宝的类生成的订单码返回给客户端
      * </p>
@@ -78,7 +80,7 @@ public class AlipayController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/ali/sendAli
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"memberId":1,"body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"memberId":1,"body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
      * result={
@@ -100,18 +102,20 @@ public class AlipayController {
         String data = "";
         long memberId = 0;
         RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
-        RequestAlipay requestAlipay = new RequestAlipay();
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+
+        RequestAlipay requestModel = new RequestAlipay();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
-            requestAlipay  = JSON.parseObject(data, RequestAlipay.class);
-            if (requestAlipay.memberId != null){
-                memberId = requestAlipay.memberId;
+            requestModel  = JSON.parseObject(data, RequestAlipay.class);
+            if (requestModel.memberId != null){
+                memberId = requestModel.memberId;
             }else{
                  // check校验数据、校验用户是否登录、获得用户ID
-                memberId = HodgepodgeMethod.checkAlipayData(requestAlipay);
-                requestAlipay.memberId = memberId;
-                token = requestAlipay.getToken();
+                memberId = HodgepodgeMethod.checkAlipayData(requestModel);
+                requestModel.memberId = memberId;
+                token = requestModel.getToken();
             }
 
             // check用户是否支付过于频繁
@@ -124,9 +128,9 @@ public class AlipayController {
             // 校验ctime
             // 校验sign
             String totalAmount = ComponentUtil.loadConstant.totalAmount;
-            requestAlipay.totalAmount = totalAmount;
+            requestModel.totalAmount = totalAmount;
             // 调用阿里云支付宝生成订单
-            AlipayModel alipayModel = HodgepodgeMethod.assembleAlipayData(requestAlipay, sgid, totalAmount);
+            AlipayModel alipayModel = HodgepodgeMethod.assembleAlipayData(requestModel, sgid, totalAmount);
             String aliOrder = Alipay.createAlipaySend(alipayModel, alipayNotifyUrl);
             // 添加请求阿里支付的纪录
             AlipayModel addAlipayModel = HodgepodgeMethod.assembleAlipayModel(alipayModel, aliOrder);
@@ -141,14 +145,21 @@ public class AlipayController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
             // 纪录用户操作存储到redis：用于check用户是否频繁操作
             HodgepodgeMethod.setAliPayMember(memberId);
+
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.ALI_SENDALI.getType(),
+                    ServerConstant.InterfaceEnum.ALI_SENDALI.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.ALI_SENDALI.getType(),
+                    ServerConstant.InterfaceEnum.ALI_SENDALI.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this AlipayController.sendAli() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
@@ -170,7 +181,7 @@ public class AlipayController {
      * @date 2019/11/25 22:58
      * local:http://localhost:8082/mg/ali/sendAliH5
      * 请求的属性类:RequestAlipay
-     * 必填字段:{"memberId":1,"returnUrl":"http://www.baidu.com","body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111"}
+     * 必填字段:{"memberId":1,"returnUrl":"http://www.baidu.com","body":"1","subject":"subject1","outTradeNo":"outTradeNo1","totalAmount":"0.01","productCode":"productCode1","agtVer":1,"clientVer":1,"clientType":1,"ctime":201911071802959,"cctime":201911071802959,"sign":"abcdefg","token":"111111","androidVer":"7.1.2","channel":"channel_1","channelNum":"channelNum_1","spreadValue":"spreadValue_1"}
      * 客户端加密字段:ctime+cctime+totalAmount+memberId/token+秘钥=sign
      * 服务端加密字段:aliOrder+stime+token+秘钥=sign
      * result={
@@ -192,18 +203,20 @@ public class AlipayController {
         String data = "";
         long memberId = 0;
         RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
-        RequestAlipay requestAlipay = new RequestAlipay();
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+
+        RequestAlipay requestModel = new RequestAlipay();
         try{
             // 解密
             data = StringUtil.decoderBase64(requestData.jsonData);
-            requestAlipay  = JSON.parseObject(data, RequestAlipay.class);
-            if (requestAlipay.memberId != null){
-                memberId = requestAlipay.memberId;
+            requestModel  = JSON.parseObject(data, RequestAlipay.class);
+            if (requestModel.memberId != null){
+                memberId = requestModel.memberId;
             }else{
                 // check校验数据、校验用户是否登录、获得用户ID
-                memberId = HodgepodgeMethod.checkAlipayData(requestAlipay);
-                requestAlipay.memberId = memberId;
-                token = requestAlipay.getToken();
+                memberId = HodgepodgeMethod.checkAlipayData(requestModel);
+                requestModel.memberId = memberId;
+                token = requestModel.getToken();
             }
 
             // check用户是否支付过于频繁
@@ -216,13 +229,13 @@ public class AlipayController {
             // 校验ctime
             // 校验sign
             String totalAmount = ComponentUtil.loadConstant.totalAmount;
-            requestAlipay.totalAmount = totalAmount;
+            requestModel.totalAmount = totalAmount;
             // 调用阿里云支付宝生成订单-h5
-            AlipayH5Model alipayModel = HodgepodgeMethod.assembleH5AlipayData(requestAlipay, sgid, totalAmount);
+            AlipayH5Model alipayModel = HodgepodgeMethod.assembleH5AlipayData(requestModel, sgid, totalAmount);
             String alipayData = JSON.toJSONString(alipayModel);
-            String aliOrder = Alipay.createH5AlipaySend(alipayData, requestAlipay.returnUrl, alipayNotifyUrl);
+            String aliOrder = Alipay.createH5AlipaySend(alipayData, requestModel.returnUrl, alipayNotifyUrl);
             // 添加请求阿里支付的纪录-H5
-            AlipayModel addAlipayModel = HodgepodgeMethod.assembleH5AlipayModel(alipayModel, requestAlipay, aliOrder);
+            AlipayModel addAlipayModel = HodgepodgeMethod.assembleH5AlipayModel(alipayModel, requestModel, aliOrder);
             ComponentUtil.alipayService.add(addAlipayModel);
 
 
@@ -234,14 +247,20 @@ public class AlipayController {
             String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-            // #添加流水
             // 纪录用户操作存储到redis：用于check用户是否频繁操作
             HodgepodgeMethod.setAliPayMember(memberId);
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.ALI_SENDALIH5.getType(),
+                    ServerConstant.InterfaceEnum.ALI_SENDALIH5.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             // 返回数据给客户端
             return JsonResult.successResult(resultDataModel, cgid, sgid);
         }catch (Exception e){
             Map<String,String> map = ExceptionMethod.getException(e, ServerConstant.PUBLIC_CONSTANT.SIZE_VALUE_TWO);
-            // #添加异常
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestModel, ServerConstant.InterfaceEnum.ALI_SENDALIH5.getType(),
+                    ServerConstant.InterfaceEnum.ALI_SENDALIH5.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             log.error(String.format("this AlipayController.sendAliH5() is error , the cgid=%s and sgid=%s and all data=%s!", cgid, sgid, data));
             e.printStackTrace();
             return JsonResult.failedResult(map.get("message"), map.get("code"), cgid, sgid);
