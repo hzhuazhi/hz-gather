@@ -1,12 +1,14 @@
 package com.hz.gather.master.core.protocol.request.login;
 
+import com.hz.gather.master.core.protocol.base.BaseRequest;
+
 /**
  * @Description TODO
  * @Author long
  * @Date 2020/1/3 22:07
  * @Version 1.0
  */
-public class ForgetPasswordModel {
+public class ForgetPasswordModel extends BaseRequest {
     /**
      * 修改密码token
      */

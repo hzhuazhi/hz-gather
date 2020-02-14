@@ -4,22 +4,27 @@ import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.enums.ENUM_ERROR;
 import com.hz.gather.master.core.common.exception.ExceptionMethod;
 import com.hz.gather.master.core.common.exception.ServiceException;
+import com.hz.gather.master.core.common.utils.BeanUtils;
 import com.hz.gather.master.core.common.utils.JsonResult;
+import com.hz.gather.master.core.common.utils.SignUtil;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMember;
 import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.protocol.request.login.*;
 import com.hz.gather.master.core.protocol.response.login.ResponseRegisterVerify;
 import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
-import com.hz.gather.master.util.TaskMethod;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +42,9 @@ import java.util.Map;
 @RequestMapping("/mg/login")
 public class LoginController {
     private static Logger log = LoggerFactory.getLogger(LoginController.class);
+
+    @Value("${secret.key.sign}")
+    private String secretKeySign;
 
     /**
      * @Description: 注册获取手机信息
@@ -64,14 +72,30 @@ public class LoginController {
     @PostMapping("/register_sms")
 //    public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response,@RequestParam String jsonData)throws Exception{
     public JsonResult<Object> getRegisterSms(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
+
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
         String data = "";
         SendSmsModel sendSmsModel = new SendSmsModel();
+        Integer memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         String time ="";
+        String  strData="";
         try{
+            // 组装返回客户端的数据
+
             data        = StringUtil.decoderBase64(requestData.jsonData);
             sendSmsModel  = JSON.parseObject(data, SendSmsModel.class);
 
-            boolean  flag =PublicMethod.checkPhoneIsType(sendSmsModel);
+            boolean  flag =PublicMethod.isChinaPhoneLegal(sendSmsModel.getPhone());
+
+            if(!flag){
+                throw  new ServiceException(ENUM_ERROR.A00018.geteCode(),ENUM_ERROR.A00018.geteDesc());
+            }
+
+            flag =PublicMethod.checkPhoneIsType(sendSmsModel);
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
@@ -88,14 +112,26 @@ public class LoginController {
 
             //还缺一个发送
             // 数据加密
-            String encryptionData = StringUtil.mergeCodeBase64(PublicMethod.toSendSmsDto(time));
+            strData=PublicMethod.toSendSmsDto(time);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
             log.info("----------:register_sms 进来啦!");
+
+            // 添加流水
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, sendSmsModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERSMS.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_REGISTERSMS.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            // 添加异常
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, sendSmsModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERSMS.getType(),
+                    ServerConstant.InterfaceEnum.QT_GETDATAMLIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
+
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -125,6 +161,14 @@ public class LoginController {
     public JsonResult<Object> getRegisterInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         LoginModel loginModel = new LoginModel();
+
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         try{
             log.info("----------:register_info 进来啦!");
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -153,32 +197,55 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
 
-
-
             String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
-            data  = PublicMethod.toLoginModelDto(token);
+            strData  = PublicMethod.toLoginModelDto(token);
+
+            ComponentUtil.userInfoService.savaRelationSpread(loginModel.getClientType(),loginModel.getChannel(),loginModel.getChannelNum(),loginModel.getSpreadValue());
 
             String encryptionData = StringUtil.mergeCodeBase64(data);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, loginModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERINFO.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_REGISTERINFO.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, loginModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERINFO.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_REGISTERINFO.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
 
 
-
-
+    /***
+     * 注册验证码
+     * @param request
+     * @param response
+     * @param requestData
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/register_verify")
     public JsonResult<Object> getRegisterVerify(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
+
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         LoginModel loginModel = new LoginModel();
+        String  strData="";
         try{
-            log.info("----------:register_info 进来啦!");
+            log.info("----------:register_verify 进来啦!");
             data        = StringUtil.decoderBase64(requestData.jsonData);
             loginModel  = JSON.parseObject(data, LoginModel.class);
             boolean   flag  = PublicMethod.isCheakRegisterVerify(loginModel);
@@ -205,21 +272,25 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
 
-
-
-
             ResponseRegisterVerify verify = PublicMethod.toResponseRegisterVerify(true);
 
 //            String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
-            data  = PublicMethod.toJson(verify);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData  = PublicMethod.toJson(verify);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, loginModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERVERIFY.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_REGISTERVERIFY.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
 
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, loginModel, ServerConstant.InterfaceEnum.LOGIN_REGISTERVERIFY.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_REGISTERVERIFY.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -240,7 +311,15 @@ public class LoginController {
     public JsonResult<Object> getForgetPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         ForgetPasswordModel forgetPasswordModel = new ForgetPasswordModel();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         String   dtoken ="";
+        String  strData="";
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
             forgetPasswordModel  = JSON.parseObject(data, ForgetPasswordModel.class);
@@ -250,7 +329,7 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenToMemberId(forgetPasswordModel.getPwToken());
+            memberId = PublicMethod.tokenToMemberId(forgetPasswordModel.getPwToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.A00014.geteCode(),ENUM_ERROR.A00014.geteDesc());
             }
@@ -281,10 +360,17 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00015.geteCode(),ENUM_ERROR.A00015.geteDesc());
             }
 
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, forgetPasswordModel, ServerConstant.InterfaceEnum.LOGIN_FORGETPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_FORGETPASSWORD.getDesc(), data, null, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(null);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, forgetPasswordModel, ServerConstant.InterfaceEnum.LOGIN_FORGETPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_FORGETPASSWORD.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -306,6 +392,14 @@ public class LoginController {
         log.info("----------:进来啦!");
         String data = "";
         ForgetPhoneModel forgetPhoneModel = new ForgetPhoneModel();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
             forgetPhoneModel  = JSON.parseObject(data, ForgetPhoneModel.class);
@@ -319,7 +413,7 @@ public class LoginController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
-            Integer  memberId = ComponentUtil.loginService.getMemberId(forgetPhoneModel.getPhone());
+              memberId = ComponentUtil.loginService.getMemberId(forgetPhoneModel.getPhone());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.A00013.geteCode(),ENUM_ERROR.A00013.geteDesc());
             }
@@ -327,18 +421,25 @@ public class LoginController {
 
 
             String  token = ComponentUtil.generateService.getNonexistentInformation(Constant.PW_TOKEN);
-            //
-            ComponentUtil.loginService.toPwTokenRedis(token,memberId);
 
-            String  pwToken =PublicMethod.toForgetPhoneDto(token);
-            String encryptionData = StringUtil.mergeCodeBase64(pwToken);
+//            ComponentUtil.redisService.set();
+            strData =PublicMethod.toForgetPhoneDto(token);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, forgetPhoneModel, ServerConstant.InterfaceEnum.LOGIN_FORGETPHONE.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_FORGETPHONE.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
 
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, forgetPhoneModel, ServerConstant.InterfaceEnum.LOGIN_FORGETPHONE.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_FORGETPHONE.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -360,7 +461,15 @@ public class LoginController {
         log.info("----------:进来啦!");
         String data = "";
         SignInModel signInModel = new SignInModel();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        long memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         String   token ="";
+        String  strData="";
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
             signInModel  = JSON.parseObject(data, SignInModel.class);
@@ -386,15 +495,24 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
 
-            data  =     PublicMethod.toToken(token);
+            strData  =     PublicMethod.toToken(token);
 
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, signInModel, ServerConstant.InterfaceEnum.LOGIN_SIGNIN.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_SIGNIN.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, signInModel, ServerConstant.InterfaceEnum.LOGIN_SIGNIN.getType(),
+                    ServerConstant.InterfaceEnum.LOGIN_SIGNIN.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }

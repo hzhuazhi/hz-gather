@@ -1,12 +1,14 @@
 package com.hz.gather.master.core.protocol.request.login;
 
+import com.hz.gather.master.core.protocol.base.BaseRequest;
+
 /**
  * @Description 注册信息信息
  * @Author long
  * @Date 2020/1/2 16:14
  * @Version 1.0
  */
-public class LoginModel {
+public class LoginModel extends BaseRequest {
     /**
      * 协议版本号
      */

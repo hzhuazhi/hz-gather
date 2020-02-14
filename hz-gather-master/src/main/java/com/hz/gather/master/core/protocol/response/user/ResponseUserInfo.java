@@ -47,6 +47,11 @@ public class ResponseUserInfo extends ResponseUser{
     private List<String> addList ;
 
     /****
+     * 下面地址集合
+     */
+    private List<String> pushAddList ;
+
+    /****
      * 引荐金额
      */
     private String    recommend_money;
@@ -246,5 +251,13 @@ public class ResponseUserInfo extends ResponseUser{
 
     public void setUserCaseMax(Integer userCaseMax) {
         this.userCaseMax = userCaseMax;
+    }
+
+    public List<String> getPushAddList() {
+        return pushAddList;
+    }
+
+    public void setPushAddList(List<String> pushAddList) {
+        this.pushAddList = pushAddList;
     }
 }

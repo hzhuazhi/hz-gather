@@ -98,4 +98,6 @@ public interface UserInfoService<T> extends BaseService<T> {
 
     Integer   EightFissionPeople(Integer  memberId);
 
+    void   savaRelationSpread(Integer clentType,String channel,String channelNum,String spreadValue);
+
 }

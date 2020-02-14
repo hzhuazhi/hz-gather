@@ -26,6 +26,9 @@ import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @Description TODO
@@ -240,6 +243,7 @@ public class PublicMethod {
      */
     public  static  boolean  checkPhoneIsType(SendSmsModel sendSmsModel){
         boolean  flag =  false ;
+
         if(null==sendSmsModel.getSmsType()){
             return flag;
         }
@@ -263,6 +267,14 @@ public class PublicMethod {
         }
 
         return true;
+    }
+
+
+    public static boolean isChinaPhoneLegal(String str) throws PatternSyntaxException {
+        String regExp = "^((19[0-9])|(13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+        Pattern p = Pattern.compile(regExp);
+        Matcher m = p.matcher(str);
+        return m.matches();
     }
 
 
@@ -608,7 +620,6 @@ public class PublicMethod {
             responseUserInfo.setInviteCode(vcMember.getInviteCode());
         }
 
-
         Long  time1=vcMember.getCreateTime()*1000L;
         String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time1);
         SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -632,6 +643,7 @@ public class PublicMethod {
         responseUserInfo.setIsprotection(vcMember.getIsQuestions());
 
         List<String>  addList  =   new ArrayList<>();
+        List<String>  pushAddList  =   new ArrayList<>();
         if (vcMember.getGradeType()==0){//普通用户信息
             responseUserInfo.setAddList(addList);
         }else if(vcMember.getGradeType()==1){//限时用户信息
@@ -660,6 +672,9 @@ public class PublicMethod {
                     }
                 }
             }
+//            else if(vcMember.getGradeType()==2){
+//
+//            }
 
             responseUserInfo.setPush_count(pushCount+"");
             responseUserInfo.setAddList(addList);
@@ -1812,5 +1827,64 @@ public class PublicMethod {
         }
         return   list;
     }
+
+
+    /**
+     * 查询信息
+     * @param channel
+     * @param channelNum
+     * @param spreadValue
+     * @return
+     */
+    public  static TbGaChannelRelationSpread toTbGaChannelRelationSpread(String channel,String channelNum,String spreadValue ){
+        TbGaChannelRelationSpread  tbGaChannelRelationSpread = new TbGaChannelRelationSpread();
+        tbGaChannelRelationSpread.setChannel(channel);
+        tbGaChannelRelationSpread.setChannelNum(channelNum);
+        tbGaChannelRelationSpread.setSpreadValue(spreadValue);
+        return   tbGaChannelRelationSpread;
+    }
+
+
+    /**
+     * @Description: TODO
+     * @param spreadValue
+     * @return com.hz.gather.master.core.model.entity.TbGaChannelRelationSpread
+     * @author long
+     * @date 2020/2/12 10:24
+     */
+    public  static TbGaChannelRelationSpread toTbGaChannelRelationSpread(String spreadValue ){
+        TbGaChannelRelationSpread  tbGaChannelRelationSpread = new TbGaChannelRelationSpread();
+        tbGaChannelRelationSpread.setSpreadValue(spreadValue);
+        return   tbGaChannelRelationSpread;
+    }
+
+
+    /**
+     * @Description: 转换为TbGaRecordNoRelation
+     * @param memberId    用户id
+    * @param clientType  终端类型 1、ios 2、android
+    * @param channel     渠道码
+    * @param channelNum  渠道号
+    * @param spreadValue 推广码/推广包ID
+     * @return com.hz.gather.master.core.model.entity.TbGaRecordNoRelation
+     * @author long
+     * @date 2020/2/12 14:07
+     */
+    public  static TbGaRecordNoRelation toTbGaRecordNoRelation(Long memberId,Integer clientType,String channel,String channelNum,String spreadValue ){
+        TbGaRecordNoRelation  tbGaRecordNoRelation = new TbGaRecordNoRelation();
+        DateModel    dateModel  =  PublicMethod.getDate();
+        BeanUtils.copy(dateModel,tbGaRecordNoRelation);
+        tbGaRecordNoRelation.setMemberId(memberId);
+        tbGaRecordNoRelation.setClientType(clientType);
+        tbGaRecordNoRelation.setChannel(channel);
+        tbGaRecordNoRelation.setChannelNum(channelNum);
+        tbGaRecordNoRelation.setSpreadValue(spreadValue);
+        return   tbGaRecordNoRelation;
+    }
+
+
+
+
+
 
 }

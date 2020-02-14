@@ -55,6 +55,13 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
     private VcMemberRewardTotalMapper vcMemberRewardTotalMapper;
     @Autowired
     private UCashOutLogMapper  uCashOutLogMapper;
+
+    @Autowired
+    private TbGaChannelRelationSpreadMapper  tbGaChannelRelationSpreadMapper;
+
+    @Autowired
+    private TbGaRecordNoRelationMapper  tbGaRecordNoRelationMapper;
+
     @Override
     public BaseDao<T> getDao() {
         return null;
@@ -105,6 +112,8 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
 
 
 //            ULimitedTimeLog
+        }else if(vcMember.getGradeType()==2){
+
         }
 
         responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list,list2);
@@ -352,5 +361,25 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             return 0;
         }
         return count.getPushPeople();
+    }
+
+    @Override
+    public void savaRelationSpread(Integer clentType,String channel,String channelNum,String spreadValue) {
+        TbGaChannelRelationSpread  tbGaChannelRelationSpread ;
+
+        if(null==clentType){
+            return;
+        }
+
+        if(clentType==1){
+            tbGaChannelRelationSpread = PublicMethod.toTbGaChannelRelationSpread(channel,channelNum,spreadValue);
+        }else{
+            tbGaChannelRelationSpread = PublicMethod.toTbGaChannelRelationSpread(spreadValue);
+        }
+        List<TbGaChannelRelationSpread>  list  = tbGaChannelRelationSpreadMapper.selectByPrimaryKey(tbGaChannelRelationSpread);
+        if(list.size()>0){
+        }
+        TbGaRecordNoRelation record = new  TbGaRecordNoRelation();
+        tbGaRecordNoRelationMapper.insertSelective(record);
     }
 }

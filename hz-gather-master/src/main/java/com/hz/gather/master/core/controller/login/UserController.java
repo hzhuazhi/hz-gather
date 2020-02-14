@@ -9,9 +9,13 @@ import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.UUIDUtils;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.*;
+import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.protocol.request.user.*;
 import com.hz.gather.master.core.protocol.response.user.*;
@@ -53,7 +57,15 @@ public class UserController {
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         log.info("----------:queryUserInfo 进来啦!");
+        String  strData="";
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
@@ -63,21 +75,29 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
             ResponseUserInfo ResponseUserInfo =ComponentUtil.userInfoService.toResponseUserInfo(memberId);
-            data=PublicMethod.toJson(ResponseUserInfo);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData  =   PublicMethod.toJson(ResponseUserInfo);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getType(),
+                    ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
 
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getType(),
+                    ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -108,6 +128,14 @@ public class UserController {
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:getFriend 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -117,21 +145,26 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
             ResponseMyFriend reponseMyFriend=ComponentUtil.userInfoService.queryMyFriend(memberId);
 
-            data = PublicMethod.toJson(reponseMyFriend);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(reponseMyFriend);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
-
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_MYFRIEND.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYFRIEND.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_MYFRIEND.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYFRIEND.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -162,6 +195,14 @@ public class UserController {
         String data = "";
         CommonModel commonModel = new CommonModel();
         String time ="";
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:queryUser 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -171,7 +212,7 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.SERVER_OK.geteCode(),ENUM_ERROR.SERVER_OK.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -182,14 +223,21 @@ public class UserController {
             }
 
             ResponseUser responseUser=PublicMethod.toResponseUser(vcMember);
-            data = PublicMethod.toJson(responseUser);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responseUser);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_QUERYUSER.getType(),
+                    ServerConstant.InterfaceEnum.USER_QUERYUSER.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_QUERYUSER.getType(),
+                    ServerConstant.InterfaceEnum.USER_QUERYUSER.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -220,6 +268,14 @@ public class UserController {
     public JsonResult<Object> editUserInfo(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequestEditUser editUser = new RequestEditUser();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:editUserInfo 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -230,21 +286,28 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(editUser.getToken());
+            memberId = PublicMethod.tokenGetMemberId(editUser.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
             Integer  updateCount  =  ComponentUtil.userInfoService.editMemeberInfo(memberId,editUser);
             ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-            data = PublicMethod.toJson(responseEditUser);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responseEditUser);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, editUser, ServerConstant.InterfaceEnum.USER_EDITUSERINFO.getType(),
+                    ServerConstant.InterfaceEnum.USER_EDITUSERINFO.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, editUser, ServerConstant.InterfaceEnum.USER_EDITUSERINFO.getType(),
+                    ServerConstant.InterfaceEnum.USER_EDITUSERINFO.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -264,6 +327,14 @@ public class UserController {
     public JsonResult<Object> myFundList(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequestFundList requestFundList = new RequestFundList();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:myFundList 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -273,7 +344,8 @@ public class UserController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestFundList.getToken());
+
+            memberId = PublicMethod.tokenGetMemberId(requestFundList.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -287,25 +359,48 @@ public class UserController {
 
             ResponseFundList responseFundList=PublicMethod.toResponseFundList(vcMemberResource,uMoneyList1, uMoneyList.getRowCount());
 //            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-            data = PublicMethod.toJson(responseFundList);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responseFundList);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestFundList, ServerConstant.InterfaceEnum.USER_MYFUNDLIST.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYFUNDLIST.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestFundList, ServerConstant.InterfaceEnum.USER_MYFUNDLIST.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYFUNDLIST.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
 
 
-
-
+    /**
+     * 我的支付信息接口
+     * @param request
+     * @param response
+     * @param requestData
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/myCashRate")
     public JsonResult<Object> myCashRate(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequestCashRate requestCashRate = new RequestCashRate();
+
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:myCashRate 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -315,7 +410,8 @@ public class UserController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestCashRate.getToken());
+
+            memberId = PublicMethod.tokenGetMemberId(requestCashRate.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -330,14 +426,21 @@ public class UserController {
 
             ResponeseCashRate responeseCashRate=PublicMethod.toResponeseCashRate(cashRateList);
 //            ResponseEditUser responseEditUser =PublicMethod.rsResponseEditUser(updateCount);
-            data = PublicMethod.toJson(responeseCashRate);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responeseCashRate);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestCashRate, ServerConstant.InterfaceEnum.USER_MYCASHRATE.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYCASHRATE.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestCashRate, ServerConstant.InterfaceEnum.USER_MYCASHRATE.getType(),
+                    ServerConstant.InterfaceEnum.USER_MYCASHRATE.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -355,6 +458,14 @@ public class UserController {
     public JsonResult<Object> checkPayPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequsetPayPassword requsetPayPassword = new RequsetPayPassword();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:checkPayPassword 进来啦!");
         try{
             data        =   StringUtil.decoderBase64(requestData.jsonData);
@@ -371,7 +482,7 @@ public class UserController {
                 throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(requsetPayPassword.getToken());
+            memberId = PublicMethod.tokenGetMemberId(requsetPayPassword.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -382,23 +493,47 @@ public class UserController {
 
 
             ResponesePayPassword responesePayPassword=PublicMethod.toResponesePayPassword(token);
-            data = PublicMethod.toJson(responesePayPassword);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responesePayPassword);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetPayPassword, ServerConstant.InterfaceEnum.USER_CHECKPAYPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.USER_CHECKPAYPASSWORD.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetPayPassword, ServerConstant.InterfaceEnum.USER_CHECKPAYPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.USER_CHECKPAYPASSWORD.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
+
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
 
 
+    /**
+     * 修改支付密码接口
+     * @param request
+     * @param response
+     * @param requestData
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/update_payPassword")
     public JsonResult<Object> updatePayPassword(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         RequsetUqPayPw requsetUqPayPw = new RequsetUqPayPw();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:updatePayPassword 进来啦!");
         try{
             data        =   StringUtil.decoderBase64(requestData.jsonData);
@@ -417,7 +552,7 @@ public class UserController {
 //                throw  new ServiceException(ENUM_ERROR.A00007.geteCode(),ENUM_ERROR.A00007.geteDesc());
 //            }
 //
-            Integer   memberId = PublicMethod.tokenGetMemberId(requsetUqPayPw.getToken());
+            memberId = PublicMethod.tokenGetMemberId(requsetUqPayPw.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.A00006.geteCode(),ENUM_ERROR.A00006.geteDesc());
             }
@@ -437,23 +572,48 @@ public class UserController {
 //            ComponentUtil.loginService.getPayPwToken(memberId,token);
 
             ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
-            data = PublicMethod.toJson(responseUpdatePayPw);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responseUpdatePayPw);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetUqPayPw, ServerConstant.InterfaceEnum.USER_UPDATEPAYPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.USER_UPDATEPAYPASSWORD.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetUqPayPw, ServerConstant.InterfaceEnum.USER_UPDATEPAYPASSWORD.getType(),
+                    ServerConstant.InterfaceEnum.USER_UPDATEPAYPASSWORD.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
 
 
+    /**
+     * 第一次修改密码
+     * @param request
+     * @param response
+     * @param requestData
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/first_uqdatePayPw")
     public JsonResult<Object> firstUqdatePayPw(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         String data = "";
         ResponseFirstUqdatePayPw requsetUqPayPw = new ResponseFirstUqdatePayPw();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        long memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:firstUqdatePayPw 进来啦!");
         try{
             data        =   StringUtil.decoderBase64(requestData.jsonData);
@@ -468,7 +628,7 @@ public class UserController {
             if(!requsetUqPayPw.getPayPw().equals(requsetUqPayPw.getPayPw2())){
                 throw  new ServiceException(ENUM_ERROR.A00005.geteCode(),ENUM_ERROR.A00005.geteDesc());
             }
-            long   memberId = HodgepodgeMethod.checkIsLogin(requsetUqPayPw.getToken());
+            memberId = HodgepodgeMethod.checkIsLogin(requsetUqPayPw.getToken());
 
             Integer memberId1 = Integer.parseInt(String.valueOf(memberId));
 
@@ -479,18 +639,33 @@ public class UserController {
             Integer  count =ComponentUtil.userInfoService.updatePayPassword(memberId1,requsetUqPayPw.getPayPw());
 
             ResponseUpdatePayPw  responseUpdatePayPw  =PublicMethod.toResponesePayPassword(count);
-            data = PublicMethod.toJson(responseUpdatePayPw);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responseUpdatePayPw);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetUqPayPw, ServerConstant.InterfaceEnum.USER_FIRSTUQDATEPAYPW.getType(),
+                    ServerConstant.InterfaceEnum.USER_FIRSTUQDATEPAYPW.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requsetUqPayPw, ServerConstant.InterfaceEnum.USER_FIRSTUQDATEPAYPW.getType(),
+                    ServerConstant.InterfaceEnum.USER_FIRSTUQDATEPAYPW.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
 
+    /**
+     * 外部接口调用，更新数据接口
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/updateBaseInfo")
     public JsonResult<Object> updateBaseInfo(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String data = "";

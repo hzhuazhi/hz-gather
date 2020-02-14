@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.TbGaRecordNoRelationMapper" >
+  <sql id="Base_Column_List" >
+    id, member_id, channel, channel_num, spread_value, client_type, curday, curhour, 
+    curminute, run_num, run_status, create_time, update_time, ts_time, yn
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.TbGaRecordNoRelation" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_ga_record_no_relation
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_ga_record_no_relation
+    where id = #{id}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.TbGaRecordNoRelation" >
+    insert into tb_ga_record_no_relation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="channelNum != null" >
+        channel_num,
+      </if>
+      <if test="spreadValue != null" >
+        spread_value,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+      <if test="curhour != null" >
+        curhour,
+      </if>
+      <if test="curminute != null" >
+        curminute,
+      </if>
+      <if test="runNum != null" >
+        run_num,
+      </if>
+      <if test="runStatus != null" >
+        run_status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="tsTime != null" >
+        ts_time,
+      </if>
+      <if test="yn != null" >
+        yn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="channel != null" >
+        #{channel},
+      </if>
+      <if test="channelNum != null" >
+        #{channelNum},
+      </if>
+      <if test="spreadValue != null" >
+        #{spreadValue},
+      </if>
+      <if test="clientType != null" >
+        #{clientType},
+      </if>
+      <if test="curday != null" >
+        #{curday},
+      </if>
+      <if test="curhour != null" >
+        #{curhour},
+      </if>
+      <if test="curminute != null" >
+        #{curminute},
+      </if>
+      <if test="runNum != null" >
+        #{runNum},
+      </if>
+      <if test="runStatus != null" >
+        #{runStatus},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="tsTime != null" >
+        #{tsTime},
+      </if>
+      <if test="yn != null" >
+        #{yn},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.TbGaRecordNoRelation" >
+    update tb_ga_record_no_relation
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
+      <if test="channel != null" >
+        channel = #{channel},
+      </if>
+      <if test="channelNum != null" >
+        channel_num = #{channelNum},
+      </if>
+      <if test="spreadValue != null" >
+        spread_value = #{spreadValue},
+      </if>
+      <if test="clientType != null" >
+        client_type = #{clientType},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday},
+      </if>
+      <if test="curhour != null" >
+        curhour = #{curhour},
+      </if>
+      <if test="curminute != null" >
+        curminute = #{curminute},
+      </if>
+      <if test="runNum != null" >
+        run_num = #{runNum},
+      </if>
+      <if test="runStatus != null" >
+        run_status = #{runStatus},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="tsTime != null" >
+        ts_time = #{tsTime},
+      </if>
+      <if test="yn != null" >
+        yn = #{yn},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+</mapper>

@@ -1,6 +1,7 @@
 package com.hz.gather.master.core.protocol.request.pay;
 
 import com.hz.gather.master.core.model.user.CommonModel;
+import com.hz.gather.master.core.protocol.base.BaseRequest;
 
 /**
  * @Description TODO

@@ -1,12 +1,14 @@
 package com.hz.gather.master.core.protocol.request.login;
 
+import com.hz.gather.master.core.protocol.base.BaseRequest;
+
 /**
  * @Description TODO
  * @Author long
  * @Date 2020/1/2 22:04
  * @Version 1.0
  */
-public class SendSmsModel{
+public class SendSmsModel extends BaseRequest {
     /**
      * 类型  1、是注册 2、忘记密码 3、用户登录
      */

@@ -104,6 +104,36 @@ public class ServerConstant {
         UP_GETDATA(13, "UpgradeController.getData", "获取客户端版本更新数据"),
 
 
+
+
+        LOGIN_REGISTERSMS(14, "LoginController.getRegisterSms", "注册获取手机信息"),
+        LOGIN_REGISTERINFO(15, "LoginController.getRegisterInfo", "用户注册接口，用户提交手机号码，以及详细信息进行提交"),
+        LOGIN_REGISTERVERIFY(16, "LoginController.getRegisterVerify", "注册验证码"),
+        LOGIN_FORGETPASSWORD(17, "LoginController.getForgetPassword", "忘记密码接口,修改密码接口"),
+        LOGIN_FORGETPHONE(18, "LoginController.getForgetPhone", "忘记密码接口,根据手机号和验证码修改信息"),
+        LOGIN_SIGNIN(19, "LoginController.getSignIn", "登录信息"),
+
+        PAY_HAVAPAY(20, "UserController.havaPay", "是否设置了支付宝"),
+        PAY_HAVAPAYINFO(21, "PayController.havaPayInfo", "支付宝列表查询"),
+        PAY_ADDZFBPAY(22, "PayController.addZFBPay", "添加支付接口信息"),
+        PAY_UPDATEZFBPAY(23, "PayController.updateZFBPay", "修改支付密码"),
+        PAY_PAYCASHOUT(24, "PayController.payCashOut", "添加支付接口信息"),
+
+        USER_QUERYUSERINFO(25, "UserController.payCashOut", "添加支付接口信息"),
+        USER_MYFRIEND(26, "UserController.myFriend", "我的好友"),
+        USER_QUERYUSER(27, "UserController.queryUser", "查询用户基本信息"),
+        USER_EDITUSERINFO(28, "UserController.editUserInfo", "编辑用户信息接口"),
+        USER_MYFUNDLIST(29, "UserController.myFundList", "我的资金详细信息"),
+        USER_MYCASHRATE(30, "UserController.myCashRate", "我的支付信息接口"),
+        USER_CHECKPAYPASSWORD(31, "UserController.checkPayPassword", "获取修改支付密码的pay"),
+        USER_UPDATEPAYPASSWORD(32, "UserController.updatePayPassword", "修改支付密码接口"),
+        USER_FIRSTUQDATEPAYPW(33, "UserController.firstUqdatePayPw", "第一次修改密码"),
+        USER_UPDATEBASEINFO(34, "UserController.updateBaseInfo", "外部接口调用，更新数据接口"),
+
+
+
+
+
         ;
         /**
          * 类型

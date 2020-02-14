@@ -7,9 +7,13 @@ import com.hz.gather.master.core.common.exception.ServiceException;
 import com.hz.gather.master.core.common.utils.JsonResult;
 import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
+import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.model.entity.VcMemberPay;
+import com.hz.gather.master.core.model.region.RegionModel;
+import com.hz.gather.master.core.model.stream.ConsumerChannelModel;
+import com.hz.gather.master.core.model.stream.StreamConsumerModel;
 import com.hz.gather.master.core.model.user.CommonModel;
 import com.hz.gather.master.core.protocol.request.pay.RequestAddZFBPay;
 import com.hz.gather.master.core.protocol.request.pay.RequestPayCashOut;
@@ -19,6 +23,7 @@ import com.hz.gather.master.core.protocol.response.pay.ResponeseHavaPayInfo;
 import com.hz.gather.master.core.protocol.response.pay.ResponesePayCashOut;
 import com.hz.gather.master.core.protocol.response.user.ResponeseHavaPay;
 import com.hz.gather.master.util.ComponentUtil;
+import com.hz.gather.master.util.HodgepodgeMethod;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +59,14 @@ public class PayController {
 //    public JsonResult<Object> havaPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:havaPay 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -63,20 +76,28 @@ public class PayController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
             ResponeseHavaPay responeseHavaPay =  ComponentUtil.payService.getHavaPay(memberId);
-            data = PublicMethod.toJson(responeseHavaPay);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responeseHavaPay);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.PAY_HAVAPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_HAVAPAY.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.PAY_HAVAPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_HAVAPAY.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -97,7 +118,15 @@ public class PayController {
     //public JsonResult<Object> havaPayinfo(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         CommonModel commonModel = new CommonModel();
-        log.info("----------:havaPay 进来啦!");
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
+        log.info("----------:havaPayInfo 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
             commonModel  = JSON.parseObject(data, CommonModel.class);
@@ -105,7 +134,7 @@ public class PayController {
             if(!flag){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
-            Integer   memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
+            memberId = PublicMethod.tokenGetMemberId(commonModel.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -113,14 +142,22 @@ public class PayController {
             List<VcMemberPay> list =  ComponentUtil.payService.queryPayZFBList(memberId);
             ResponeseHavaPayInfo responeseHavaPayInfo =PublicMethod.toQueryHavaPayInfo(list);
 
-            data = PublicMethod.toJson(responeseHavaPayInfo);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responeseHavaPayInfo);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.PAY_HAVAPAYINFO.getType(),
+                    ServerConstant.InterfaceEnum.PAY_HAVAPAYINFO.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.PAY_HAVAPAYINFO.getType(),
+                    ServerConstant.InterfaceEnum.PAY_HAVAPAYINFO.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -140,6 +177,14 @@ public class PayController {
     //public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
         RequestAddZFBPay requestAddZFBPay = new RequestAddZFBPay();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:addZFBPay 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -149,7 +194,7 @@ public class PayController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestAddZFBPay.getToken());
+            memberId = PublicMethod.tokenGetMemberId(requestAddZFBPay.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -162,14 +207,22 @@ public class PayController {
             Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId(),requestAddZFBPay.getZfbName());
 
             ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
-            data = PublicMethod.toJson(responeseAddZFBPay);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responeseAddZFBPay);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestAddZFBPay, ServerConstant.InterfaceEnum.PAY_ADDZFBPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_ADDZFBPAY.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestAddZFBPay, ServerConstant.InterfaceEnum.PAY_ADDZFBPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_ADDZFBPAY.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -190,7 +243,16 @@ public class PayController {
     public JsonResult<Object> updateZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestBody RequestEncryptionJson requestData) throws Exception{
         //public JsonResult<Object> addZFBPay(HttpServletRequest request, HttpServletResponse response, @RequestParam String jsonData)throws Exception{
         String data = "";
+
         RequestUpdateZFBPay requestUpdateZFBPay = new RequestUpdateZFBPay();
+        String sgid = ComponentUtil.redisIdService.getNewId();
+        String cgid = "";
+        String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
+        String  strData="";
         log.info("----------:addZFBPay 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -200,7 +262,7 @@ public class PayController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestUpdateZFBPay.getToken());
+            memberId = PublicMethod.tokenGetMemberId(requestUpdateZFBPay.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -213,14 +275,22 @@ public class PayController {
             Integer  count  = ComponentUtil.payService.updatyPayId(id,requestUpdateZFBPay.getZfbPayId(),requestUpdateZFBPay.getZfbName());
 
             ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
-            data = PublicMethod.toJson(responeseAddZFBPay);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responeseAddZFBPay);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestUpdateZFBPay, ServerConstant.InterfaceEnum.PAY_UPDATEZFBPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_UPDATEZFBPAY.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestUpdateZFBPay, ServerConstant.InterfaceEnum.PAY_UPDATEZFBPAY.getType(),
+                    ServerConstant.InterfaceEnum.PAY_UPDATEZFBPAY.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }
@@ -242,8 +312,13 @@ public class PayController {
         String sgid = ComponentUtil.redisIdService.getNewId();
         String cgid = "";
         String ip = StringUtil.getIpAddress(request);
+        Integer memberId = 0;
+
+        RegionModel regionModel = HodgepodgeMethod.assembleRegionModel(ip);
+        ConsumerChannelModel consumerChannelModel = new ConsumerChannelModel();
         String data = "";
         RequestPayCashOut requestPayCashOut = new RequestPayCashOut();
+        String  strData="";
         log.info("----------:payCashOut 进来啦!");
         try{
             data        = StringUtil.decoderBase64(requestData.jsonData);
@@ -261,7 +336,7 @@ public class PayController {
 
 
 
-            Integer   memberId = PublicMethod.tokenGetMemberId(requestPayCashOut.getToken());
+            memberId = PublicMethod.tokenGetMemberId(requestPayCashOut.getToken());
             if(memberId==0){
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
@@ -294,14 +369,23 @@ public class PayController {
 //            Integer  count  = ComponentUtil.payService.addPayZFB(memberId,requestAddZFBPay.getZfbPayId());
 
 //            ResponeseAddZFBPay responeseAddZFBPay =PublicMethod.updateRs(count);
-            data = PublicMethod.toJson(responesePayCashOut);
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            strData = PublicMethod.toJson(responesePayCashOut);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
+
+
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestPayCashOut, ServerConstant.InterfaceEnum.PAY_PAYCASHOUT.getType(),
+                    ServerConstant.InterfaceEnum.PAY_PAYCASHOUT.getDesc(), data, strData, consumerChannelModel, null);
+            ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
+
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
             Map<String,String> map= ExceptionMethod.getException(e, Constant.CODE_ERROR_TYPE1);
+            StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, requestPayCashOut, ServerConstant.InterfaceEnum.PAY_PAYCASHOUT.getType(),
+                    ServerConstant.InterfaceEnum.PAY_PAYCASHOUT.getDesc(), data, null, consumerChannelModel, map);
+            ComponentUtil.streamConsumerService.addError(streamConsumerModel);
             return JsonResult.failedResult(map.get("message"),map.get("code"));
         }
     }

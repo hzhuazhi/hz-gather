@@ -1,12 +1,14 @@
 package com.hz.gather.master.core.protocol.request.login;
 
+import com.hz.gather.master.core.protocol.base.BaseRequest;
+
 /**
  * @Description TODO
  * @Author long
  * @Date 2020/1/5 12:26
  * @Version 1.0
  */
-public class ForgetPhoneModel {
+public class ForgetPhoneModel  extends BaseRequest {
     /**
      * 手机号
      */

@@ -1,12 +1,14 @@
 package com.hz.gather.master.core.protocol.request.login;
 
+import com.hz.gather.master.core.protocol.base.BaseRequest;
+
 /**
  * @Description TODO
  * @Author long
  * @Date 2020/1/6 14:39
  * @Version 1.0
  */
-public class SignInModel {
+public class SignInModel extends BaseRequest {
     /**
      * 类型 1、密码登录  2、验证码登录
      */

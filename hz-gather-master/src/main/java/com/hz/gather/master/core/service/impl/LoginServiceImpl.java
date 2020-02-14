@@ -18,6 +18,7 @@ import com.hz.gather.master.core.model.entity.VcMemberGenerateModel;
 import com.hz.gather.master.core.model.entity.VcMemberResource;
 import com.hz.gather.master.core.model.entity.VcMemberRewardTotal;
 import com.hz.gather.master.core.model.price.VirtualCoinPriceModel;
+import com.hz.gather.master.core.protocol.request.login.CommonModel;
 import com.hz.gather.master.core.protocol.request.login.LoginModel;
 import com.hz.gather.master.core.service.LoginService;
 import com.hz.gather.master.util.ComponentUtil;
@@ -94,7 +95,6 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         }else if(type==4){
             ComponentUtil.redisService.set(CacheKey.UPDATE_PAYPW_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);
         }
-
         return time;
     }
 
@@ -137,8 +137,13 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         }
         VcMember queryInviteCode=PublicMethod.queryInviteCode(loginModel.getInviteCode());
         VcMember   vcMember  =  vcMemberMapper.selectByPrimaryKey(queryInviteCode);
-        addUserInfo(loginModel,memberId,InviteAdd,vcMember,loginModel.getPhone());
-        addRedis(loginModel,InviteAdd,memberId);
+//        addUserInfo(loginModel,memberId,InviteAdd,vcMember,loginModel.getPhone());
+//        addRedis(loginModel,InviteAdd,memberId);
+
+        CommonModel commonModel =  new  CommonModel();
+        BeanUtils.copy(loginModel,commonModel);
+        String   redisString = PublicMethod.toJson(commonModel);
+        ComponentUtil.redisService.set(memberId+"",redisString);
 
         return InviteAdd[2];
     }
