@@ -366,4 +366,14 @@
   </select>
 
 
+  <select id="selectBySuperiorIdInfo" resultType="com.hz.gather.master.core.model.entity.VcMember" >
+    select
+    <include refid="Base_Column_List" />
+    from vc_member
+    where 1=1
+    and  superior_id  = #{superiorId}
+    and  grade_type!=0
+  </select>
+
+
 </mapper>

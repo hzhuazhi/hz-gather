@@ -109,11 +109,9 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
                 list =   uBatchLogMapper.selectByBatchNum(uBatchLog);
 //                throw  new ServiceException(ENUM_ERROR.A00016.geteCode(),ENUM_ERROR.A00016.geteDesc());
             }
-
-
-//            ULimitedTimeLog
         }else if(vcMember.getGradeType()==2){
-
+            VcMember vcMember1=PublicMethod.toVcMemberSuperiorId(memberId);
+            list2 = vcMemberMapper.selectBySuperiorIdInfo(vcMember1);
         }
 
         responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list,list2);

@@ -646,7 +646,7 @@ public class PublicMethod {
         List<String>  pushAddList  =   new ArrayList<>();
         if (vcMember.getGradeType()==0){//普通用户信息
             responseUserInfo.setAddList(addList);
-        }else if(vcMember.getGradeType()==1){//限时用户信息
+        }else if(vcMember.getGradeType()==1){ //限时用户信息
             String recommendMoney = "0";
 
             int pushCount =0;
@@ -657,6 +657,7 @@ public class PublicMethod {
                 if(null!=listVcMember){
                     for(VcMember vcMember1:listVcMember){
                         addList.add(vcMember1.getMemberAdd());
+                        pushAddList.add(vcMember1.getMemberAdd());
                         pushCount++;
                     }
                 }
@@ -676,6 +677,7 @@ public class PublicMethod {
 //
 //            }
 
+            responseUserInfo.setPushAddList(pushAddList);
             responseUserInfo.setPush_count(pushCount+"");
             responseUserInfo.setAddList(addList);
           //  SimpleDateFormat sdfLongTimePlus = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -690,7 +692,23 @@ public class PublicMethod {
 
 
         }else if(vcMember.getGradeType()==2){
+            int count =0;
+            for(VcMember  vcMember1:listVcMember){
+                if(count<3){
+                    addList.add(vcMember1.getMemberAdd());
+                }
+                count++;
+            }
+
+            count=0;
+            for(VcMember  vcMember1:listVcMember){
+                if(count<5){
+                    pushAddList.add(vcMember1.getMemberAdd());
+                }
+                count++;
+            }
             responseUserInfo.setAddList(addList);
+            responseUserInfo.setPushAddList(pushAddList);
             responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.PUSH_PEOPLE_MONEY+"");
             responseUserInfo.setFission_money(vcMemberResource.getTeamPeople()*Constant.EVERY_PEOPLE_MONEY+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");

@@ -33,4 +33,6 @@ public interface VcMemberMapper<T> extends BaseDao<T> {
     List<VcMember> selectBySuperiorIdMember(VcMember model);
 
     List<VcMember> selectSuperiorIdList(VcMember model);
+
+    List<VcMember> selectBySuperiorIdInfo(VcMember model);
 }
