@@ -51,7 +51,7 @@ public class TaskAlipay {
      * @date 2019/12/27 21:30
      */
 //    @Scheduled(cron = "1 * * * * ?")
-//    @Scheduled(fixedDelay = 1000) // 每秒执行
+    @Scheduled(fixedDelay = 1000) // 每秒执行
     public void taskTransferAlipay() throws Exception{
         log.info("TaskAlipay.taskTransferAlipay()------------------进来了!");
         StatusModel statusQuery = TaskMethod.assembleTaskByAliapyTransferStatusQuery(limitNum);
@@ -112,7 +112,7 @@ public class TaskAlipay {
      * @date 2019/12/27 21:30
      */
 //    @Scheduled(cron = "1 * * * * ?")
-//    @Scheduled(fixedDelay = 3000) // 每3秒执行
+    @Scheduled(fixedDelay = 3000) // 每3秒执行
     public void taskAlipay(){
         log.info("TaskAlipay.taskAlipay()------------------进来了!");
         // 查询要跑的数据
