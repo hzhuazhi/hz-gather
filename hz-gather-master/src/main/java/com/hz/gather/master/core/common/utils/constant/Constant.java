@@ -27,7 +27,7 @@ public class Constant {
     public  static  int  CODE_ERROR_TYPE1    =  1 ; //显示给前端
     public  static  int  CODE_ERROR_TYPE2    =  2 ; //不显示显示给前端
 
-    public  static  long  TOKEN_EXPIRE_S    =  1296000L ;
+    public  static  Long  TOKEN_EXPIRE_S    =  604800L;
 
 
     /*************** 每个推荐用户分红金额****************/

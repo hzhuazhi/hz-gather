@@ -137,13 +137,14 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
         }
         VcMember queryInviteCode=PublicMethod.queryInviteCode(loginModel.getInviteCode());
         VcMember   vcMember  =  vcMemberMapper.selectByPrimaryKey(queryInviteCode);
-//        addUserInfo(loginModel,memberId,InviteAdd,vcMember,loginModel.getPhone());
-//        addRedis(loginModel,InviteAdd,memberId);
+        addUserInfo(loginModel,memberId,InviteAdd,vcMember,loginModel.getPhone());
+        addRedis(loginModel,InviteAdd,memberId);
 
-        CommonModel commonModel =  new  CommonModel();
-        BeanUtils.copy(loginModel,commonModel);
-        String   redisString = PublicMethod.toJson(commonModel);
-        ComponentUtil.redisService.set(memberId+"",redisString);
+//        ComponentUtil.redisService.set(InviteAdd[2]+"",memberId+"",Constant.TOKEN_EXPIRE_S);
+//        CommonModel commonModel =  new  CommonModel();
+//        BeanUtils.copy(loginModel,commonModel);
+//        String   redisString = PublicMethod.toJson(commonModel);
+//        ComponentUtil.redisService.set(memberId+"",redisString);
 
         return InviteAdd[2];
     }
@@ -242,7 +243,7 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
 //        String inviteCode= CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, InviteAdd[0]);
         String tradingAddress = CachedKeyUtils.getCacheKey(CacheKey.TRADING_ADDRESS_INFO, InviteAdd[1]);
 
-        ComponentUtil.redisService.set(InviteAdd[2],memberId+"");
+        ComponentUtil.redisService.set(InviteAdd[2],memberId+"",Constant.TOKEN_EXPIRE_S);
         ComponentUtil.redisService.onlyData(phoneKeyCache, "1");
 //        ComponentUtil.redisService.onlyData(inviteCode, "1");
         ComponentUtil.redisService.onlyData(tradingAddress, "1");

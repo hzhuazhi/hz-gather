@@ -271,7 +271,7 @@ public class PublicMethod {
 
 
     public static boolean isChinaPhoneLegal(String str) throws PatternSyntaxException {
-        String regExp = "^((19[0-9])|(13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+        String regExp = "^((16[0-9])|(19[0-9])|(13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
         Pattern p = Pattern.compile(regExp);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -469,6 +469,7 @@ public class PublicMethod {
         VcMemberResource  vcMemberResource =  new  VcMemberResource();
         vcMemberResource.setMemberId(memberId);
         vcMemberResource.setSurplusMoney(new BigDecimal(money));
+        vcMemberResource.setCashMoney(new BigDecimal(money));
         return vcMemberResource;
     }
 
@@ -615,6 +616,7 @@ public class PublicMethod {
         responseUserInfo.setPhone(vcMember.getPhone());
         responseUserInfo.setInviteCode("");
         responseUserInfo.setRq_code("");
+
         if(vcMember.getGradeType()!=0){
             responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
             responseUserInfo.setInviteCode(vcMember.getInviteCode());
@@ -644,6 +646,7 @@ public class PublicMethod {
 
         List<String>  addList  =   new ArrayList<>();
         List<String>  pushAddList  =   new ArrayList<>();
+        responseUserInfo.setPushAddList(pushAddList);
         if (vcMember.getGradeType()==0){//普通用户信息
             responseUserInfo.setAddList(addList);
         }else if(vcMember.getGradeType()==1){ //限时用户信息

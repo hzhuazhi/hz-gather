@@ -200,9 +200,9 @@ public class LoginController {
             String  token  = ComponentUtil.loginService.addMemberInfo(loginModel);
             strData  = PublicMethod.toLoginModelDto(token);
 
-            ComponentUtil.userInfoService.savaRelationSpread(loginModel.getClientType(),loginModel.getChannel(),loginModel.getChannelNum(),loginModel.getSpreadValue());
+//            ComponentUtil.userInfoService.savaRelationSpread(loginModel.getClientType(),loginModel.getChannel(),loginModel.getChannelNum(),loginModel.getSpreadValue());
 
-            String encryptionData = StringUtil.mergeCodeBase64(data);
+            String encryptionData = StringUtil.mergeCodeBase64(strData);
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 

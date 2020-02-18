@@ -257,6 +257,9 @@
       <if test="surplusMoney != null" >
         surplus_money =surplus_money+ #{surplusMoney},
       </if>
+      <if test="cashMoney != null" >
+        cash_money = cash_money+ #{cashMoney},
+      </if>
     </set>
     where member_id = #{memberId}
   </update>

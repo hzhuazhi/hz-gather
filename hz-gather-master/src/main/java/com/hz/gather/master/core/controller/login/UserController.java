@@ -91,6 +91,7 @@ public class UserController {
                     ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getDesc(), data, strData, consumerChannelModel, null);
             ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
 
+            System.out.println("=======:"+resultDataModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();
