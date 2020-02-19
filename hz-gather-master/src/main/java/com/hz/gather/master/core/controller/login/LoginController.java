@@ -89,6 +89,8 @@ public class LoginController {
             data        = StringUtil.decoderBase64(requestData.jsonData);
             sendSmsModel  = JSON.parseObject(data, SendSmsModel.class);
 
+
+
             boolean  flag =PublicMethod.isChinaPhoneLegal(sendSmsModel.getPhone());
 
             if(!flag){
@@ -180,6 +182,7 @@ public class LoginController {
                 throw  new ServiceException(ENUM_ERROR.INVALID_USER.geteCode(),ENUM_ERROR.INVALID_USER.geteDesc());
             }
             //用户手机号码是否被注册
+
             flag = ComponentUtil.loginService.isPhoneExist(loginModel.getPhone());
             if(flag){
                 throw  new ServiceException(ENUM_ERROR.A00001.geteCode(),ENUM_ERROR.A00001.geteDesc());

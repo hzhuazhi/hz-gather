@@ -99,6 +99,8 @@ public class AutowireRunner implements ApplicationRunner {
     private StreamConsumerService streamConsumerService;
     Thread runThread = null;
 
+    @Autowired
+    private DateService  dateService;
 
 
 
@@ -133,6 +135,7 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.taskHodgepodgeService = taskHodgepodgeService;
         ComponentUtil.regionService = regionService;
         ComponentUtil.streamConsumerService = streamConsumerService;
+        ComponentUtil.dateService = dateService;
         runThread = new RunThread();
         runThread.start();
 

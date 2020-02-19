@@ -1746,6 +1746,22 @@ public class PublicMethod {
     }
 
 
+
+    public  static SysNoticeInfo insertNoticeModelDate(String nickname,Integer type,Double money,Date  date){
+        SysNoticeInfo  noticeModel =  new SysNoticeInfo();
+        noticeModel.setCreateTime(date);
+        DateModel dateModel= PublicMethod.getDate();
+        BeanUtils.copy(dateModel,noticeModel);
+        noticeModel.setMemberId(0);
+        noticeModel.setDataType(type);
+        noticeModel.setNickname(nickname);
+        noticeModel.setReceiveMoney(new BigDecimal(money));
+        return  noticeModel;
+    }
+
+
+
+
     /**
      * 生产用户领取奖励总额表信息
      * @param memberId

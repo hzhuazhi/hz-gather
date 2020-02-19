@@ -330,7 +330,7 @@ public class DateUtil {
 	 * @return String
 	 * @throws Exception
 	 */
-	public static String getPlusTime(Date date) throws Exception {
+	public static String getPlusTime(Date date) {
 		if (date == null)
 			return null;
 		try {
@@ -2644,20 +2644,20 @@ public class DateUtil {
 		return Integer.parseInt(sdf.format(date));
 	}
 
-	/**
-	 * @Description: TODO(当前日期的几天前的日期，日期格式：20180511)
-	 * @author df
-	 * @create 20:02 2018/5/11
-	 **/
-	public static int getIntAgoday(int day){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Date date = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(Calendar.DAY_OF_MONTH, -day);
-		date = calendar.getTime();
-		return Integer.parseInt(sdf.format(date));
-	}
+    /**
+     * @Description: TODO(当前日期的几天前的日期，日期格式：20180511)
+     * @author df
+     * @create 20:02 2018/5/11
+     **/
+    public static int getIntAgoday(int day){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, -day);
+        date = calendar.getTime();
+        return Integer.parseInt(sdf.format(date));
+    }
 
 	/**
 	 * method : 13、根据Date获取"yyyy-MM-dd"字符串
@@ -3045,10 +3045,8 @@ public class DateUtil {
 //		boolean flag = isBeLongSfm(start, end);
 //		System.out.println("flag:" + flag);
 
-//		DateUtil.dateAddDays(new Date(),2);
-//		System.out.println(DateUtil.dateAddDays(new Date(),2));
-		int day = getIntAgoday(2);
-		System.out.println(day);
+		DateUtil.dateAddDays(new Date(),2);
+		System.out.println(DateUtil.dateAddDays(new Date(),2));
 	}
 
 	/**
@@ -3065,5 +3063,32 @@ public class DateUtil {
 		}
 		return "";
 	}
+
+
+	public static Date randomDate(String beginDate,String endDate){
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date start = format.parse(beginDate);
+			Date end = format.parse(endDate);
+
+			if(start.getTime() >= end.getTime()){
+				return null;
+			}
+			long date = random(start.getTime(),end.getTime());
+			return new Date(date);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static long random(long begin,long end){
+		long rtn = begin + (long)(Math.random() * (end - begin));
+		if(rtn == begin || rtn == end){
+			return random(begin,end);
+		}
+		return rtn;
+	}
+
 
 }

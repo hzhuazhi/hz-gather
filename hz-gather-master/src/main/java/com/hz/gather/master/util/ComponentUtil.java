@@ -36,5 +36,7 @@ public class ComponentUtil {
     public static RegionService regionService;
     public static StreamConsumerService streamConsumerService;
 
+    public static DateService dateService;
+
 
 }

@@ -20,10 +20,22 @@ public class RandomUtil {
         return random.toString();
     }
 
+
+    public static String   getRandom(int   count,int num){
+
+        StringBuffer  random  =  new StringBuffer() ;
+        Random r = new Random();
+        for(int i=0 ; i<count ;  i++) {
+            int ran1 = r.nextInt(num);
+            random.append(ran1);
+        }
+        return random.toString();
+    }
+
     public static void main(String  [] args){
 //        getRandom(6);
-        for(int i=0;i<100;i++){
-            System.out.println(getRandom(6));
+        for(int i=0;i<10;i++){
+            System.out.println(getRandom(4,10));
         }
 
     }
