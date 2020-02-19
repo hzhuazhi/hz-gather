@@ -2645,6 +2645,21 @@ public class DateUtil {
 	}
 
 	/**
+	 * @Description: TODO(当前日期的几天前的日期，日期格式：20180511)
+	 * @author df
+	 * @create 20:02 2018/5/11
+	 **/
+	public static int getIntAgoday(int day){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date date = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DAY_OF_MONTH, -day);
+		date = calendar.getTime();
+		return Integer.parseInt(sdf.format(date));
+	}
+
+	/**
 	 * method : 13、根据Date获取"yyyy-MM-dd"字符串
 	 */
 	public static String getDayStr(Date date) {
@@ -3030,8 +3045,10 @@ public class DateUtil {
 //		boolean flag = isBeLongSfm(start, end);
 //		System.out.println("flag:" + flag);
 
-		DateUtil.dateAddDays(new Date(),2);
-		System.out.println(DateUtil.dateAddDays(new Date(),2));
+//		DateUtil.dateAddDays(new Date(),2);
+//		System.out.println(DateUtil.dateAddDays(new Date(),2));
+		int day = getIntAgoday(2);
+		System.out.println(day);
 	}
 
 	/**

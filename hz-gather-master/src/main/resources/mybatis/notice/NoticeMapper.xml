@@ -89,6 +89,9 @@
             <if test="dataType != null and dataType != '' " >
                 and a.data_type = #{dataType}
             </if>
+            <if test="agoCurday != null and agoCurday != '' " >
+                and a.curday >= #{agoCurday}
+            </if>
             and a.is_valid = 1
         </trim>
     </sql>

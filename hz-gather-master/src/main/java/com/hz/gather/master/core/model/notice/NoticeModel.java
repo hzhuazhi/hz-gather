@@ -68,6 +68,11 @@ public class NoticeModel extends BasePage implements Serializable {
      */
     private Integer isValid;
 
+    /**
+     * 几天前的日期
+     */
+    private Integer agoCurday;
+
     public Long getId() {
         return id;
     }
@@ -154,5 +159,13 @@ public class NoticeModel extends BasePage implements Serializable {
 
     public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public Integer getAgoCurday() {
+        return agoCurday;
+    }
+
+    public void setAgoCurday(Integer agoCurday) {
+        this.agoCurday = agoCurday;
     }
 }

@@ -2,10 +2,7 @@ package com.hz.gather.master.core.controller.notice;
 
 import com.alibaba.fastjson.JSON;
 import com.hz.gather.master.core.common.exception.ExceptionMethod;
-import com.hz.gather.master.core.common.utils.BeanUtils;
-import com.hz.gather.master.core.common.utils.JsonResult;
-import com.hz.gather.master.core.common.utils.SignUtil;
-import com.hz.gather.master.core.common.utils.StringUtil;
+import com.hz.gather.master.core.common.utils.*;
 import com.hz.gather.master.core.common.utils.constant.ServerConstant;
 import com.hz.gather.master.core.model.RequestEncryptionJson;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
@@ -94,6 +91,7 @@ public class NoticeDController {
             requestModel  = JSON.parseObject(data, RequestNotice.class);
             // 公告数据
             NoticeModel noticeQuery = BeanUtils.copy(requestModel, NoticeModel.class);
+            noticeQuery.setAgoCurday(DateUtil.getIntAgoday(2));// 设置查询当前系统2天以内的数据
             List<NoticeModel> noticeList = ComponentUtil.noticeService.queryByList(noticeQuery);
             // 组装返回客户端的数据
             long stime = System.currentTimeMillis();
