@@ -209,6 +209,9 @@
       <if test="surplusMoney != null" >
         surplus_money =surplus_money+ #{surplusMoney},
       </if>
+      <if test="fissionMoney != null" >
+        fission_money = fission_money+ #{fissionMoney},
+      </if>
     </set>
     where member_id = #{memberId}
   </update>
@@ -262,6 +265,9 @@
       </if>
       <if test="totalMoney != null" >
         total_money = total_money+ #{totalMoney},
+      </if>
+      <if test="fissionMoney != null" >
+        fission_money = fission_money+ #{fissionMoney},
       </if>
     </set>
     where member_id = #{memberId}

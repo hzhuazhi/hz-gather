@@ -217,7 +217,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
     @Override
     public boolean updateMemberInfo(List<VcMember> list,Integer  superiorId,boolean superiorFlag,String outTradeNo,Integer  createMemberId) throws Exception {
         for(VcMember vcMember:list){
-            Integer type=2;
+            Integer type=2;  //是否是直推 1、是直推 2 、裂变
             if(vcMember.getMemberId()==superiorId){
                 type=1;
             }
@@ -280,7 +280,7 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
             ULimitedTimeLog  uLimitedTimeLog=PublicMethod.toULimitedTimeLog(memberId);
             ULimitedTimeLog  uLimitedTimeLogh = uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
 
-            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceTeamPeople(memberId);
+            VcMemberResource  vcMemberResource = PublicMethod.toUqdateVcMemberResourceTeamPeople(memberId,money);
 
             ULimitedTimeLog updateTimeLog =PublicMethod.updateFissionMoney(uLimitedTimeLogh.getBatchNum(),Constant.EVERY_PEOPLE_MONEY);
             UBatchLog  insertBatchLog = PublicMethod.insertUBatchLog(createMemberId,uLimitedTimeLogh.getBatchNum(),type,money);
@@ -336,7 +336,6 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         ULimitedTimeLog  uLimited=uLimitedTimeLogMapper.selectByMaxBatchNum(uLimitedTimeLog);
         if(uLimited != null){
             if(uLimited.getPushNumber()>=3){
-
                 ULimitedTimeLog updatelog = PublicMethod.updateTimeLogFinish(uLimited.getBatchNum());
                 VcMember vcMember= PublicMethod.updateVcMemberGradeType(memberId);
                 UBatchLog uBatchLog = PublicMethod.toUBatchLog(uLimited.getBatchNum());

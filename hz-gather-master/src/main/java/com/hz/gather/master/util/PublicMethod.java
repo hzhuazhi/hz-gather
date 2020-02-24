@@ -617,6 +617,7 @@ public class PublicMethod {
         responseUserInfo.setPhone(vcMember.getPhone());
         responseUserInfo.setInviteCode("");
         responseUserInfo.setRq_code("");
+        responseUserInfo.setCount_fission_money(vcMember.getFission_money()+"");
         if(stayTimeLog==null||stayTimeLog.getFissionMoney().toString().equals("0.00")){
             responseUserInfo.setIsStayMoney(1);
             responseUserInfo.setStayMoney("0");
@@ -1567,9 +1568,10 @@ public class PublicMethod {
     }
 
 
-    public static  VcMemberResource   toUqdateVcMemberResourceTeamPeople(Integer  memberId){
+    public static  VcMemberResource   toUqdateVcMemberResourceTeamPeople(Integer  memberId,Double money){
         VcMemberResource  vcMemberResource = new VcMemberResource();
         vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setFissionMoney(new BigDecimal(money));
         vcMemberResource.setTeamPeople(1);
         return vcMemberResource;
     }
@@ -1698,6 +1700,7 @@ public class PublicMethod {
         vcMemberResource.setMemberId(uLimited.getMemberId());
         vcMemberResource.setTotalMoney(uLimited.getFissionMoney());
         vcMemberResource.setSurplusMoney(uLimited.getFissionMoney());
+        vcMemberResource.setFissionMoney(uLimited.getFissionMoney());
 //        vcMemberResource.setTeamPeople(list.size());
         return vcMemberResource;
     }
@@ -1716,6 +1719,7 @@ public class PublicMethod {
         vcMemberResource.setMemberId(memberId);
         vcMemberResource.setTotalMoney(money);
         vcMemberResource.setSurplusMoney(money);
+        vcMemberResource.setFissionMoney(money);
         return vcMemberResource;
     }
 

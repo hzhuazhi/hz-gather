@@ -31,6 +31,12 @@ public class ResponseUserInfo extends ResponseUser{
      * 已提总收益
      */
     private String  cash_money;
+
+    /**
+     * 裂变总金额
+     */
+    private String  count_fission_money;
+
     /**
      * vip 等级 0、普通用户 1、限时用户 2、永久vip
      */
@@ -284,5 +290,13 @@ public class ResponseUserInfo extends ResponseUser{
 
     public void setIsStayMoney(Integer isStayMoney) {
         this.isStayMoney = isStayMoney;
+    }
+
+    public String getCount_fission_money() {
+        return count_fission_money;
+    }
+
+    public void setCount_fission_money(String count_fission_money) {
+        this.count_fission_money = count_fission_money;
     }
 }

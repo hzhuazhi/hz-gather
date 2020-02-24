@@ -224,6 +224,14 @@ public class VcMember {
     private List<Integer> idList;
 
 
+    /**
+     * 总裂变金额
+     *
+     * @mbggenerated
+     */
+    private BigDecimal fission_money;
+
+
     public Integer getMemberId() {
         return memberId;
     }
@@ -470,5 +478,13 @@ public class VcMember {
 
     public void setIdList(List<Integer> idList) {
         this.idList = idList;
+    }
+
+    public BigDecimal getFission_money() {
+        return fission_money;
+    }
+
+    public void setFission_money(BigDecimal fission_money) {
+        this.fission_money = fission_money;
     }
 }
