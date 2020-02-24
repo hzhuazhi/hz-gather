@@ -101,6 +101,15 @@ public class ResponseUserInfo extends ResponseUser{
      */
     private Integer    userCaseMax;
 
+    /**
+     * 待收益
+     */
+    private String     stayMoney;
+    /**
+     * 是否有待收益 1、没有 2、有
+     */
+    private Integer     isStayMoney;
+
     public String getRq_code() {
         return rq_code;
     }
@@ -259,5 +268,21 @@ public class ResponseUserInfo extends ResponseUser{
 
     public void setPushAddList(List<String> pushAddList) {
         this.pushAddList = pushAddList;
+    }
+
+    public String getStayMoney() {
+        return stayMoney;
+    }
+
+    public void setStayMoney(String stayMoney) {
+        this.stayMoney = stayMoney;
+    }
+
+    public Integer getIsStayMoney() {
+        return isStayMoney;
+    }
+
+    public void setIsStayMoney(Integer isStayMoney) {
+        this.isStayMoney = isStayMoney;
     }
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hz.gather.master.core.mapper.VcPhoneNumMapper" >
+  <sql id="Base_Column_List" >
+    id, phone, is_valid, curday
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.hz.gather.master.core.model.entity.VcPhoneNum" >
+    select 
+    <include refid="Base_Column_List" />
+    from vc_phone_num
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vc_phone_num
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.hz.gather.master.core.model.entity.VcPhoneNum" >
+    insert into vc_phone_num
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="curday != null" >
+        curday,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="phone != null" >
+        #{phone},
+      </if>
+      <if test="isValid != null" >
+        #{isValid},
+      </if>
+      <if test="curday != null" >
+        #{curday},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.VcPhoneNum" >
+    update vc_phone_num
+    <set >
+      <if test="phone != null" >
+        phone = #{phone},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid},
+      </if>
+      <if test="curday != null" >
+        curday = #{curday},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

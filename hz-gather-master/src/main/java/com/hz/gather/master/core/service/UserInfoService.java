@@ -100,4 +100,5 @@ public interface UserInfoService<T> extends BaseService<T> {
 
     void   savaRelationSpread(Integer clentType,String channel,String channelNum,String spreadValue);
 
+    boolean    memberIsPermanentVIP(Integer  memberId);
 }

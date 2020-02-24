@@ -144,4 +144,12 @@ public class TransactionalServiceImpl<T> extends BaseServiceImpl<T> implements T
         uMoneyListMapper.insertSelective(uMoneyList);
         vcMemberResourceMapper.updateCaseFail(vcMemberResource);
     }
+
+    @Override
+    public void vipSurplusReward(Integer  memberId, VcMemberResource vcMemberResource, UMoneyLog uMoneyLog,UMoneyList uMoneyList) {
+        uLimitedTimeLogMapper.updateByisFinish(memberId);
+        uMoneyLogMapper.insertSelective(uMoneyLog);
+        uMoneyListMapper.insertSelective(uMoneyList);
+        vcMemberResourceMapper.updateCaseFail(vcMemberResource);
+    }
 }

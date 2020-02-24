@@ -21,4 +21,8 @@ public interface ULimitedTimeLogMapper<T> extends BaseDao<T> {
     ULimitedTimeLog selectByMaxBatchNum(ULimitedTimeLog record);
 
     List<ULimitedTimeLog> selectByInvalidTime(ULimitedTimeLog record);
+
+    ULimitedTimeLog selectByMemberId(ULimitedTimeLog record);
+
+    int   updateByisFinish(Integer memberId);
 }

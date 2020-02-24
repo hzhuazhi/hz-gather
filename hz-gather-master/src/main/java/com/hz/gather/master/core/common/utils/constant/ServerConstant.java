@@ -132,6 +132,10 @@ public class ServerConstant {
 
 
 
+        REWARD_VIPRECEIVEFISSIONREWARD(35, "RewardController.vipReceivefissionReward", "永久vip 领取裂变奖励"),
+
+
+
 
 
         ;

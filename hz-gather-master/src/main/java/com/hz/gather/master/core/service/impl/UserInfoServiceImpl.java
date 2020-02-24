@@ -92,8 +92,10 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         List<VcMember> list2 =null;
         List<UBatchLog>     list = null;
         ULimitedTimeLog  timeLog = null;
+        ULimitedTimeLog stayTimeLog= null;
         //状态显示vip的时候
         if(vcMember.getGradeType()==1){
+
 //            VcMember  vcMember1 = PublicMethod.toVcMembersuperiorId(memberId);
 //            List<VcMember> list1 =vcMemberMapper.selectBySuperiorIdMember(vcMember1);
             ULimitedTimeLog  limitedTimeLog = new ULimitedTimeLog();
@@ -114,8 +116,8 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
             list2 = vcMemberMapper.selectBySuperiorIdInfo(vcMember1);
         }
 
-        responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list,list2);
-
+        stayTimeLog=ComponentUtil.limitedTimeService.getQueryList(memberId);
+        responseUserInfo=PublicMethod.toResponseUserInfo(vcMember,vcMemberResource,timeLog,list,list2,stayTimeLog);
 
         return responseUserInfo;
     }
@@ -379,5 +381,21 @@ public class UserInfoServiceImpl<T> extends BaseServiceImpl<T> implements UserIn
         }
         TbGaRecordNoRelation record = new  TbGaRecordNoRelation();
         tbGaRecordNoRelationMapper.insertSelective(record);
+    }
+
+
+    @Override
+    public boolean memberIsPermanentVIP(Integer memberId) {
+        boolean  flag=false;
+        VcMember  vcMember  = PublicMethod.toVcMember(memberId);
+        VcMember  vcMember1 = vcMemberMapper.selectByPrimaryKey(vcMember);
+        if(null!=vcMember1){
+            if (vcMember1.getGradeType()==2){
+                flag = true;
+            }
+        }else{
+            return  flag;
+        }
+        return flag;
     }
 }

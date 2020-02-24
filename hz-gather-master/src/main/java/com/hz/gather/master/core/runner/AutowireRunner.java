@@ -102,6 +102,9 @@ public class AutowireRunner implements ApplicationRunner {
     @Autowired
     private DateService  dateService;
 
+    @Autowired
+    private LimitedTimeService  limitedTimeService;
+
 
 
 
@@ -136,6 +139,7 @@ public class AutowireRunner implements ApplicationRunner {
         ComponentUtil.regionService = regionService;
         ComponentUtil.streamConsumerService = streamConsumerService;
         ComponentUtil.dateService = dateService;
+        ComponentUtil.limitedTimeService = limitedTimeService;
         runThread = new RunThread();
         runThread.start();
 

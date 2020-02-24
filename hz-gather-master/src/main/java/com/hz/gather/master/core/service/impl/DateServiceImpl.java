@@ -39,9 +39,9 @@ public class DateServiceImpl <T> extends BaseServiceImpl<T> implements DateServi
         map.put("4",1000D);
         map.put("5",2000D);
         for(int i=0;i<count;i++){
-            String  begenDate=DateUtil.getDateLong(new Date());
+            String  begenDate=DateUtil.getDateHour(new Date());
             String  endDate =DateUtil.getPlusTime(new Date());
-            Date date = DateUtil.randomDate(begenDate+" 07:00:00",endDate);
+            Date date = DateUtil.randomDate(begenDate+":00:00",endDate);
             String  key = RandomUtil.getRandom(1,6);
             Double  money = Double.parseDouble(map.get(key)+"");
 

@@ -60,6 +60,7 @@ public class Constant {
     public  static  Integer   REWARD_TYPE1  =  1; //裂变奖励
     public  static  Integer   REWARD_TYPE2  =  2; //提现奖励
     public  static  Integer   REWARD_TYPE3  =  3; //提现失败奖励
+    public  static  Integer   REWARD_TYPE4  =  4; //领取vip裂变收益
 
     /*************** 用户符号类型****************/
     public  static  Integer   SYMBO_TYPE1  =  1; //加
@@ -72,4 +73,9 @@ public class Constant {
 
     /*************** 提现次数限制地址 ****************/
     public   static  Integer   USERCASHMAX = SysNoticeAskSingleton.getInstance().getUserCashMaxCount();
+
+    /*************** 裂变奖励明细表奖励类型****************/
+    public  static  Integer   MONEY_TYPE1  =  1; //直推
+    public  static  Integer   MONEY_TYPE2  =  2; //裂变
+    public  static  Integer   MONEY_TYPE3  =  3; //永久vip 领取裂变收益
 }

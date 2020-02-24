@@ -9,7 +9,6 @@ import com.hz.gather.master.core.common.utils.StringUtil;
 import com.hz.gather.master.core.common.utils.constant.Constant;
 import com.hz.gather.master.core.model.ResponseEncryptionJson;
 import com.hz.gather.master.core.protocol.request.login.SendSmsModel;
-import com.hz.gather.master.util.ComponentUtil;
 import com.hz.gather.master.util.PublicMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

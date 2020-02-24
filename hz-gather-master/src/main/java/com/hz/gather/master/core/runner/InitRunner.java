@@ -28,12 +28,12 @@ public class InitRunner implements ApplicationRunner {
         log.debug("初始化信息！");
         ComponentUtil.initService.initBasics();
 
-        new Thread() {
-            public void run() {
-                log.debug("修改结果状态！");
-                ComponentUtil.payService.executeInvalidTimeInfo();
-            }
-        }.start();
+//        new Thread() {
+//            public void run() {
+//                log.debug("修改结果状态！");
+//                ComponentUtil.payService.executeInvalidTimeInfo();
+//            }
+//        }.start();
 
 
         new Thread() {

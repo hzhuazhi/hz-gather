@@ -115,6 +115,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" >
     update u_limited_time_log
     <set >
@@ -204,6 +205,26 @@
 
     </set>
     where batch_num = #{batchNum}
+  </update>
+
+  <select id="selectByMemberId" resultType="com.hz.gather.master.core.model.entity.ULimitedTimeLog" parameterType="java.lang.Long" >
+    select
+    sum(fission_money) as fission_money
+    from u_limited_time_log
+    where 1=1
+    and   is_finish=1
+    and   is_valid=2
+    <if test="memberId != null and memberId != '' " >
+      and member_id = #{memberId}
+    </if>
+  </select>
+
+
+
+  <update id="updateByisFinish" parameterType="java.lang.Integer" >
+    update u_limited_time_log
+    set is_finish = 2
+    where member_id = #{memberId}
   </update>
 
 </mapper>

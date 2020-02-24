@@ -80,11 +80,11 @@ public class LoginServiceImpl<T> extends BaseServiceImpl<T> implements LoginServ
     @Override
     public String createTime(String phone,Integer type)throws  Exception {
         String  time = DateUtil.timeStamp()  ;
-        String  amsVerification = RandomUtil.getRandom(6);
+        String  amsVerification = "8888";//RandomUtil.getRandom(6);
         if (amsVerification.startsWith("0")){
             amsVerification = amsVerification.replaceFirst("0" , "1");
         }
-        SendSms.aliSendSms(phone,amsVerification);
+        //SendSms.aliSendSms(phone,amsVerification);
         //缺少一个发送短信
         if(type==1){
             ComponentUtil.redisService.set(CacheKey.REGISTER_SMS+(phone+time),amsVerification, Constant.EFFECTIVE_IDENT_CODE_TIME, TimeUnit.MINUTES);

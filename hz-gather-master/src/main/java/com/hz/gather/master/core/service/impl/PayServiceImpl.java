@@ -438,4 +438,26 @@ public class PayServiceImpl<T> extends BaseServiceImpl<T> implements PayService<
         int  count  = ComponentUtil.transactionalService.updateULimitedTimeLogIsValid(limitedTimeLogUpdate,limitedTimeLog,vcMemberResource);
         return count;
     }
+
+
+    @Override
+    public boolean receiveVIPSurplusReward(Integer memberId) {
+        boolean  flag = false;
+        ULimitedTimeLog  uLimitedTimeLog    =  ComponentUtil.limitedTimeService.getQueryList(memberId);
+
+        if(uLimitedTimeLog==null){
+            return flag;
+        }
+        if(uLimitedTimeLog.getFissionMoney().compareTo(new BigDecimal(0))>0){
+            UMoneyLog   uMoneyLog  =  PublicMethod.insertUMoneyLog(memberId,0,"",uLimitedTimeLog.getFissionMoney(),Constant.MONEY_TYPE3);
+            VcMemberResource  updateVcMemberResource =   PublicMethod.toVcMemberResource(memberId,uLimitedTimeLog.getFissionMoney());
+            UMoneyList  uMoneyList = PublicMethod.insertUMoneyList(memberId,Constant.REWARD_TYPE4,Constant.SYMBO_TYPE1,uLimitedTimeLog.getFissionMoney());
+
+            ComponentUtil.transactionalService.vipSurplusReward(memberId,updateVcMemberResource,uMoneyLog,uMoneyList);
+            flag=true;
+        }else{
+            return flag;
+        }
+        return flag;
+    }
 }

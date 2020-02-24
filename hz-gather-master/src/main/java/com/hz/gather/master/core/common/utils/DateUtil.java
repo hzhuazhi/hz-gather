@@ -32,6 +32,7 @@ import static java.lang.System.out;
 public class DateUtil {
 	static SimpleDateFormat sdfShort = new SimpleDateFormat("yyyyMMdd");
 	static SimpleDateFormat sdfLong = new SimpleDateFormat("yyyy-MM-dd");
+	static SimpleDateFormat sdfHour = new SimpleDateFormat("yyyy-MM-dd HH");
 	static SimpleDateFormat sdfLongCn = new SimpleDateFormat("yyyy年MM月dd日");
 	static SimpleDateFormat sdfShortU = new SimpleDateFormat("MMM dd", Locale.ENGLISH);
 	static SimpleDateFormat sdfLongU = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);
@@ -155,6 +156,23 @@ public class DateUtil {
 			return "";
 		}
 	}
+
+
+    /**
+     * @return String
+     * @throws Exception
+     */
+    public static String getDateHour(Date date) {
+        String nowDate = "";
+        try {
+            if (date != null)
+                nowDate = sdfHour.format(date);
+            return nowDate;
+        } catch (Exception e) {
+            out.println("Error at getDate:" + e.getMessage());
+            return "";
+        }
+    }
 
 	/**
 	 * @return String

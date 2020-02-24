@@ -606,7 +606,8 @@ public class PublicMethod {
      * @author long
      * @date 2020/1/8 17:51
      */
-    public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog,List<UBatchLog> list ,List<VcMember> listVcMember)throws  Exception{
+    public  static ResponseUserInfo   toResponseUserInfo(VcMember vcMember, VcMemberResource vcMemberResource, ULimitedTimeLog  limitedTimeLog,List<UBatchLog> list ,
+                                                                List<VcMember> listVcMember,ULimitedTimeLog stayTimeLog)throws  Exception{
         ResponseUserInfo responseUserInfo =  new ResponseUserInfo();
         responseUserInfo.setUserCaseMax(Constant.USERCASHMAX);
         responseUserInfo.setMemberAdd(vcMember.getMemberAdd());
@@ -616,6 +617,14 @@ public class PublicMethod {
         responseUserInfo.setPhone(vcMember.getPhone());
         responseUserInfo.setInviteCode("");
         responseUserInfo.setRq_code("");
+        if(stayTimeLog==null||stayTimeLog.getFissionMoney().toString().equals("0.00")){
+            responseUserInfo.setIsStayMoney(1);
+            responseUserInfo.setStayMoney("0");
+        }else{
+            responseUserInfo.setIsStayMoney(2);
+            responseUserInfo.setStayMoney(stayTimeLog.getFissionMoney()+"");
+        }
+
 
         if(vcMember.getGradeType()!=0){
             responseUserInfo.setRq_code(Constant.REGISTERADD+"?inviteCode="+vcMember.getInviteCode());
@@ -688,7 +697,8 @@ public class PublicMethod {
             Long expireTimelong = parse.getTime();
 
             responseUserInfo.setRecommend_money(vcMemberResource.getPushPeople()*Constant.PUSH_PEOPLE_MONEY+"");
-            responseUserInfo.setExpire_time(expireTimelong);
+//            responseUserInfo.setExpire_time(expireTimelong);
+            responseUserInfo.setExpire_time(0L);
             responseUserInfo.setFission_money(limitedTimeLog.getFissionMoney()+"");
             responseUserInfo.setReality_push_count(Constant.FISSION_NUMBER+"");
             responseUserInfo.setRequire_fission_count(pushCount+"");
@@ -1371,6 +1381,29 @@ public class PublicMethod {
         return uMoneyLog;
     }
 
+    /**
+     * @Description: TODO
+     * @param memberId
+    * @param CreateMemberId
+    * @param outTradeNo
+    * @param receiveMoney
+    * @param type
+     * @return com.hz.gather.master.core.model.entity.UMoneyLog
+     * @author long
+     * @date 2020/2/21 15:58
+     */
+    public  static UMoneyLog  insertUMoneyLog(Integer memberId,Integer CreateMemberId,String outTradeNo,BigDecimal receiveMoney,Integer type){
+        DateModel dateModel= PublicMethod.getDate();
+        UMoneyLog  uMoneyLog = new UMoneyLog();
+        BeanUtils.copy(dateModel,uMoneyLog);
+        uMoneyLog.setMemberId(memberId);
+        uMoneyLog.setRewardType(type);
+        uMoneyLog.setOutTradeNo(outTradeNo);
+        uMoneyLog.setReceiveMoney(receiveMoney);
+        uMoneyLog.setCreateMemberId(CreateMemberId);
+        return uMoneyLog;
+    }
+
 
     /**
      * @Description: 用户资金明细表
@@ -1669,6 +1702,23 @@ public class PublicMethod {
         return vcMemberResource;
     }
 
+
+    /**
+     * @Description: 成为永久vip  领取需要准备的字段
+     * @param memberId
+    * @param money
+     * @return com.hz.gather.master.core.model.entity.VcMemberResource
+     * @author long
+     * @date 2020/2/21 15:34
+     */
+    public static VcMemberResource     toVcMemberResource(Integer  memberId,BigDecimal  money){
+        VcMemberResource  vcMemberResource  = new VcMemberResource();
+        vcMemberResource.setMemberId(memberId);
+        vcMemberResource.setTotalMoney(money);
+        vcMemberResource.setSurplusMoney(money);
+        return vcMemberResource;
+    }
+
     public static ULimitedTimeLog  updateFissionMoney(String batchNum,Double money){
         ULimitedTimeLog  uLimitedTimeLog = new ULimitedTimeLog();
         uLimitedTimeLog.setBatchNum(batchNum);
@@ -1750,8 +1800,7 @@ public class PublicMethod {
     public  static SysNoticeInfo insertNoticeModelDate(String nickname,Integer type,Double money,Date  date){
         SysNoticeInfo  noticeModel =  new SysNoticeInfo();
         noticeModel.setCreateTime(date);
-        DateModel dateModel= PublicMethod.getDate();
-        BeanUtils.copy(dateModel,noticeModel);
+        noticeModel.setCurday(DateUtil.getDayNumber(date));
         noticeModel.setMemberId(0);
         noticeModel.setDataType(type);
         noticeModel.setNickname(nickname);

@@ -206,6 +206,13 @@ public interface PayService<T> extends BaseService<T> {
     Integer  insertLimitedTimeLog(Integer  memberId,Long id);
 
 
+    /**
+     * 永久vip领取剩余奖励
+     * @param memberId
+     */
+    boolean     receiveVIPSurplusReward(Integer  memberId);
+
+
 
 
 }

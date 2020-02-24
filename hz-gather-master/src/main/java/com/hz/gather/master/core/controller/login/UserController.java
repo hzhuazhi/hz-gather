@@ -86,12 +86,10 @@ public class UserController {
             ResponseEncryptionJson resultDataModel = new ResponseEncryptionJson();
             resultDataModel.jsonData = encryptionData;
 
-
             StreamConsumerModel streamConsumerModel = HodgepodgeMethod.assembleStream(sgid, cgid, memberId, regionModel, commonModel, ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getType(),
                     ServerConstant.InterfaceEnum.USER_QUERYUSERINFO.getDesc(), data, strData, consumerChannelModel, null);
             ComponentUtil.streamConsumerService.addVisit(streamConsumerModel);
 
-            System.out.println("=======:"+resultDataModel);
             return JsonResult.successResult(resultDataModel);
         }catch (Exception e){
             e.printStackTrace();

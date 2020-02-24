@@ -59,4 +59,7 @@ public interface TransactionalService <T> extends BaseService<T> {
 
     void  updateCaseMoneyFail(UMoneyList uMoneyList,VcMemberResource vcMemberResource);
 
+    void  vipSurplusReward(Integer  memberId,VcMemberResource vcMemberResource,UMoneyLog  uMoneyLog,UMoneyList uMoneyList);
+
+
 }

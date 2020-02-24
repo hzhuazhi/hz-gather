@@ -37,6 +37,7 @@ public class ComponentUtil {
     public static StreamConsumerService streamConsumerService;
 
     public static DateService dateService;
+    public static LimitedTimeService limitedTimeService;
 
 
 }
